@@ -1,0 +1,70 @@
+<!doctype html>
+<head>
+	<script src="/javascripts/welder.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="/css/welder.css">
+</head>
+<body>
+	<script type="text/javascript">
+		var $ = jQuery = require("jquery");
+		var h = require("hyperscript");
+		var welder = require("welder");
+		require("bootstrap");
+
+		$(document).ready( function() {
+			$("body").append(
+				h('.container',
+					h('h1','FastQC'),
+					h('h4','Quality Control for fastq files from sequencers.'),
+					h('.container',
+						h('form#main-form', { action:'', role:'form' },
+							h('fieldset',
+								h('div.form-group',
+									h('label','Fastq file'),
+									h('input.welder-file-picker',{name:'fastq_file'})
+								),
+								h('button.btn.btn-primary',{type:'submit'},"Submit")
+							)
+						)
+					)
+				)
+			);
+
+			welder.initWidgetsFromClasses();
+			welder.widgets.poweredBy();
+
+			$("#main-form").submit( function() {
+				$(this).find('fieldset').prop('disabled',true);
+				var params = welder.formToObject( this );
+
+				welder.ajax.postJson(
+					"/api/v1/projects/"+welder.getCurrentProjectFromUrl()+"/runs",
+					{
+						"name": "fastqc",
+						"params": params,
+						"tasks": [
+							{
+								"name": "fastqc",
+								"command": "/opt/FastQC/fastqc --outdir=./results ./inputs/fastq",
+								"container_image": "container-registry.appsoma.com/zack_fastqc",
+								"inputs": {
+									"fastq": "$PARAMS/fastq_file"
+								},
+								"requirements": {
+									"cpus": 1,
+									"mem": 512
+								}
+							}
+						]
+					},
+					function( res ) {
+						window.location = res.runStatusUrl;
+					}
+				);
+				return false;
+			});
+		});
+	</script>
+</body>
+

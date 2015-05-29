@@ -1,0 +1,89 @@
+<!doctype html>
+<head>
+	<script src="/javascripts/welder.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="/css/welder.css">
+</head>
+<body>
+	<script type="text/javascript">
+		var $ = jQuery = require("jquery");
+		var h = require("hyperscript");
+		var welder = require("welder");
+		require("bootstrap");
+
+		$(document).ready( function() {
+			$("body").append(
+				h('.container',
+					h('h1','BWA and SAM'),
+					h('h4','Burrows-Wheeler Aligner and Sequence Alignment Map.'),
+					h('.container',
+						h('form#main-form', { action:'', role:'form' },
+							h('fieldset',
+								h('div.form-group',
+									h('label','Reference Genome'),
+									h('input.welder-file-picker',{name:'reference_genome'})
+								),
+								h('div.form-group',
+									h('label','Fastq file(s)'),
+									h('input.welder-file-picker',{name:'fastq_files[]','data-multiple':true})
+								),
+								h('div.form-group',
+									h('label','Barcode length'),
+									h('input.form-control',{name:'barcode_length',value:0,type:'number',style:{width:'100px'}})
+								),
+								h('button.btn.btn-primary',{type:'submit'},"Submit")
+							)
+						)
+					)
+				)
+			);
+
+			welder.initWidgetsFromClasses();
+			welder.widgets.poweredBy();
+
+			$("#main-form").submit( function() {
+				$(this).find('fieldset').prop('disabled',true);
+				var params = welder.formToObject( this );
+				
+				welder.ajax.postJson(
+					"/api/v1/projects/"+welder.getCurrentProjectFromUrl()+"/runs",
+					{
+						"name": "bwa_and_sam",
+						"params": params,
+						"tasks": [
+							{
+								"name": "launcher",
+								"command": "python ./code/tools/launch_parallel_bwa.py",
+								"container_image": "container-registry.appsoma.com/zack_cutadapt_macs2_bwa",
+								"inputs": {
+									"reference_genome": "$PARAMS/reference_genome"
+								},
+								"code": [
+									{
+										"name": "tools",
+										"git": {
+											//"url": "git@github.com:appsoma/example_code.git"
+											"url": "git://github.com/appsoma/example_code.git"
+										}
+									}
+								],
+								"requirements": {
+									"cpus": 1,
+									"mem": 512
+								}
+							}
+						]
+					},
+					function( res ) {
+						window.location = res.runStatusUrl;
+					}
+				);
+				
+				return false;
+			});
+		});
+	</script>
+
+</body>
+
