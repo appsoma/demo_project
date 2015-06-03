@@ -42,11 +42,11 @@
 				welder.ajax.postJson(
 					"/api/v1/projects/"+welder.getCurrentProjectFromUrl()+"/runs",
 					{
+						"appname": "fastqc",
 						"name": "fastqc",
 						"params": params,
 						"tasks": [
 							{
-								"appname": "fastqc",
 								"name": "fastqc",
 								"command": "/opt/FastQC/fastqc --outdir=./results ./inputs/fastq",
 								"container_image": "container-registry.appsoma.com/zack_fastqc",
