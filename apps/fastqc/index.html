@@ -33,6 +33,7 @@
 
 			welder.initWidgetsFromClasses();
 			welder.widgets.poweredBy();
+			welder.handleRunSimilar( "#main-form" );
 
 			$("#main-form").submit( function() {
 				$(this).find('fieldset').prop('disabled',true);
@@ -45,6 +46,7 @@
 						"params": params,
 						"tasks": [
 							{
+								"appname": "fastqc",
 								"name": "fastqc",
 								"command": "/opt/FastQC/fastqc --outdir=./results ./inputs/fastq",
 								"container_image": "container-registry.appsoma.com/zack_fastqc",

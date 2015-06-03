@@ -41,6 +41,7 @@
 
 			welder.initWidgetsFromClasses();
 			welder.widgets.poweredBy();
+			welder.handleRunSimilar( "#main-form" );
 
 			$("#main-form").submit( function() {
 				$(this).find('fieldset').prop('disabled',true);
@@ -49,6 +50,7 @@
 				welder.ajax.postJson(
 					"/api/v1/projects/"+welder.getCurrentProjectFromUrl()+"/runs",
 					{
+						"appname": "bwa",
 						"name": "bwa_and_sam",
 						"params": params,
 						"tasks": [
