@@ -48,6 +48,7 @@
 						"tasks": [
 							{
 								"name": "sleeper",
+								"container_image": "ubuntu",
 								"command": "python -c \"import time; import json; f=open('../../params.json'); time.sleep( int(json.loads(f.read())['secs']) )\""
 							}
 						]
