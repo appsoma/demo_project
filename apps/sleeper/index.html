@@ -48,7 +48,7 @@
 						"tasks": [
 							{
 								"name": "sleeper",
-								"container_image": "ubuntu",
+								"container_image": "python:2.7.10",
 								"command": "python -c \"import json; f=open('../../params.json'); print json.loads(f.read())['secs']\"",
 								"requirements": {
 									"cpus": 1,
