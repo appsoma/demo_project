@@ -49,7 +49,7 @@
 							{
 								"name": "sleeper",
 								"container_image": "ubuntu",
-								"command": "SECS=`python -c \"import json; f=open('../../params.json'); print json.loads(f.read())['secs']\"`; sleep $SECS",
+								"command": "python -c \"import json; f=open('../../params.json'); print json.loads(f.read())['secs']\"",
 								"requirements": {
 									"cpus": 1,
 									"mem": 512,
