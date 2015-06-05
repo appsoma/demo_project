@@ -1,0 +1,6 @@
+{
+	"name": "Memory Allocator",
+	"bootstrap_icon": "glyphicon-share",
+	"short_description": "Requires specified memory",
+	"description": ""
+}
