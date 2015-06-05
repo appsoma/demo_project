@@ -49,7 +49,7 @@
 							{
 								"name": "sleeper",
 								"container_image": "python:2.7.10",
-								"command": "python -c \"import json; f=open('./params.json'); print json.loads(f.read())['secs']\"",
+								"command": "python -c \"import time; import json; f=open('./params.json'); time.sleep( int(json.loads(f.read())['secs']) )\"",
 								"requirements": {
 									"cpus": 1,
 									"mem": 512,
