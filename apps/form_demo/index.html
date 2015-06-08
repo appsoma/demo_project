@@ -1,0 +1,60 @@
+<!doctype html>
+<head>
+	<script src="/js/welder_widgets.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="/css/welder.css">
+</head>
+<body>
+	<script type="text/javascript">
+		var $ = jQuery = require("jquery");
+		var h = require("hyperscript");
+		var welder = require("welder");
+		require("bootstrap");
+
+		$(document).ready( function() {
+			$("body").append(
+				h('.container',
+					h('h1','Form demo'),
+					h('h4','Demonstrates using a form'),
+					h('.container',
+					    h('#main-form.welder-form',{'data-form-name':'form_demo'})
+					)
+				)
+			);
+
+			welder.widgets.poweredBy();
+			welder.initWidgetsFromClasses();
+
+			$("#main-form").submit( function() {
+				$(this).find('fieldset').prop('disabled',true);
+				var params = welder.formToObject( this );
+
+				welder.ajax.postJson(
+					"/api/v1/projects/"+welder.getCurrentProjectFromUrl()+"/runs",
+					{
+						"name": "form_demo",
+						"appname": "form_demo",
+						"params": params,
+						"tasks": [
+							{
+								"name": "echo_params",
+								"command": "echo params.json",
+								"container_image": "ubuntu",
+								"requirements": {
+									"cpus": 1,
+									"mem": 512,
+									"disk": 1024
+								}
+							}
+						]
+					},
+					function( res ) {
+						window.location = res.runStatusUrl;
+					}
+				);
+				return false;
+			});
+		});
+	</script>
+</body>
