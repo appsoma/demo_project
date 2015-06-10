@@ -77,8 +77,7 @@
 		$(this).find('fieldset').prop('disabled',true);
 		var params = welder.formToObject( this );
 
-		welder.ajax.postJson(
-			"/api/v1/projects/"+welder.getCurrentProjectFromUrl()+"/runs",
+		welder.ajax.apiv1( "POST", welder.getCurrentProjectFromUrl(), '/runs', 
 			{
 				"name": "world_population",
 				"params": params,

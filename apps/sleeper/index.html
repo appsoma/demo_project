@@ -1,9 +1,9 @@
 <!doctype html>
 <head>
-	<script src="/js/welder_widgets.js"></script>
+	<script src="/welder_assets/js/welder_widgets.js"></script>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
-	<link rel="stylesheet" href="/css/welder.css">
+	<link rel="stylesheet" href="/welder_assets/css/welder.css">
 </head>
 <body>
 	<script type="text/javascript">
@@ -39,29 +39,23 @@
 				$(this).find('fieldset').prop('disabled',true);
 				var params = welder.formToObject( this );
 
-				welder.ajax.postJson(
-					"/api/v1/projects/"+welder.getCurrentProjectFromUrl()+"/runs",
-					{
-						"appname": "sleeper",
-						"name": "sleeper",
-						"params": params,
-						"tasks": [
-							{
-								"name": "sleeper",
-								"container_image": "python:2.7.10",
-								"command": "python -c \"import time; import json; f=open('./params.json'); time.sleep( int(json.loads(f.read())['secs']) )\"",
-								"requirements": {
-									"cpus": 1,
-									"mem": 512,
-									"disk": 1024
-								}
+				welder.ajax.postRun({
+					"appname": "sleeper",
+					"name": "sleeper",
+					"params": params,
+					"tasks": [
+						{
+							"name": "sleeper",
+							"container_image": "python:2.7.10",
+							"command": "python -c \"import time; import json; f=open('./params.json'); time.sleep( int(json.loads(f.read())['secs']) )\"",
+							"requirements": {
+								"cpus": 1,
+								"mem": 512,
+								"disk": 1024
 							}
-						]
-					},
-					function( res ) {
-						window.location = res.runStatusUrl;
-					}
-				);
+						}
+					]
+				});
 				return false;
 			});
 		});

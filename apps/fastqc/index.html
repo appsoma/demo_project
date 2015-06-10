@@ -1,9 +1,9 @@
 <!doctype html>
 <head>
-	<script src="/js/welder_widgets.js"></script>
+	<script src="/welder_assets/js/welder_widgets.js"></script>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
-	<link rel="stylesheet" href="/css/welder.css">
+	<link rel="stylesheet" href="/welder_assets/css/welder.css">
 </head>
 <body>
 	<script type="text/javascript">
@@ -39,32 +39,26 @@
 				$(this).find('fieldset').prop('disabled',true);
 				var params = welder.formToObject( this );
 
-				welder.ajax.postJson(
-					"/api/v1/projects/"+welder.getCurrentProjectFromUrl()+"/runs",
-					{
-						"appname": "fastqc",
-						"name": "fastqc",
-						"params": params,
-						"tasks": [
-							{
-								"name": "fastqc",
-								"command": "/opt/FastQC/fastqc --outdir=./results ./inputs/fastq",
-								"container_image": "container-registry.appsoma.com/zack_fastqc",
-								"inputs": {
-									"fastq": "$PARAMS/fastq_file"
-								},
-								"requirements": {
-									"cpus": 1,
-									"mem": 512,
-									"disk": 1024
-								}
+				welder.ajax.postRun({
+					"appname": "fastqc",
+					"name": "fastqc",
+					"params": params,
+					"tasks": [
+						{
+							"name": "fastqc",
+							"command": "/opt/FastQC/fastqc --outdir=./results ./inputs/fastq",
+							"container_image": "container-registry.appsoma.com/zack_fastqc",
+							"inputs": {
+								"fastq": "$PARAMS/fastq_file"
+							},
+							"requirements": {
+								"cpus": 1,
+								"mem": 512,
+								"disk": 1024
 							}
-						]
-					},
-					function( res ) {
-						window.location = res.runStatusUrl;
-					}
-				);
+						}
+					]
+				});
 				return false;
 			});
 		});

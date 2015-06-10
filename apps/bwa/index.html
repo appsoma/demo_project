@@ -1,9 +1,9 @@
 <!doctype html>
 <head>
-	<script src="/js/welder_widgets.js"></script>
+	<script src="/welder_assets/js/welder_widgets.js"></script>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
-	<link rel="stylesheet" href="/css/welder.css">
+	<link rel="stylesheet" href="/welder_assets/css/welder.css">
 </head>
 <body>
 	<script type="text/javascript">
@@ -47,41 +47,35 @@
 				$(this).find('fieldset').prop('disabled',true);
 				var params = welder.formToObject( this );
 				
-				welder.ajax.postJson(
-					"/api/v1/projects/"+welder.getCurrentProjectFromUrl()+"/runs",
-					{
-						"appname": "bwa",
-						"name": "bwa_and_sam",
-						"params": params,
-						"tasks": [
-							{
-								"name": "launcher",
-								"command": "python ./code/tools/launch_parallel_bwa.py",
-								"container_image": "container-registry.appsoma.com/zack_cutadapt_macs2_bwa",
-								"inputs": {
-									"reference_genome": "$PARAMS/reference_genome"
-								},
-								"code": [
-									{
-										"name": "tools",
-										"git": {
-											//"url": "git@github.com:appsoma/example_code.git"
-											"url": "git://github.com/appsoma/example_code.git"
-										}
+				welder.ajax.postRun({
+					"appname": "bwa",
+					"name": "bwa_and_sam",
+					"params": params,
+					"tasks": [
+						{
+							"name": "launcher",
+							"command": "python ./code/tools/launch_parallel_bwa.py",
+							"container_image": "container-registry.appsoma.com/zack_cutadapt_macs2_bwa",
+							"inputs": {
+								"reference_genome": "$PARAMS/reference_genome"
+							},
+							"code": [
+								{
+									"name": "tools",
+									"git": {
+										//"url": "git@github.com:appsoma/example_code.git"
+										"url": "git://github.com/appsoma/example_code.git"
 									}
-								],
-								"requirements": {
-									"cpus": 1,
-									"mem": 512,
-									"disk": 1024
 								}
+							],
+							"requirements": {
+								"cpus": 1,
+								"mem": 512,
+								"disk": 1024
 							}
-						]
-					},
-					function( res ) {
-						window.location = res.runStatusUrl;
-					}
-				);
+						}
+					]
+				});
 				
 				return false;
 			});

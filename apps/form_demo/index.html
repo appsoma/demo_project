@@ -1,6 +1,6 @@
 <!doctype html>
 <head>
-	<script src="/js/welder_widgets.js"></script>
+	<script src="/welder_assets/js/welder_widgets.js"></script>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
 	<link rel="stylesheet" href="/css/welder.css">
@@ -30,29 +30,23 @@
 				$(this).find('fieldset').prop('disabled',true);
 				var params = welder.formToObject( this );
 
-				welder.ajax.postJson(
-					"/api/v1/projects/"+welder.getCurrentProjectFromUrl()+"/runs",
-					{
-						"name": "form_demo",
-						"appname": "form_demo",
-						"params": params,
-						"tasks": [
-							{
-								"name": "echo_params",
-								"command": "echo params.json",
-								"container_image": "ubuntu",
-								"requirements": {
-									"cpus": 1,
-									"mem": 512,
-									"disk": 1024
-								}
+				welder.ajax.postRun({
+					"name": "form_demo",
+					"appname": "form_demo",
+					"params": params,
+					"tasks": [
+						{
+							"name": "echo_params",
+							"command": "echo params.json",
+							"container_image": "ubuntu",
+							"requirements": {
+								"cpus": 1,
+								"mem": 512,
+								"disk": 1024
 							}
-						]
-					},
-					function( res ) {
-						window.location = res.runStatusUrl;
-					}
-				);
+						}
+					]
+				});
 				return false;
 			});
 		});
