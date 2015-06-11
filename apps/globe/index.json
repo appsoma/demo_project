@@ -2,5 +2,6 @@
 	"name": "Globe",
 	"bootstrap_icon": "glyphicon-globe",
 	"short_description": "World population visualization",
-	"description": "World population visualization"
+	"description": "World population visualization",
+	"portal": true
 }

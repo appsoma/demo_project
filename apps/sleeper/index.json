@@ -2,5 +2,6 @@
 	"name": "Sleeper",
 	"bootstrap_icon": "glyphicon-hourglass",
 	"short_description": "A demo service that sleeps for N seconds.",
-	"description": ""
+	"description": "",
+	"portal": true
 }
