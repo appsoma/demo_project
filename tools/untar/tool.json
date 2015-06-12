@@ -1,0 +1,22 @@
+{
+	"name": "untar",
+	"inputs": {
+		"tar_file": {
+			"extension": [ "tar", ".tar.gz" ],
+			"type": "tar"
+		}
+	},
+	"outputs": {
+		"extracted_tar": {
+			"folder": "extracted_tar"
+		}
+	},
+	"command": "mkdir ./outputs/extracted_tar && tar xvf ./inputs/tar_file -C ./outputs/extracted_tar",
+	"container_image": "ubuntu",
+	"requirements": {
+		"cpus": 1,
+		"mem": 512,
+		"disk":512
+	}
+}
+
