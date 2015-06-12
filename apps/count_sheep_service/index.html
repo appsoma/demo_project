@@ -48,7 +48,7 @@
 							"name": "count_sheep",
 							"monitor": "ps -p `cat service.pid`",
 							"kill": "kill -9 `cat service.pid`",
-							"command": "echo $$ > service.pid; python ./code/tools/count_sheep_service.py",
+							"command": "python ./code/tools/count_sheep_service.py",
 							"code": [
 								{
 									"name": "tools",
