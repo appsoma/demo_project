@@ -2,7 +2,7 @@ import re
 import json
 import os
 import sys
-from welder_api import welder_api
+from code.welder_api.welder_api import *
 from subprocess import call
 
 params = {}
