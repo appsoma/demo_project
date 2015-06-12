@@ -15,14 +15,14 @@
 		$(document).ready( function() {
 			$("body").append(
 				h('.container',
-					h('h1','Service'),
-					h('h4','A test service start'),
+					h('h1','Count Sheep Service'),
+					h('h4','A demo web-service'),
 					h('.container',
 						h('form#main-form', { action:'', role:'form' },
 							h('fieldset',
 								h('div.form-group',
-									h('label','Some parameter'),
-									h('input.form-control',{name:'some_parameter'})
+									h('label','Number of sheep to count'),
+									h('input.form-control',{name:'sheep_count'})
 								),
 								h('button.btn.btn-primary',{type:'submit'},"Submit")
 							)
