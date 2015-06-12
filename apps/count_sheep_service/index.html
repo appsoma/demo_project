@@ -43,20 +43,20 @@
 					"name": "count_sheep_service",
 					"params": params,
 					"type": "service",
-					"code": [
-						{
-							"name": "tools",
-							"git": {
-								"url": "git://github.com/appsoma/example_code.git"
-							}
-						}
-					],
 					"tasks": [
 						{
 							"name": "count_sheep",
 							"monitor": "ps -p `cat service.pid`",
 							"kill": "kill -9 `cat service.pid`",
-							"command": "echo $$ > service.pid; cat ./code/tools/count_sheep_service.py; sleep 10"
+							"command": "echo $$ > service.pid; cat ./code/tools/count_sheep_service.py; sleep 10",
+							"code": [
+								{
+									"name": "tools",
+									"git": {
+										"url": "git://github.com/appsoma/example_code.git"
+									}
+								}
+							]
 						}
 					]
 				});
