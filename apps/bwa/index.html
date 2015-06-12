@@ -22,11 +22,11 @@
 							h('fieldset',
 								h('div.form-group',
 									h('label','Reference Genome'),
-									h('input.welder-file-picker',{name:'reference_genome'})
+									h('input.welder-file-picker',{name:'reference_genome','data-default-dataset':'reference_genomes'})
 								),
 								h('div.form-group',
 									h('label','Fastq file(s)'),
-									h('input.welder-file-picker',{name:'fastq_files[]','data-multiple':true})
+									h('input.welder-file-picker',{name:'fastq_files[]','data-multiple':true,'data-default-dataset':'from_sequencer'})
 								),
 								h('div.form-group',
 									h('label','Barcode length'),
