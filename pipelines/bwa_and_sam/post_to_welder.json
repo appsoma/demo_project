@@ -1,0 +1,46 @@
+// This is an example of what I want out of the pipeline tool... 
+// This is the finished product that will be POSTED to welder
+
+{
+	"name": "bwa_sam_pipeline",
+	"tasks": [
+		{
+			"name": "extract_genome",
+			"tool": {
+				// Here we make the tool overload explicit:
+				"toolname": "untar",
+				"inputs": {
+					"tar_file": "$PARAMS/reference_genome"
+				}
+			}
+		},
+		{
+			// Alternative syntax where we don't make the overload explicit:
+			"name": "bwa1",
+			"tool": "bwa",
+			"inputs": {
+				"extracted_reference_genome": "$TASKS/extract_genome/outputs/extracted_tar",
+				"fastq": "$PARAMS/fastq1"
+			}
+		},
+		{
+			"name": "bwa2",
+			"tool": "bwa",
+			"inputs": {
+				"extracted_reference_genome": "$TASKS/extract_genome/outputs/extracted_tar",
+				"fastq": "$PARAMS/fastq2"
+			}
+		},
+		{
+			"name": "sam",
+			"tool": "sam",
+			"inputs": {
+				"extracted_reference_genome": "$TASKS/extract_genome/outputs/extracted_tar",
+				"fastq1": "$PARAMS/fastq1",
+				"sai1": "$TASKS/bwa1/outputs/out.sai",
+				"fastq2": "$PARAMS/fastq1",
+				"sai2": "$TASKS/bwa1/outputs/out.sai"
+			}
+		},
+	]
+}

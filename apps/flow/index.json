@@ -2,5 +2,6 @@
 	"name": "Flow",
 	"bootstrap_icon": "glyphicon-tint",
 	"short_description": "Real time turbulent flow simulation",
-	"description": "Demonstrates that modern browsers are capable of complex calculations in Javascript"
+	"description": "Demonstrates that modern browsers are capable of complex calculations in Javascript",
+	"portal": true
 }

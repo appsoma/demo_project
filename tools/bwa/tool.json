@@ -1,0 +1,33 @@
+{
+	"name": "bwa",
+	"inputs": {
+		"extracted_reference_genome": {
+			"folder": true,
+			"type": "NCBI_extracted_tar"
+		},
+		"fastq": {
+			"extension": [ ".fastq", ".fq" ],
+			"type": "fastq"
+		}
+	},
+	"outputs": {
+		"out.sai": {
+			"type": "sai"
+		}
+	},
+	"command": "python ./code/bwa_and_sam/bwa_tool.py",
+	"code": [ "bwa_and_sam" ],
+	"git": [
+		{
+			"comment": "This is how git will work",
+			"name": "./code/tools",
+			"url": "git://github.com/appsoma/example_code.git"
+		}
+	],
+	"container_image": "container-registry.appsoma.com/zack_cutadapt_macs2_bwa",
+	"requirements": {
+		"cpus": 1,
+		"mem": 512,
+		"disk":512
+	}
+}

@@ -1,0 +1,89 @@
+// This is the intermediate file that describes the pipeline abstractly
+// Note that it really isn't all the much different from post_to_welder.json
+// and in fact maybe we don't need this intermediate at all.
+
+{
+	"name": "bwa_sam_pipeline",
+	"nodes": [
+		{
+			"id": "1",
+			"outputs": {
+				// In this example we use a hash to be consistent with inputs
+				"params.reference_genome": {
+					"id": "1.1",
+				}
+			}
+		},
+		{
+			"id": "2",
+			"name": "params.fastq1",
+			"outputs": [
+				// In this example we use a list unlike the inputs
+				{
+					"id": "2.1",
+					"name": "params.fastq1",
+				}
+			]
+		},
+		{
+			"id": "3",
+			"name": "params.fastq2",
+			"outputs": [
+				{
+					"id": "3.1",
+					"name": "params.fastq2",
+				}
+			]
+		},
+		{
+			"id": "4",
+			"name": "extract_genome",
+			"tool": "data_io.untar",
+			"inputs": {
+				"tar_file": "1"
+			},
+			"outputs": {
+				"id": "4.1",
+				"name": "extracted_tar"
+			}
+		},
+		{
+			"id": "5",
+			"name": "bwa1",
+			"tool": "bwa",
+			"inputs": {
+				"extracted_reference_genome": "4.1",
+				"fastq": "2.1"
+			},
+			"outputs": {
+				"id": "5.1",
+				"name": "sai"
+			}
+		},
+		{
+			"id": "6",
+			"name": "bwa2",
+			"tool": "bwa",
+			"inputs": {
+				"extracted_reference_genome": "4.1",
+				"fastq": "3.1"
+			},
+			"outputs": {
+				"id": "6.1",
+				"name": "sai"
+			}
+		},
+		{
+			"id": "7",
+			"name": "sam",
+			"tool": "sam",
+			"inputs": {
+				"extracted_reference_genome": "4.1",
+				"fastq1": "2.1",
+				"sai1": "5.1",
+				"fastq2": "3.1",
+				"sai2": "6.1"
+			}
+		},
+	]
+}

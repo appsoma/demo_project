@@ -3,7 +3,7 @@
 	<script src="/welder_assets/js/welder_widgets.js"></script>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
-	<link rel="stylesheet" href="/welder_assets/css/welder.css">
+	<link rel="stylesheet" href="/welder_assets/css/welder_widgets.css">
 </head>
 <body>
 	<script type="text/javascript">
@@ -22,7 +22,7 @@
 							h('fieldset',
 								h('div.form-group',
 									h('label','Fastq file'),
-									h('input.welder-file-picker',{name:'fastq_file'})
+									h('input.welder-file-picker',{name:'fastq_file','data-default-dataset':'from_sequencer'})
 								),
 								h('button.btn.btn-primary',{type:'submit'},"Submit")
 							)

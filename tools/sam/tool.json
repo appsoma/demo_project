@@ -1,0 +1,41 @@
+{
+	"name": "sam",
+	"inputs": {
+		"extracted_reference_genome": {
+			"folder": true,
+			"type": "NCBI_extracted_tar"
+		},
+		"fastq1": {
+			"extension": [ ".fastq", ".fq" ],
+			"type": "fastq"
+		},
+		"sai1": {
+			"extension": ".sai",
+			"type": "sai"
+		},
+		"fastq2": {
+			"extension": [ ".fastq", ".fq" ],
+			"type": "fastq",
+			"optional": true,
+		},
+		"sai2": {
+			"extension": ".sai",
+			"type": "sai",
+			"optional": true,
+		}
+	},
+	"outputs": {
+		"sam": {
+			"file": "out.sam",
+			"type": "sam"
+		}
+	},
+	"command": "python ./code/bwa_and_sam/sam_tool.py",
+	"code": [ "bwa_and_sam" ],
+	"container_image": "container-registry.appsoma.com/zack_cutadapt_macs2_bwa",
+	"requirements": {
+		"cpus": 1,
+		"mem": 512,
+		"disk":512
+	}
+}

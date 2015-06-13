@@ -15,14 +15,14 @@
 		$(document).ready( function() {
 			$("body").append(
 				h('.container',
-					h('h1','FastQC'),
-					h('h4','Quality Control for fastq files from sequencers.'),
+					h('h1','Demo Web Service'),
+					h('h4','A demo web-service'),
 					h('.container',
 						h('form#main-form', { action:'', role:'form' },
 							h('fieldset',
 								h('div.form-group',
-									h('label','Memory in MB'),
-									h('input.form-control',{name:'mem'})
+									h('label','A parameter to print'),
+									h('input.form-control',{name:'to_print'})
 								),
 								h('button.btn.btn-primary',{type:'submit'},"Submit")
 							)
@@ -40,18 +40,16 @@
 				var params = welder.formToObject( this );
 
 				welder.ajax.postRun({
-					"appname": "memoryhog",
-					"name": "memoryhog",
+					"name": "web_service",
 					"params": params,
+					"type": "service",
 					"tasks": [
 						{
-							"name": "memoryhog",
-							"command": "sleep 10",
-							"requirements": {
-								"cpus": 1,
-								"mem": "$PARAMS/mem",
-								"disk": 1024
-							}
+							"name": "web_service",
+							"monitor": "ps -p `cat service.pid`",
+							"kill": "kill -9 `cat service.pid`",
+							"command": "python ./code/tools/web_service.py",
+							"code": [ "web_service" ]
 						}
 					]
 				});
@@ -60,4 +58,3 @@
 		});
 	</script>
 </body>
-

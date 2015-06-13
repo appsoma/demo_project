@@ -2,5 +2,6 @@
 	"name": "BWA and SAM",
 	"bootstrap_icon": "glyphicon-equalizer",
 	"short_description": "Burroughs Wheeler Aligner (BWA) and SAM are parts of a software package for mapping low-divergent sequences against a large reference genome.",
-	"description": "Burroughs Wheeler Aligner (BWA) and SAM are parts of a software package for mapping low-divergent sequences against a large reference genome, such as the human genome. The bwa-aln algorithm is designed for Illumina sequence reads up to 100bp. This tool wraps bwa-aln, bwa-samse and -sampe modules of bwa read mapping tool.<ul><li>bwa aln - actual mapper placing reads onto the reference sequence</li><li>bwa samse - post-processor converting suffix array coordinates into genome coordinates in SAM format for single reads</li><li>bam sampe - post-processor for paired reads</li></ul>"
+	"description": "Burroughs Wheeler Aligner (BWA) and SAM are parts of a software package for mapping low-divergent sequences against a large reference genome, such as the human genome. The bwa-aln algorithm is designed for Illumina sequence reads up to 100bp. This tool wraps bwa-aln, bwa-samse and -sampe modules of bwa read mapping tool.<ul><li>bwa aln - actual mapper placing reads onto the reference sequence</li><li>bwa samse - post-processor converting suffix array coordinates into genome coordinates in SAM format for single reads</li><li>bam sampe - post-processor for paired reads</li></ul>",
+	"portal": true
 }

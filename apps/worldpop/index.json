@@ -2,5 +2,6 @@
 	"name": "World Population Map",
 	"bootstrap_icon": "glyphicon-map-marker",
 	"short_description": "Flat map of top population centers world wide.",
-	"description": "Flat map of top population centers world wide."
+	"description": "Flat map of top population centers world wide.",
+	"portal": true
 }
