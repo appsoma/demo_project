@@ -8,7 +8,7 @@
 	},
 	"outputs": {
 		"extracted_tar": {
-			"folder": "extracted_tar"
+			"folder": true
 		}
 	},
 	"command": "mkdir ./outputs/extracted_tar && tar xvf ./inputs/tar_file -C ./outputs/extracted_tar",
