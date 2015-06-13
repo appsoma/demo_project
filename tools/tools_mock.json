@@ -1,6 +1,5 @@
 {
-"tool_list": [
-	{
+	"root_intrusion": {
 		"id": "root_intrusion",
 		"name": "Root Intrusion",
 		"categoryId": "Security",
