@@ -15,7 +15,7 @@
 			"type": "sai"
 		}
 	},
-	"command": "python bwa_tool.py",
+	"command": "python ./code/bwa_and_sam/bwa_tool.py",
 	"code": [ "bwa_and_sam" ],
 	"git": [
 		{

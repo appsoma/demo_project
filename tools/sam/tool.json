@@ -30,7 +30,7 @@
 			"type": "sam"
 		}
 	},
-	"command": "python sam_tool.py",
+	"command": "python ./code/bwa_and_sam/sam_tool.py",
 	"code": [ "bwa_and_sam" ],
 	"container_image": "container-registry.appsoma.com/zack_cutadapt_macs2_bwa",
 	"requirements": {
