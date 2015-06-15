@@ -6,13 +6,13 @@
 		"brief": "mybriefdescription",
 		"description": "mydesc",
 		"license": "mylicense",
-		"category":"pipeCategoryId",
-		"vmi": "myvmi"
+		"categoryId":"pipeCategoryId"
 	},
 	"steps": {
-		"3363571": {
-			"id": "3363571",
+		"step_0:assess_threat": {
+			"id": "step_0:assess_threat",
 			"name": "Assess Threat",
+			"icon": { "fontawesome": "\uf002" },
 			"type": "data_io.compress",
 			"params": {
 				"path": [
@@ -42,9 +42,10 @@
 			"x": 422,
 			"y": 238
 		},
-		"1189999": {
-			"id": 1189999,
+		"step_1:root_intrusion": {
+			"id": "step_1:root_intrusion",
 			"name": "Root Intrusion",
+			"icon": { "fontawesome": "\uf071" },
 			"type": "data_io.batch_input",
 			"params": {
 				"descriptionText": "Test data"
@@ -60,9 +61,10 @@
 			"x": 72,
 			"y": 81
 		},
-		"11899993": {
-			"id": 11899993,
+		"step_2:virus_detection": {
+			"id": "step_2:virus_detection",
 			"name": "Virus Detection",
+			"icon": { "fontawesome": "\uf236" },
 			"type": "data_io.batch_input",
 			"params": {
 				"descriptionText": "Test Data"
@@ -84,9 +86,10 @@
 			"x": 61,
 			"y": 406
 		},
-		"1203088": {
-			"id": 1203088,
+		"step_3:critical_virus_filter": {
+			"id": "step_3:critical_virus_filter",
 			"name": "Critical Virus Filter",
+			"icon": { "fontawesome": "\uf0b0" },
 			"type": "data_io.sort_files",
 			"params": {},
 			"inputs": {
@@ -121,9 +124,10 @@
 			"x": 237,
 			"y": 323
 		},
-		"1212993": {
-			"id": 1212993,
+		"step_4:node_isolator": {
+			"id": "step_4:node_isolator",
 			"name": "Node Isolator",
+			"icon": { "fontawesome": "\uf007" },
 			"type": "picard.merge",
 			"params": {},
 			"inputs": {
@@ -146,32 +150,32 @@
 	},
 	"connections": [
 		{
-			"source": 1189999,
-			"target": 3363571,
+			"source": "step_1:root_intrusion",
+			"target": "step_0:assess_threat",
 			"output": 33631121,
 			"input": 336357,
-			"id": "1189999_3363571_33631121_336357"
+			"id": "step_1:root_intrusion_step_0:assess_threat_33631121_336357"
 		},
 		{
-			"source": 3363571,
-			"target": 1212993,
+			"source": "step_0:assess_threat",
+			"target": "step_4:node_isolator",
 			"output": 33635721321,
 			"input": 33635127388,
-			"id": "3363571_1212993_33635721321_33635127388"
+			"id": "assess_threat_step_4:node_isolator_33635721321_33635127388"
 		},
 		{
-			"source": 1203088,
-			"target": 3363571,
+			"source": "step_3:critical_virus_filter",
+			"target": "step_0:assess_threat",
 			"output": 3223631121,
 			"input": 336357213,
-			"id": "1203088_3363571_3223631121_336357213"
+			"id": "step_3:critical_virus_filter_step_0:assess_threat_3223631121_336357213"
 		},
 		{
-			"source": 11899993,
-			"target": 1203088,
+			"source": "step_2:virus_detection",
+			"target": "step_3:critical_virus_filter",
 			"output": 336311213,
 			"input": 3316351273,
-			"id": "11899993_1203088_336311213_3316351273"
+			"id": "step_2:virus_detection_step_3:critical_virus_filter_336311213_3316351273"
 		}
 	]
 }
