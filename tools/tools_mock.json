@@ -2,6 +2,7 @@
 	"root_intrusion": {
 		"id": "root_intrusion",
 		"name": "Root Intrusion",
+		"icon": { "fontawesome": "\uf071" },
 		"categoryId": "Security",
 		"type": "data_io.sort_files",
 		"params": {
@@ -29,9 +30,10 @@
 			}
 		]
 	},
-	{
+	"sort_files": {
 		"id": "sort_files",
 		"name": "Sort Files",
+		"icon": { "fontawesome": "\uf160" },
 		"categoryId": "File Manipulation",
 		"type": "data_io.sort_files",
 		"params": {
@@ -59,9 +61,10 @@
 			}
 		]
 	},
-	{
-		"id": 336357,
+	"virus_detection": {
+		"id": "virus_detection",
 		"name": "Virus Detection",
+		"icon": { "fontawesome": "\uf236" },
 		"categoryId": "Security",
 		"type": "data_io.input_file",
 		"params": {
@@ -100,9 +103,10 @@
 			}
 		]
 	},
-	{
+	"input_file":{
 		"id": "input_file",
 		"name": "Input File",
+		"icon": { "fontawesome": "\uf016" },
 		"categoryId": "File Manipulation",
 		"type": "data_io.input_file",
 		"params": {
@@ -140,9 +144,10 @@
 			}
 		]
 	},
-	{
-		"id": 60856683,
+	"critical_virus_filter": {
+		"id": "critical_virus_filter",
 		"name": "Critical Virus Filter",
+		"icon": { "fontawesome": "\uf0b0" },
 		"categoryId": "Security",
 		"type": "data_io.input_file",
 		"params": {
@@ -166,13 +171,14 @@
 			}
 		]
 	},
-	{
-		"id": 118985999,
+	"assess_threat": {
+		"id": "assess_threat",
 		"name": "Assess Threat",
+		"icon": { "fontawesome": "\uf002" },
 		"categoryId": "Security",
 		"type": "data_io.batch_input",
 		"params": {
-		"descriptionText": ""
+			"someParam": "22"
 		},
 		 "input_list":[
 			{
@@ -189,13 +195,14 @@
 			}
 		]
 	},
-	{
+	"batch_input": {
 		"id": "batch_input",
 		"name": "Batch Input",
+		"icon": { "fontawesome": "\uf1b3" },
 		"categoryId": "File Manipulation",
 		"type": "data_io.batch_input",
 		"params": {
-		"descriptionText": ""
+			"descriptionText": ""
 		},
 		 "input_list":[
 			{
@@ -212,9 +219,10 @@
 			}
 		]
 	},
-	{
-		"id": 96643336,
+	"node_isolator": {
+		"id": "node_isolator",
 		"name": "Node Isolator",
+		"icon": { "fontawesome": "\uf007" },
 		"categoryId": "Responses",
 		"type": "bowtie2",
 		"params": {
