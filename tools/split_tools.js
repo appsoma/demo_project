@@ -39,10 +39,17 @@ for( var t in toolList ) {
 		return obj;
 	}
 
+	tool.form = tool.id+".form";
 	tool.inputs = toObj(tool.inputs);
 	tool.outputs = toObj(tool.outputs);
 
-	fs.writeFileSync( "./"+t+"/tool.json", JSON.stringify(tool,null,4) );
+	var order = ["id", "label", "version", "author", "icon", "category", "form", "params", "inputs", "outputs"];
+	var toolOut = {};
+	for( var index in order ) {
+		toolOut[order[index]] = tool[order[index]];
+	}
+
+	fs.writeFileSync( "./"+t+"/tool.json", JSON.stringify(toolOut,null,4) );
 
 	console.log("mkdir "+t);
 	console.log("make file "+t+"/tool.json");
