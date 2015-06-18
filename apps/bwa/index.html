@@ -48,7 +48,7 @@
 				var params = welder.formToObject( this );
 				
 				welder.ajax.postRun({
-					"appname": "bwa",
+					"appFolderName": "bwa",
 					"name": "bwa_and_sam",
 					"params": params,
 					"tasks": [
@@ -59,7 +59,6 @@
 							"inputs": {
 								"reference_genome": "$PARAMS/reference_genome"
 							},
-							"code": [ "bwa_and_sam", "welder_api" ],
 							"requirements": {
 								"cpus": 1,
 								"mem": 512,
