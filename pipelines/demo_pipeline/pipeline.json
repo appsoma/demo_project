@@ -40,7 +40,7 @@
 		},
 		{
 			"id": "step_1-root_intrusion",
-			"name": "Root Intrusion",
+			"label": "Root Intrusion",
 			"icon": { "fontawesome": "\uf071" },
 			"params": {
 				"descriptionText": "Test data"
@@ -58,7 +58,7 @@
 		},
 		{
 			"id": "step_2-virus_detection",
-			"name": "Virus Detection",
+			"label": "Virus Detection",
 			"icon": { "fontawesome": "\uf236" },
 			"params": {
 				"descriptionText": "Test Data"
@@ -82,7 +82,7 @@
 		},
 		{
 			"id": "step_3-critical_virus_filter",
-			"name": "Critical Virus Filter",
+			"label": "Critical Virus Filter",
 			"icon": { "fontawesome": "\uf0b0" },
 			"params": {},
 			"inputs": {
@@ -119,7 +119,7 @@
 		},
 		{
 			"id": "step_4-node_isolator",
-			"name": "Node Isolator",
+			"label": "Node Isolator",
 			"icon": { "fontawesome": "\uf007" },
 			"params": {},
 			"inputs": {
