@@ -13,7 +13,11 @@
 		require("bootstrap");
 
 		$(document).ready( function() {
-			var form = welder.widgets.pipelineForm( "body", { pipeline:"demo_pipeline" } );
+			$("body").append(
+				h('.container#main-form')
+			);
+
+			var form = welder.widgets.pipelineForm( "#main-form", { pipeline:"demo_pipeline" } );
 			welder.widgets.poweredBy();
 			welder.handleRunSimilar( "#main-form" );
 
