@@ -8,6 +8,13 @@
 	"steps": [
 		{
 			"id": "step_0-assess_threat",
+			"command": "echo Hello from Step 0",
+			"container_image": "ubuntu",
+			"requirements": {
+				"cpus": 1,
+				"mem": 512,
+				"disk": 512
+			},
 			"tool": "assess_threat",
 			"form": "assess_threat.form",
 			"label": "Assess Threat",
@@ -42,6 +49,13 @@
 		},
 		{
 			"id": "step_1-root_intrusion",
+			"command": "echo Hello from Step 1",
+			"container_image": "ubuntu",
+			"requirements": {
+				"cpus": 1,
+				"mem": 512,
+				"disk": 512
+			},
 			"tool": "root_intrusion",
 			"form": "root_intrusion.form",
 			"label": "Root Intrusion",
