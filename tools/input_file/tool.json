@@ -1,0 +1,45 @@
+{
+    "id": "input_file",
+    "label": "Input File",
+    "version": "0.0",
+    "author": "",
+    "icon": {
+        "fontawesome": ""
+    },
+    "category": "File Manipulation",
+    "form": "input_file.form",
+    "params": {
+        "path": [
+            "/Projects/31/ucsc.hg19.fasta"
+        ]
+    },
+    "inputs": {
+        "genome2": {
+            "id": "genome2",
+            "label": "Genome2",
+            "type": "1"
+        },
+        "genome3": {
+            "id": "genome3",
+            "label": "Genome3",
+            "type": "1"
+        },
+        "genome4": {
+            "id": "genome4",
+            "label": "Genome4",
+            "type": "1"
+        },
+        "genome5": {
+            "id": "genome5",
+            "label": "Genome5",
+            "type": "1"
+        }
+    },
+    "outputs": {
+        "genome_out_2": {
+            "id": "genome_out_2",
+            "label": "Genome Out 2",
+            "type": "2"
+        }
+    }
+}

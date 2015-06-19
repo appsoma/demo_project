@@ -1,0 +1,28 @@
+{
+    "id": "batch_input",
+    "label": "Batch Input",
+    "version": "0.0",
+    "author": "",
+    "icon": {
+        "fontawesome": ""
+    },
+    "category": "File Manipulation",
+    "form": "batch_input.form",
+    "params": {
+        "descriptionText": ""
+    },
+    "inputs": {
+        "reference_genome2": {
+            "id": "reference_genome2",
+            "label": "Reference Genome2",
+            "type": "2"
+        }
+    },
+    "outputs": {
+        "reference_genome_out_3": {
+            "id": "reference_genome_out_3",
+            "label": "Reference Genome Out 3",
+            "type": "3"
+        }
+    }
+}

@@ -1,0 +1,25 @@
+[
+    {
+        "componentName": "input",
+        "context": {
+            "label": "input1",
+            "name": "input1",
+            "placeholder": "placeholder",
+            "help": "",
+            "validFunction": "",
+            "required": false
+        }
+    },
+    {
+        "componentName": "textarea",
+        "context": {
+            "label": "input2",
+            "name": "input2",
+            "placeholder": "placeholder",
+            "help": "",
+            "rows": "3",
+            "validFunction": "",
+            "required": false
+        }
+    }
+]

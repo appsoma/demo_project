@@ -1,0 +1,28 @@
+{
+    "id": "assess_threat",
+    "label": "Assess Threat",
+    "version": "0.0",
+    "author": "",
+    "icon": {
+        "fontawesome": ""
+    },
+    "category": "Security",
+    "form": "assess_threat.form",
+    "params": {
+        "someParam": "22"
+    },
+    "inputs": {
+        "reference_genome2": {
+            "id": "reference_genome2",
+            "label": "Reference Genome2",
+            "type": "2"
+        }
+    },
+    "outputs": {
+        "reference_genome_out_3": {
+            "id": "reference_genome_out_3",
+            "label": "Reference Genome Out 3",
+            "type": "3"
+        }
+    }
+}

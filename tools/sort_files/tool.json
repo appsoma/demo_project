@@ -1,0 +1,35 @@
+{
+    "id": "sort_files",
+    "label": "Sort Files",
+    "version": "0.0",
+    "author": "",
+    "icon": {
+        "fontawesome": ""
+    },
+    "category": "File Manipulation",
+    "form": "sort_files.form",
+    "params": {
+        "alignment_mode": "--local",
+        "b2_preset": "--very-sensitive",
+        "b2_qc_filter": true
+    },
+    "inputs": {
+        "read_sequence": {
+            "id": "read_sequence",
+            "label": "Read Sequence",
+            "type": "batch_input"
+        },
+        "fasta_reference": {
+            "id": "fasta_reference",
+            "label": "Fasta Reference",
+            "type": "batch_input"
+        }
+    },
+    "outputs": {
+        "aligned": {
+            "id": "aligned",
+            "label": "Aligned",
+            "type": "batch_input"
+        }
+    }
+}
