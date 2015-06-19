@@ -30,11 +30,6 @@
 					"id": "336357",
 					"name": "Input File",
 					"type": "batch_input"
-				},
-				"336357213": {
-					"id": "336357213",
-					"name": "Files",
-					"type": "files"
 				}
 			},
 			"outputs": {
