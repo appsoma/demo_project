@@ -8,7 +8,7 @@
 	"steps": [
 		{
 			"id": "step_0-assess_threat",
-			"command": "echo ./inputs/a_text_file; echo Hello from step 0",
+			"command": "cat ./inputs/a_text_file; echo Hello from step 0",
 			"container_image": "ubuntu",
 			"requirements": {
 				"cpus": 1,
@@ -27,13 +27,6 @@
 					"id": "a_text_file",
 					"name": "Input File",
 					"type": "text"
-				}
-			},
-			"outputs": {
-				"33635721321": {
-					"id": "33635721321",
-					"name": "Compressed File",
-					"type": "batch_input"
 				}
 			},
 			"x": 422,
