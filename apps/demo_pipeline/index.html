@@ -23,7 +23,7 @@
 
 			$("#main-form").submit( function() {
 				var params = welder.formToObject( this );
-				welder.ajax.postRunPipeline({
+				welder.ajax.postRun({
 					pipeline: "demo_pipeline",
 					params: params
 				});
