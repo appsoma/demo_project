@@ -1,0 +1,13 @@
+[
+    {
+        "componentName": "input",
+        "context": {
+            "label": "Something about root intrusion. Note namespace collision!",
+            "name": "input1",
+            "placeholder": "placeholder",
+            "help": "",
+            "validFunction": "",
+            "required": false
+        }
+    }
+]

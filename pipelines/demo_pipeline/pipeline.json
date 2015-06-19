@@ -40,6 +40,26 @@
 			"x": 422,
 			"y": 238
 		}
+		{
+			"id": "step_1-root_intrusion",
+			"tool": "root_intrusion",
+			"form": "root_intrusion.form",
+			"label": "Root Intrusion",
+			"icon": { "fontawesome": "\uf071" },
+			"params": {
+				"descriptionText": "Test data"
+			},
+			"inputs": {},
+			"outputs": {
+				"33631121": {
+					"id": 33631121,
+					"name": "Batch Output",
+					"type": "batch_input"
+				}
+			},
+			"x": 72,
+			"y": 81
+		}
 	],
 	"connections": [
 		{
