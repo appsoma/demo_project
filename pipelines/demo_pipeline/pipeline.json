@@ -39,7 +39,7 @@
 			},
 			"x": 422,
 			"y": 238
-		}
+		},
 		{
 			"id": "step_1-root_intrusion",
 			"tool": "root_intrusion",
