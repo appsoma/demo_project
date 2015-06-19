@@ -24,7 +24,32 @@ for( var t in toolList ) {
 		console.log("safer "+tool.icon.fontawesome);
 	}
 
-	fs.writeFileSync( "./"+t+"/tool.json", JSON.stringify(tool,null,4) );
+	function toObj(arrayList) {
+		var obj = {};
+		for( var key in arrayList ) {
+			var a = arrayList[key];
+			a.name = String(a.name || a.label || a.id || "unknown").trim();
+			var id = a.name.replace(/ /g, '_').toLowerCase();
+			obj[id] = {
+				"id": id,
+				"label": a.name,
+				"type": a.type || "none"
+			}
+		}
+		return obj;
+	}
+
+	tool.form = tool.id+".form";
+	tool.inputs = toObj(tool.inputs);
+	tool.outputs = toObj(tool.outputs);
+
+	var order = ["id", "label", "version", "author", "icon", "category", "form", "params", "inputs", "outputs"];
+	var toolOut = {};
+	for( var index in order ) {
+		toolOut[order[index]] = tool[order[index]];
+	}
+
+	fs.writeFileSync( "./"+t+"/tool.json", JSON.stringify(toolOut,null,4) );
 
 	console.log("mkdir "+t);
 	console.log("make file "+t+"/tool.json");

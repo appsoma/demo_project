@@ -8,6 +8,8 @@
 	"steps": [
 		{
 			"id": "step_0-assess_threat",
+			"tool": "assess_threat",
+			"form": "assess_threat.form",
 			"label": "Assess Threat",
 			"icon": { "fontawesome": "\uf002" },
 			"params": {
@@ -40,7 +42,9 @@
 		},
 		{
 			"id": "step_1-root_intrusion",
-			"name": "Root Intrusion",
+			"tool": "root_intrusion",
+			"form": "root_intrusion.form",
+			"label": "Root Intrusion",
 			"icon": { "fontawesome": "\uf071" },
 			"params": {
 				"descriptionText": "Test data"
@@ -58,7 +62,9 @@
 		},
 		{
 			"id": "step_2-virus_detection",
-			"name": "Virus Detection",
+			"tool": "virus_detection",
+			"form": "virus_detection.form",
+			"label": "Virus Detection",
 			"icon": { "fontawesome": "\uf236" },
 			"params": {
 				"descriptionText": "Test Data"
@@ -82,7 +88,9 @@
 		},
 		{
 			"id": "step_3-critical_virus_filter",
-			"name": "Critical Virus Filter",
+			"tool": "critical_virus_filter",
+			"form": "critical_virus_filter.form",
+			"label": "Critical Virus Filter",
 			"icon": { "fontawesome": "\uf0b0" },
 			"params": {},
 			"inputs": {
@@ -119,7 +127,9 @@
 		},
 		{
 			"id": "step_4-node_isolator",
-			"name": "Node Isolator",
+			"tool": "node_isolator",
+			"form": "node_isolator.form",
+			"label": "Node Isolator",
 			"icon": { "fontawesome": "\uf007" },
 			"params": {},
 			"inputs": {
