@@ -27,19 +27,19 @@
 			},
 			"inputs": {
 				"336357": {
-					"id": 336357,
+					"id": "336357",
 					"name": "Input File",
 					"type": "batch_input"
 				},
 				"336357213": {
-					"id": 336357213,
+					"id": "336357213",
 					"name": "Files",
 					"type": "files"
 				}
 			},
 			"outputs": {
 				"33635721321": {
-					"id": 33635721321,
+					"id": "33635721321",
 					"name": "Compressed File",
 					"type": "batch_input"
 				}
@@ -66,7 +66,7 @@
 			"inputs": {},
 			"outputs": {
 				"33631121": {
-					"id": 33631121,
+					"id": "33631121",
 					"name": "Batch Output",
 					"type": "batch_input"
 				}
@@ -79,29 +79,29 @@
 		{
 			"source": "step_1-root_intrusion",
 			"target": "step_0-assess_threat",
-			"output": 33631121,
-			"input": 336357,
+			"output": "33631121",
+			"input": "336357",
 			"id": "step_1-root_intrusion_step_0-assess_threat_33631121_336357"
 		},
 		{
 			"source": "step_0-assess_threat",
 			"target": "step_4-node_isolator",
-			"output": 33635721321,
-			"input": 33635127388,
+			"output": "33635721321",
+			"input": "33635127388",
 			"id": "assess_threat_step_4-node_isolator_33635721321_33635127388"
 		},
 		{
 			"source": "step_3-critical_virus_filter",
 			"target": "step_0-assess_threat",
-			"output": 3223631121,
-			"input": 336357213,
+			"output": "3223631121",
+			"input": "336357213",
 			"id": "step_3-critical_virus_filter_step_0-assess_threat_3223631121_336357213"
 		},
 		{
 			"source": "step_2-virus_detection",
 			"target": "step_3-critical_virus_filter",
-			"output": 336311213,
-			"input": 3316351273,
+			"output": "336311213",
+			"input": "3316351273",
 			"id": "step_2-virus_detection_step_3-critical_virus_filter_336311213_3316351273"
 		}
 	]
