@@ -17,11 +17,11 @@
 				h('.container#main-form')
 			);
 
-			var form = welder.widgets.pipelineForm( "#main-form", { pipeline:"demo_pipeline" } );
+			welder.widgets.pipelineForm( "#main-form", { pipeline:"demo_pipeline" } );
 			welder.widgets.poweredBy();
 			welder.handleRunSimilar( "#main-form" );
 
-			$(form).submit( function() {
+			$("#main-form").submit( function() {
 				var params = welder.formToObject( this );
 				welder.ajax.postRunPipeline({
 					pipeline: "demo_pipeline",
