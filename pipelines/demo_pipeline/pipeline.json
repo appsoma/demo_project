@@ -7,28 +7,6 @@
 	"category":"General",
 	"steps": [
 		{
-			"id": "root_intrusion",
-			"command": "echo Hello from root_intrusion",
-			"container_image": "ubuntu",
-			"requirements": {
-				"cpus": 1,
-				"mem": 512,
-				"disk": 512
-			},
-			"tool": "root_intrusion",
-			"label": "Root Intrusion",
-			"icon": { "fontawesome": "\uf071" },
-			"outputs": {
-				"stdout": {
-					"id": "stdout",
-					"name": "stdout",
-					"type": "text"
-				}
-			},
-			"x": 72,
-			"y": 81
-		},
-		{
 			"id": "assess_threat",
 			"command": "cat ./inputs/a_text_file; echo Hello from assess_threat",
 			"container_image": "ubuntu",
@@ -49,6 +27,28 @@
 			},
 			"x": 422,
 			"y": 238
+		},
+		{
+			"id": "root_intrusion",
+			"command": "echo Hello from root_intrusion",
+			"container_image": "ubuntu",
+			"requirements": {
+				"cpus": 1,
+				"mem": 512,
+				"disk": 512
+			},
+			"tool": "root_intrusion",
+			"label": "Root Intrusion",
+			"icon": { "fontawesome": "\uf071" },
+			"outputs": {
+				"stdout": {
+					"id": "stdout",
+					"name": "stdout",
+					"type": "text"
+				}
+			},
+			"x": 72,
+			"y": 81
 		}
 	],
 	"connections": [
