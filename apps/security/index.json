@@ -1,0 +1,7 @@
+{
+	"name": "Security",
+	"bootstrap_icon": "glyphicon-thumbs-up",
+	"short_description": "A prototype of a security app",
+	"description": "A prototype of a security app",
+	"portal": true
+}
