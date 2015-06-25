@@ -1,8 +1,8 @@
 {
-	"label": "Test Pipeline",
+	"label": "Sample Omics Pipeline",
 	"version": "0.1",
 	"author": "kdemarest",
-	"description": "this is a description of a pipeline I made it go on a really long time to test trimming it for descriptions",
+	"description": "The sample genomics pipeline shows BWA in action.",
 	"license": "",
 	"category": "General",
 	"steps": [

@@ -1,8 +1,8 @@
 {
-	"label": "Test Pipeline",
+	"label": "Security Sample Pipeline",
 	"version": "0.1",
 	"author": "kdemarest",
-	"description": "this is a description of a pipeline I made it go on a really long time to test trimming it for descriptions",
+	"description": "Detects viruses when combined with intrusion, and remediates.",
 	"license": "",
 	"category": "General",
 	"steps": [
