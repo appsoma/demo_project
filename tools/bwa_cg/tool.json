@@ -1,0 +1,26 @@
+{
+    "id": "bwa_cg",
+    "label": "BWA for Complete Genomics",
+    "version": "0.0",
+    "author": "",
+    "icon": {
+        "fontawesome": ""
+    },
+    "category": "NGS",
+    "form": "bwa_cg.form",
+    "params": {},
+    "inputs": {
+        "fastq_input": {
+            "id": "fastq_input",
+            "label": "FastQ Input",
+            "type": "file"
+        }
+    },
+    "outputs": {
+        "sam_output": {
+            "id": "sam_output",
+            "label": "SAM Output",
+            "type": "file"
+        }
+    }
+}

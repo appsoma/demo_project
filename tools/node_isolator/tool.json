@@ -1,30 +1,22 @@
 {
-    "id": "node_isolator",
-    "label": "Node Isolator",
-    "version": "0.0",
-    "author": "",
-    "icon": {
-        "fontawesome": ""
-    },
-    "category": "Responses",
-    "form": "node_isolator.form",
-    "params": {
-        "alignment_mode": "--local",
-        "b2_preset": "--very-sensitive",
-        "b2_qc_filter": true
-    },
-    "inputs": {
-        "reference_genome2": {
-            "id": "reference_genome2",
-            "label": "Reference Genome2",
-            "type": "2"
-        }
-    },
-    "outputs": {
-        "reference_genome_out_3": {
-            "id": "reference_genome_out_3",
-            "label": "Reference Genome Out 3",
-            "type": "3"
-        }
-    }
+	"id": "node_isolator",
+	"label": "Node Isolator",
+	"version": "0.0",
+	"author": "",
+	"icon": {
+		"fontawesome": ""
+	},
+	"category": "Responses",
+	"form": "node_isolator.form",
+	"params": {
+	},
+	"inputs": {
+		"in1": {
+			"id": "in1",
+			"label": "Node List",
+			"type": "file"
+		}
+	},
+	"outputs": {
+	}
 }

@@ -1,0 +1,35 @@
+{
+	"id": "file_merge",
+	"label": "Merge Files",
+	"version": "0.0",
+	"author": "",
+	"icon": {
+		"fontawesome": "\uf067"
+	},
+	"category": "File Manipulation",
+	"form": "input_file.form",
+	"params": {
+		"path": [
+			"/Projects/31/ucsc.hg19.fasta"
+		]
+	},
+	"inputs": {
+		"in1": {
+			"id": "in1",
+			"label": "File 1",
+			"type": "file"
+		},
+		"in2": {
+			"id": "in2",
+			"label": "File 2",
+			"type": "file"
+		}
+	},
+	"outputs": {
+		"out1": {
+			"id": "out1",
+			"label": "Result File",
+			"type": "file"
+		}
+	}
+}

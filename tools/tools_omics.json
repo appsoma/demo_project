@@ -1,0 +1,278 @@
+{
+	"input_dataset": {
+		"id": "input_dataset",
+		"label": "Input Dataset",
+		"version": "0.0",
+		"author": "",
+		"icon": { "fontawesome": "\uf071" },
+		"category": "NGS",
+		"params": {
+		},
+		"inputs": [
+		],
+		"outputs": [
+			{
+				"id": "file",
+				"label": "File",
+				"type": "file"
+			}
+		]
+	},
+	"output_dataset": {
+		"id": "output_dataset",
+		"label": "Output Dataset",
+		"version": "0.0",
+		"author": "",
+		"icon": { "fontawesome": "\uf071" },
+		"category": "NGS",
+		"params": {
+		},
+		"inputs": [
+			{
+				"id": "file",
+				"label": "File",
+				"type": "file"
+			}
+		],
+		"outputs": [
+		]
+	},
+	"fast_qc": {
+		"id": "fast_qc",
+		"label": "Fast QC",
+		"version": "0.0",
+		"author": "",
+		"icon": { "fontawesome": "\uf071" },
+		"category": "NGS",
+		"params": {
+		},
+		"inputs": [
+			{
+				"id": "in1",
+				"label": "Short Read Data",
+				"type": "file"
+			},
+			{
+				"id": "in2",
+				"label": "Contaminant List",
+				"type": "file"
+			},
+			{
+				"id": "in3",
+				"label": "Limit File",
+				"type": "file"
+			}
+		],
+		"outputs": [
+			{
+				"id": "html",
+				"label": "Html File",
+				"type": "file"
+			},
+			{
+				"id": "text",
+				"label": "Text File",
+				"type": "file"
+			}
+		]
+	},
+	"bowtie2": {
+		"id": "bowtie2",
+		"label": "Bowtie 2",
+		"version": "0.0",
+		"author": "",
+		"icon": { "fontawesome": "\uf071" },
+		"category": "NGS",
+		"params": {
+		},
+		"inputs": [
+			{
+				"id": "in1",
+				"label": "FastQ File",
+				"type": "file"
+			}
+		],
+		"outputs": [
+			{
+				"id": "un1",
+				"label": "Unaligned Reads (left)",
+				"type": "file"
+			},
+			{
+				"id": "un2",
+				"label": "Unaligned Reads (right)",
+				"type": "file"
+			},
+			{
+				"id": "un3",
+				"label": "Output (bam)",
+				"type": "file"
+			}
+		]
+	},
+	"bwa_short": {
+		"id": "bwa_short",
+		"label": "BWA (<100bp reads)",
+		"version": "0.0",
+		"author": "",
+		"icon": { "fontawesome": "\uf071" },
+		"category": "NGS",
+		"params": {
+		},
+		"inputs": [
+			{
+				"id": "in1",
+				"label": "First set of Reads",
+				"type": "file"
+			},
+			{
+				"id": "in2",
+				"label": "Second set of Reads",
+				"type": "file"
+			}
+		],
+		"outputs": [
+			{
+				"id": "out1",
+				"label": "Bam Output",
+				"type": "file"
+			}
+		]
+	},
+	"bwa_cg": {
+		"id": "bwa_cg",
+		"label": "BWA for Complete Genomics",
+		"version": "0.0",
+		"author": "",
+		"icon": { "fontawesome": "\uf071" },
+		"category": "NGS",
+		"params": {
+		},
+		"inputs": [
+			{
+				"id": "in1",
+				"label": "FastQ Input",
+				"type": "file"
+			}
+		],
+		"outputs": [
+			{
+				"id": "out1",
+				"label": "SAM Output",
+				"type": "file"
+			}
+		]
+	},
+	"tophat": {
+		"id": "tophat",
+		"label": "Tophat",
+		"version": "0.0",
+		"author": "",
+		"icon": { "fontawesome": "\uf071" },
+		"category": "NGS",
+		"params": {
+		},
+		"inputs": [
+			{
+				"id": "in1",
+				"label": "RNA-Seq FastQ",
+				"type": "file"
+			}
+		],
+		"outputs": [
+			{
+				"id": "align_summary",
+				"label": "Align Summary",
+				"type": "file"
+			},
+			{
+				"id": "out2",
+				"label": "Fusions",
+				"type": "file"
+			},
+			{
+				"id": "out3",
+				"label": "Insertions",
+				"type": "file"
+			},
+			{
+				"id": "out4",
+				"label": "Deletions",
+				"type": "file"
+			},
+			{
+				"id": "out5",
+				"label": "Junctions",
+				"type": "file"
+			},
+			{
+				"id": "out6",
+				"label": "Accepted Hits",
+				"type": "file"
+			},
+			{
+				"id": "out7",
+				"label": "Unmapped",
+				"type": "file"
+			}
+		]
+	},
+	"fastq_to_bam": {
+		"id": "fastq_to_bam",
+		"label": "FastQ to Bam",
+		"version": "0.0",
+		"author": "",
+		"icon": { "fontawesome": "\uf071" },
+		"category": "NGS",
+		"params": {
+		},
+		"inputs": [
+			{
+				"id": "in1",
+				"label": "FastQ File",
+				"type": "file"
+			},
+			{
+				"id": "in2",
+				"label": "Second FastQ File",
+				"type": "file"
+			}
+		],
+		"outputs": [
+			{
+				"id": "output_bam",
+				"label": "Bam File",
+				"type": "file"
+			}
+		]
+	},
+	"gatk_comb_var": {
+		"id": "gatk_comb_var",
+		"label": "GATK Combine Variants",
+		"version": "0.0",
+		"author": "",
+		"icon": { "fontawesome": "\uf071" },
+		"category": "NGS",
+		"params": {
+		},
+		"inputs": [
+			{
+				"id": "in1",
+				"label": "Variants to Merge",
+				"type": "file"
+			}
+		],
+		"outputs": [
+			{
+				"id": "output_variants",
+				"label": "Variants VCF",
+				"type": "file"
+			},
+			{
+				"id": "output_log",
+				"label": "Log",
+				"type": "file"
+			}
+		]
+	}
+}

@@ -1,46 +1,33 @@
 {
-    "id": "virus_detection",
-    "label": "Virus Detection",
-    "version": "0.0",
-    "author": "",
-    "icon": {
-        "fontawesome": ""
-    },
-    "category": "Security",
-    "form": "virus_detection.form",
-    "params": {
-        "path": [
-            "/Projects/31/ucsc.hg19.fasta"
-        ],
-        "descriptionText": "We recommend inputting the most recent build of the human genome (hg19). To use this file in an analysis, make sure you copy if from Public Resources > Files to your project. "
-    },
-    "inputs": {
-        "genome2": {
-            "id": "genome2",
-            "label": "Genome2",
-            "type": "1"
-        },
-        "genome3": {
-            "id": "genome3",
-            "label": "Genome3",
-            "type": "1"
-        },
-        "genome4": {
-            "id": "genome4",
-            "label": "Genome4",
-            "type": "1"
-        },
-        "genome5": {
-            "id": "genome5",
-            "label": "Genome5",
-            "type": "1"
-        }
-    },
-    "outputs": {
-        "genome_out_2": {
-            "id": "genome_out_2",
-            "label": "Genome Out 2",
-            "type": "2"
-        }
-    }
+	"id": "virus_detection",
+	"label": "Virus Detection",
+	"version": "0.0",
+	"author": "",
+	"icon": {
+		"fontawesome": ""
+	},
+	"category": "Security",
+	"form": "virus_detection.form",
+	"params": {
+	},
+	"inputs": {
+		"in1": {
+			"id": "in1",
+			"label": "File Stream",
+			"type": "file"
+		}
+	},
+	"outputs": {
+		"out1": {
+			"id": "out1",
+			"label": "Viruses Detected",
+			"type": "file"
+		},
+		"out2": {
+			"id": "out2",
+			"label": "Log of Checks",
+			"type": "file"
+		}
+
+	}
 }

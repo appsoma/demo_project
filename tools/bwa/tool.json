@@ -1,12 +1,32 @@
+Best Practice:
+In the project "demo_project_{user}_{branch}"
+
+Name code submodules with their tag, eg "bwa_and_sam_v1.4"
+
+What comes across:
+name
+params (but compiled into the run)
+inputs (but compiled)
+outputs
+
+
 {
 	"name": "bwa",
+	"label": "Root Intrusion",
+	"icon": { "fontawesome": "\uf071" },
+	"categoryId": "Security",
+
+LATER	"params": {
+		"some_name": "default value"
+	},
+
 	"inputs": {
 		"extracted_reference_genome": {
-			"folder": true,
+MAYBE			"folder": true,
 			"type": "NCBI_extracted_tar"
 		},
 		"fastq": {
-			"extension": [ ".fastq", ".fq" ],
+NO			"extension": [ ".fastq", ".fq" ],
 			"type": "fastq"
 		}
 	},
@@ -16,7 +36,7 @@
 		}
 	},
 	"command": "python ./code/bwa_and_sam/bwa_tool.py",
-	"code": [ "bwa_and_sam" ],
+	"command": "python ./code/bwa_and_sam_v1.4/bwa_tool.py",
 	"git": [
 		{
 			"comment": "This is how git will work",

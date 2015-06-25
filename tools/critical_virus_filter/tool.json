@@ -1,31 +1,26 @@
 {
-    "id": "critical_virus_filter",
-    "label": "Critical Virus Filter",
-    "version": "0.0",
-    "author": "",
-    "icon": {
-        "fontawesome": ""
-    },
-    "category": "Security",
-    "form": "critical_virus_filter.form",
-    "params": {
-        "path": [
-            "/Projects/31/human_hg19_genes.gtf"
-        ],
-        "descriptionText": "This must be compatible with your Reference Genome FASTA. "
-    },
-    "inputs": {
-        "reference_genome2": {
-            "id": "reference_genome2",
-            "label": "Reference Genome2",
-            "type": "2"
-        }
-    },
-    "outputs": {
-        "reference_genome_out_3": {
-            "id": "reference_genome_out_3",
-            "label": "Reference Genome Out 3",
-            "type": "3"
-        }
-    }
+	"id": "critical_virus_filter",
+	"label": "Critical Virus Filter",
+	"version": "0.0",
+	"author": "",
+	"icon": {
+		"fontawesome": ""
+	},
+	"category": "Security",
+	"params": {
+	},
+	"inputs": {
+		"in1": {
+			"id": "in1",
+			"label": "Viruses",
+			"type": "file"
+		}
+	},
+	"outputs": {
+		"out1": {
+			"id": "out1",
+			"label": "Viruses",
+			"type": "file"
+		}
+	}
 }

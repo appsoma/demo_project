@@ -1,28 +1,48 @@
 {
-    "id": "assess_threat",
-    "label": "Assess Threat",
-    "version": "0.0",
-    "author": "",
-    "icon": {
-        "fontawesome": ""
-    },
-    "category": "Security",
-    "form": "assess_threat.form",
-    "params": {
-        "someParam": "22"
-    },
-    "inputs": {
-        "reference_genome2": {
-            "id": "reference_genome2",
-            "label": "Reference Genome2",
-            "type": "2"
-        }
-    },
-    "outputs": {
-        "reference_genome_out_3": {
-            "id": "reference_genome_out_3",
-            "label": "Reference Genome Out 3",
-            "type": "3"
-        }
-    }
+	"id": "assess_threat",
+	"label": "Assess Threat",
+	"version": "0.0",
+	"author": "",
+	"icon": {
+		"fontawesome": ""
+	},
+	"category": "Security",
+	"form": "assess_threat.form",
+	"params": {
+		"someParam": "22"
+	},
+	"inputs": {
+		"in1": {
+			"id": "in1",
+			"label": "Threat Stream 1",
+			"type": "file"
+		},
+		"in2": {
+			"id": "in2",
+			"label": "Threat Stream 2",
+			"type": "file"
+		},
+		"in3": {
+			"id": "in3",
+			"label": "Threat Stream 3",
+			"type": "file"
+		},
+		"in4": {
+			"id": "in4",
+			"label": "Threat Stream 4",
+			"type": "file"
+		},
+		"in5": {
+			"id": "in5",
+			"label": "Threat Stream 5",
+			"type": "file"
+		}
+	},
+	"outputs": {
+		"out1": {
+			"id": "out1",
+			"label": "Threat Level",
+			"type": "file"
+		}
+	}
 }

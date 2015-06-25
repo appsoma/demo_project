@@ -1,0 +1,41 @@
+{
+    "id": "fast_qc",
+    "label": "Fast QC",
+    "version": "0.0",
+    "author": "",
+    "icon": {
+        "fontawesome": ""
+    },
+    "category": "NGS",
+    "form": "fast_qc.form",
+    "params": {},
+    "inputs": {
+        "short_read_data": {
+            "id": "short_read_data",
+            "label": "Short Read Data",
+            "type": "file"
+        },
+        "contaminant_list": {
+            "id": "contaminant_list",
+            "label": "Contaminant List",
+            "type": "file"
+        },
+        "limit_file": {
+            "id": "limit_file",
+            "label": "Limit File",
+            "type": "file"
+        }
+    },
+    "outputs": {
+        "html_file": {
+            "id": "html_file",
+            "label": "Html File",
+            "type": "file"
+        },
+        "text_file": {
+            "id": "text_file",
+            "label": "Text File",
+            "type": "file"
+        }
+    }
+}

@@ -1,0 +1,21 @@
+{
+	"id": "system_integrity_stream",
+	"label": "System Integrity Stream",
+	"version": "0.0",
+	"author": "",
+	"icon": {
+		"fontawesome": ""
+	},
+	"category": "Security",
+	"params": {
+	},
+	"inputs": {
+	},
+	"outputs": {
+		"out1": {
+			"id": "out1",
+			"label": "System Integrity Checks",
+			"type": "file"
+		}
+	}
+}

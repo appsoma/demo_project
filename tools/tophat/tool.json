@@ -1,0 +1,56 @@
+{
+    "id": "tophat",
+    "label": "Tophat",
+    "version": "0.0",
+    "author": "",
+    "icon": {
+        "fontawesome": ""
+    },
+    "category": "NGS",
+    "form": "tophat.form",
+    "params": {},
+    "inputs": {
+        "rna-seq_fastq": {
+            "id": "rna-seq_fastq",
+            "label": "RNA-Seq FastQ",
+            "type": "file"
+        }
+    },
+    "outputs": {
+        "align_summary": {
+            "id": "align_summary",
+            "label": "Align Summary",
+            "type": "file"
+        },
+        "fusions": {
+            "id": "fusions",
+            "label": "Fusions",
+            "type": "file"
+        },
+        "insertions": {
+            "id": "insertions",
+            "label": "Insertions",
+            "type": "file"
+        },
+        "deletions": {
+            "id": "deletions",
+            "label": "Deletions",
+            "type": "file"
+        },
+        "junctions": {
+            "id": "junctions",
+            "label": "Junctions",
+            "type": "file"
+        },
+        "accepted_hits": {
+            "id": "accepted_hits",
+            "label": "Accepted Hits",
+            "type": "file"
+        },
+        "unmapped": {
+            "id": "unmapped",
+            "label": "Unmapped",
+            "type": "file"
+        }
+    }
+}

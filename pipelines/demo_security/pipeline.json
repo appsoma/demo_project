@@ -1,0 +1,302 @@
+{
+	"label": "Test Pipeline",
+	"version": "0.1",
+	"author": "kdemarest",
+	"description": "this is a description of a pipeline I made it go on a really long time to test trimming it for descriptions",
+	"license": "",
+	"category": "General",
+	"steps": [
+		{
+			"id": "step_1-file_integrity_stream",
+			"label": "File Integrity Stream",
+			"version": "0.0",
+			"author": "",
+			"icon": {
+				"fontawesome": ""
+			},
+			"category": "Security",
+			"form": "tool.form",
+			"params": {},
+			"inputs": {},
+			"outputs": {
+				"out1": {
+					"id": "out1",
+					"label": "File Integrity Checks",
+					"type": "file"
+				}
+			},
+			"x": 134,
+			"y": 339,
+			"tool": "file_integrity_stream",
+			"form_object": null
+		},
+		{
+			"id": "step_4-virus_detection",
+			"label": "Virus Detection",
+			"version": "0.0",
+			"author": "",
+			"icon": {
+				"fontawesome": ""
+			},
+			"category": "Security",
+			"form": "virus_detection.form",
+			"params": {},
+			"inputs": {
+				"in1": {
+					"id": "in1",
+					"label": "File Stream",
+					"type": "file"
+				}
+			},
+			"outputs": {
+				"out1": {
+					"id": "out1",
+					"label": "Viruses Detected",
+					"type": "file"
+				},
+				"out2": {
+					"id": "out2",
+					"label": "Log of Checks",
+					"type": "file"
+				}
+			},
+			"x": 303,
+			"y": 403,
+			"tool": "virus_detection",
+			"form_object": null
+		},
+		{
+			"id": "step_4-critical_virus_filter",
+			"label": "Critical Virus Filter",
+			"version": "0.0",
+			"author": "",
+			"icon": {
+				"fontawesome": ""
+			},
+			"category": "Security",
+			"params": {},
+			"inputs": {
+				"in1": {
+					"id": "in1",
+					"label": "Viruses",
+					"type": "file"
+				}
+			},
+			"outputs": {
+				"out1": {
+					"id": "out1",
+					"label": "Viruses",
+					"type": "file"
+				}
+			},
+			"x": 471,
+			"y": 346,
+			"tool": "critical_virus_filter",
+			"form_object": null
+		},
+		{
+			"id": "step_4-system_integrity_stream",
+			"label": "System Integrity Stream",
+			"version": "0.0",
+			"author": "",
+			"icon": {
+				"fontawesome": ""
+			},
+			"category": "Security",
+			"params": {},
+			"inputs": {},
+			"outputs": {
+				"out1": {
+					"id": "out1",
+					"label": "System Integrity Checks",
+					"type": "file"
+				}
+			},
+			"x": 183,
+			"y": 123,
+			"tool": "system_integrity_stream",
+			"form_object": null
+		},
+		{
+			"id": "step_5-root_intrusion",
+			"label": "Root Intrusion",
+			"version": "0.0",
+			"author": "",
+			"icon": {
+				"fontawesome": ""
+			},
+			"category": "Security",
+			"form": "root_intrusion.form",
+			"params": {},
+			"inputs": {
+				"in1": {
+					"id": "in1",
+					"label": "System Monitoring",
+					"type": "file"
+				}
+			},
+			"outputs": {
+				"out1": {
+					"id": "out1",
+					"label": "Possible Intrusion",
+					"type": "file"
+				}
+			},
+			"x": 468,
+			"y": 190,
+			"tool": "root_intrusion",
+			"form_object": [
+				{
+					"componentName": "input",
+					"context": {
+						"label": "Something about root intrusion. Note namespace collision!",
+						"name": "input1",
+						"placeholder": "placeholder",
+						"help": "",
+						"validFunction": "",
+						"required": false
+					}
+				}
+			]
+		},
+		{
+			"id": "step_6-node_isolator",
+			"label": "Node Isolator",
+			"version": "0.0",
+			"author": "",
+			"icon": {
+				"fontawesome": ""
+			},
+			"category": "Responses",
+			"form": "node_isolator.form",
+			"params": {},
+			"inputs": {
+				"in1": {
+					"id": "in1",
+					"label": "Node List",
+					"type": "file"
+				}
+			},
+			"outputs": {},
+			"x": 871,
+			"y": 273,
+			"tool": "node_isolator"
+		},
+		{
+			"id": "step_6-assess_threat",
+			"label": "Assess Threat",
+			"version": "0.0",
+			"author": "",
+			"icon": {
+				"fontawesome": ""
+			},
+			"category": "Security",
+			"form": "assess_threat.form",
+			"params": {
+				"someParam": "22"
+			},
+			"inputs": {
+				"in1": {
+					"id": "in1",
+					"label": "Threat Stream 1",
+					"type": "file"
+				},
+				"in2": {
+					"id": "in2",
+					"label": "Threat Stream 2",
+					"type": "file"
+				},
+				"in3": {
+					"id": "in3",
+					"label": "Threat Stream 3",
+					"type": "file"
+				},
+				"in4": {
+					"id": "in4",
+					"label": "Threat Stream 4",
+					"type": "file"
+				},
+				"in5": {
+					"id": "in5",
+					"label": "Threat Stream 5",
+					"type": "file"
+				}
+			},
+			"outputs": {
+				"out1": {
+					"id": "out1",
+					"label": "Threat Level",
+					"type": "file"
+				}
+			},
+			"x": 682,
+			"y": 302,
+			"tool": "assess_threat"
+		}
+	],
+	"connections": [
+		{
+			"source": "step_4-system_integrity_stream",
+			"target": "step_5-root_intrusion",
+			"output": "out1",
+			"input": "in1",
+			"id": "step_4-system_integrity_stream_step_5-root_intrusion_out1_in1"
+		},
+		{
+			"source": "step_1-file_integrity_stream",
+			"target": "step_4-virus_detection",
+			"output": "out1",
+			"input": "in1",
+			"id": "step_1-file_integrity_stream_step_4-virus_detection_out1_in1"
+		},
+		{
+			"source": "step_4-virus_detection",
+			"target": "step_4-critical_virus_filter",
+			"output": "out2",
+			"input": "in1",
+			"id": "step_4-virus_detection_step_4-critical_virus_filter_out2_in1"
+		},
+		{
+			"source": "step_4-system_integrity_stream",
+			"target": "step_5-root_intrusion",
+			"output": "out1",
+			"input": "in1",
+			"id": "step_4-system_integrity_stream_step_5-root_intrusion_out1_in1"
+		},
+		{
+			"source": "step_1-file_integrity_stream",
+			"target": "step_4-virus_detection",
+			"output": "out1",
+			"input": "in1",
+			"id": "step_1-file_integrity_stream_step_4-virus_detection_out1_in1"
+		},
+		{
+			"source": "step_4-virus_detection",
+			"target": "step_4-critical_virus_filter",
+			"output": "out2",
+			"input": "in1",
+			"id": "step_4-virus_detection_step_4-critical_virus_filter_out2_in1"
+		},
+		{
+			"source": "step_5-root_intrusion",
+			"target": "step_6-assess_threat",
+			"output": "out1",
+			"input": "in1",
+			"id": "step_5-root_intrusion_step_6-assess_threat_out1_in1"
+		},
+		{
+			"source": "step_4-critical_virus_filter",
+			"target": "step_6-assess_threat",
+			"output": "out1",
+			"input": "in2",
+			"id": "step_4-critical_virus_filter_step_6-assess_threat_out1_in2"
+		},
+		{
+			"source": "step_6-assess_threat",
+			"target": "step_6-node_isolator",
+			"output": "out1",
+			"input": "in1",
+			"id": "step_6-assess_threat_step_6-node_isolator_out1_in1"
+		}
+	]
+}

@@ -1,35 +1,27 @@
 {
-    "id": "root_intrusion",
-    "label": "Root Intrusion",
-    "version": "0.0",
-    "author": "",
-    "icon": {
-        "fontawesome": ""
-    },
-    "category": "Security",
-    "form": "root_intrusion.form",
-    "params": {
-        "alignment_mode": "--local",
-        "b2_preset": "--very-sensitive",
-        "b2_qc_filter": true
-    },
-    "inputs": {
-        "read_sequence": {
-            "id": "read_sequence",
-            "label": "Read Sequence",
-            "type": "batch_input"
-        },
-        "fasta_reference": {
-            "id": "fasta_reference",
-            "label": "Fasta Reference",
-            "type": "batch_input"
-        }
-    },
-    "outputs": {
-        "aligned": {
-            "id": "aligned",
-            "label": "Aligned",
-            "type": "batch_input"
-        }
-    }
+	"id": "root_intrusion",
+	"label": "Root Intrusion",
+	"version": "0.0",
+	"author": "",
+	"icon": {
+		"fontawesome": ""
+	},
+	"category": "Security",
+	"form": "root_intrusion.form",
+	"params": {
+	},
+	"inputs": {
+		"in1": {
+			"id": "in1",
+			"label": "System Monitoring",
+			"type": "file"
+		}
+	},
+	"outputs": {
+		"out1": {
+			"id": "out1",
+			"label": "Possible Intrusion",
+			"type": "file"
+		}
+	}
 }

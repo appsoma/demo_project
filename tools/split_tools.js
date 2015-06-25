@@ -6,7 +6,7 @@
 
 var fs = require("fs");
 
-var jsonString = fs.readFileSync("./tools_mock.json","utf8");
+var jsonString = fs.readFileSync("./tools_omics.json","utf8");
 
 var toolList = JSON.parse(jsonString);
 

@@ -1,0 +1,13 @@
+{
+    "signature": {
+        "name": "Unnamed Pipeline",
+        "version": "1.0",
+        "author": "ken",
+        "brief": "Some pipeline desc!",
+        "description": "Some pipeline desc!",
+        "license": "",
+        "category": "General"
+    },
+    "steps": [],
+    "connections": []
+}

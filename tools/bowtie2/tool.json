@@ -1,0 +1,36 @@
+{
+    "id": "bowtie2",
+    "label": "Bowtie 2",
+    "version": "0.0",
+    "author": "",
+    "icon": {
+        "fontawesome": ""
+    },
+    "category": "NGS",
+    "form": "bowtie2.form",
+    "params": {},
+    "inputs": {
+        "fastq_file": {
+            "id": "fastq_file",
+            "label": "FastQ File",
+            "type": "file"
+        }
+    },
+    "outputs": {
+        "unaligned_reads_(left)": {
+            "id": "unaligned_reads_(left)",
+            "label": "Unaligned Reads (left)",
+            "type": "file"
+        },
+        "unaligned_reads_(right)": {
+            "id": "unaligned_reads_(right)",
+            "label": "Unaligned Reads (right)",
+            "type": "file"
+        },
+        "output_(bam)": {
+            "id": "output_(bam)",
+            "label": "Output (bam)",
+            "type": "file"
+        }
+    }
+}

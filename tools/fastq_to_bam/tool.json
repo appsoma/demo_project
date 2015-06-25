@@ -1,0 +1,31 @@
+{
+    "id": "fastq_to_bam",
+    "label": "FastQ to Bam",
+    "version": "0.0",
+    "author": "",
+    "icon": {
+        "fontawesome": "\uf0C5"
+    },
+    "category": "NGS",
+    "form": "fastq_to_bam.form",
+    "params": {},
+    "inputs": {
+        "fastq_file": {
+            "id": "fastq_file",
+            "label": "FastQ File",
+            "type": "file"
+        },
+        "second_fastq_file": {
+            "id": "second_fastq_file",
+            "label": "Second FastQ File",
+            "type": "file"
+        }
+    },
+    "outputs": {
+        "bam_file": {
+            "id": "bam_file",
+            "label": "Bam File",
+            "type": "file"
+        }
+    }
+}

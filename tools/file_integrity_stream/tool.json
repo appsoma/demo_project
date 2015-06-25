@@ -1,0 +1,21 @@
+{
+	"id": "file_integrity_stream",
+	"label": "File Integrity Stream",
+	"version": "0.0",
+	"author": "",
+	"icon": {
+		"fontawesome": ""
+	},
+	"category": "Security",
+	"params": {
+	},
+	"inputs": {
+	},
+	"outputs": {
+		"out1": {
+			"id": "out1",
+			"label": "File Integrity Checks",
+			"type": "file"
+		}
+	}
+}

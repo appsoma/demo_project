@@ -1,0 +1,31 @@
+{
+    "id": "bwa_short",
+    "label": "BWA (<100bp reads)",
+    "version": "0.0",
+    "author": "",
+    "icon": {
+        "fontawesome": ""
+    },
+    "category": "NGS",
+    "form": "bwa_short.form",
+    "params": {},
+    "inputs": {
+        "first_set_of_reads": {
+            "id": "first_set_of_reads",
+            "label": "First set of Reads",
+            "type": "file"
+        },
+        "second_set_of_reads": {
+            "id": "second_set_of_reads",
+            "label": "Second set of Reads",
+            "type": "file"
+        }
+    },
+    "outputs": {
+        "bam_output": {
+            "id": "bam_output",
+            "label": "Bam Output",
+            "type": "file"
+        }
+    }
+}

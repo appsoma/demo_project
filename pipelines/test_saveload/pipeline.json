@@ -1,0 +1,377 @@
+{
+	"label": "Test Pipeline",
+	"version": "0.1",
+	"author": "kdemarest",
+	"description": "this is a description of a pipeline I made it go on a really long time to test trimming it for descriptions",
+	"license": "",
+	"category": "General",
+	"steps": [
+		{
+			"id": "step_0-input_dataset",
+			"label": "Input Dataset",
+			"version": "0.0",
+			"author": "",
+			"icon": {
+				"fontawesome": ""
+			},
+			"category": "NGS",
+			"form": "input_dataset.form",
+			"params": {},
+			"inputs": {},
+			"outputs": {
+				"file": {
+					"id": "file",
+					"label": "File",
+					"type": "file"
+				}
+			},
+			"x": 105,
+			"y": 238,
+			"tool": "input_dataset",
+			"form_object": null
+		},
+		{
+			"id": "step_2-bwa_cg",
+			"label": "BWA for Complete Genomics",
+			"version": "0.0",
+			"author": "",
+			"icon": {
+				"fontawesome": "B(cg)"
+			},
+			"category": "NGS",
+			"form": "bwa_cg.form",
+			"params": {},
+			"inputs": {
+				"fastq_input": {
+					"id": "fastq_input",
+					"label": "FastQ Input",
+					"type": "file"
+				}
+			},
+			"outputs": {
+				"sam_output": {
+					"id": "sam_output",
+					"label": "SAM Output",
+					"type": "file"
+				}
+			},
+			"x": 349,
+			"y": 307,
+			"tool": "bwa_cg",
+			"form_object": null
+		},
+		{
+			"id": "step_3-gatk_comb_var",
+			"label": "GATK Combine Variants",
+			"version": "0.0",
+			"author": "",
+			"icon": {
+				"fontawesome": ""
+			},
+			"category": "NGS",
+			"form": "gatk_comb_var.form",
+			"params": {},
+			"inputs": {
+				"variants_to_merge": {
+					"id": "variants_to_merge",
+					"label": "Variants to Merge",
+					"type": "file"
+				}
+			},
+			"outputs": {
+				"variants_vcf": {
+					"id": "variants_vcf",
+					"label": "Variants VCF",
+					"type": "file"
+				},
+				"log": {
+					"id": "log",
+					"label": "Log",
+					"type": "file"
+				}
+			},
+			"x": 533,
+			"y": 351,
+			"tool": "gatk_comb_var",
+			"form_object": null
+		},
+		{
+			"id": "step_4-fastq_to_bam",
+			"label": "FastQ to Bam",
+			"version": "0.0",
+			"author": "",
+			"icon": {
+				"fontawesome": ""
+			},
+			"category": "NGS",
+			"form": "fastq_to_bam.form",
+			"params": {},
+			"inputs": {
+				"fastq_file": {
+					"id": "fastq_file",
+					"label": "FastQ File",
+					"type": "file"
+				},
+				"second_fastq_file": {
+					"id": "second_fastq_file",
+					"label": "Second FastQ File",
+					"type": "file"
+				}
+			},
+			"outputs": {
+				"bam_file": {
+					"id": "bam_file",
+					"label": "Bam File",
+					"type": "file"
+				}
+			},
+			"x": 339,
+			"y": 139,
+			"tool": "fastq_to_bam",
+			"form_object": null
+		},
+		{
+			"id": "step_5-input_dataset",
+			"label": "Input Dataset",
+			"version": "0.0",
+			"author": "",
+			"icon": {
+				"fontawesome": ""
+			},
+			"category": "NGS",
+			"form": "input_dataset.form",
+			"params": {},
+			"inputs": {},
+			"outputs": {
+				"file": {
+					"id": "file",
+					"label": "File",
+					"type": "file"
+				}
+			},
+			"x": 103,
+			"y": 86,
+			"tool": "input_dataset",
+			"form_object": null
+		},
+		{
+			"id": "step_5-file_merge",
+			"label": "Merge Files",
+			"version": "0.0",
+			"author": "",
+			"icon": {
+				"fontawesome": ""
+			},
+			"category": "File Manipulation",
+			"form": "input_file.form",
+			"params": {
+				"path": [
+					"/Projects/31/ucsc.hg19.fasta"
+				]
+			},
+			"inputs": {
+				"in1": {
+					"id": "in1",
+					"label": "File 1",
+					"type": "file"
+				},
+				"in2": {
+					"id": "in2",
+					"label": "File 2",
+					"type": "file"
+				}
+			},
+			"outputs": {
+				"out1": {
+					"id": "out1",
+					"label": "Result File",
+					"type": "file"
+				}
+			},
+			"x": 696,
+			"y": 244,
+			"tool": "file_merge",
+			"form_object": null
+		},
+		{
+			"id": "step_6-output_dataset",
+			"label": "Output Dataset",
+			"version": "0.0",
+			"author": "",
+			"icon": {
+				"fontawesome": ""
+			},
+			"category": "NGS",
+			"form": "output_dataset.form",
+			"params": {},
+			"inputs": {
+				"file": {
+					"id": "file",
+					"label": "File",
+					"type": "file"
+				}
+			},
+			"outputs": {},
+			"x": 854,
+			"y": 285,
+			"tool": "output_dataset",
+			"form_object": null
+		}
+	],
+	"connections": [
+		{
+			"source": "step_0-input_dataset",
+			"target": "step_2-bwa_cg",
+			"output": "file",
+			"input": "fastq_input",
+			"id": "step_0-input_dataset_step_2-bwa_cg_file_fastq_input"
+		},
+		{
+			"source": "step_2-bwa_cg",
+			"target": "step_3-gatk_comb_var",
+			"output": "sam_output",
+			"input": "variants_to_merge",
+			"id": "step_2-bwa_cg_step_3-gatk_comb_var_sam_output_variants_to_merge"
+		},
+		{
+			"source": "step_5-input_dataset",
+			"target": "step_4-fastq_to_bam",
+			"output": "file",
+			"input": "fastq_file",
+			"id": "step_5-input_dataset_step_4-fastq_to_bam_file_fastq_file"
+		},
+		{
+			"source": "step_0-input_dataset",
+			"target": "step_4-fastq_to_bam",
+			"output": "file",
+			"input": "second_fastq_file",
+			"id": "step_0-input_dataset_step_4-fastq_to_bam_file_second_fastq_file"
+		},
+		{
+			"source": "step_0-input_dataset",
+			"target": "step_2-bwa_cg",
+			"output": "file",
+			"input": "fastq_input",
+			"id": "step_0-input_dataset_step_2-bwa_cg_file_fastq_input"
+		},
+		{
+			"source": "step_2-bwa_cg",
+			"target": "step_3-gatk_comb_var",
+			"output": "sam_output",
+			"input": "variants_to_merge",
+			"id": "step_2-bwa_cg_step_3-gatk_comb_var_sam_output_variants_to_merge"
+		},
+		{
+			"source": "step_5-input_dataset",
+			"target": "step_4-fastq_to_bam",
+			"output": "file",
+			"input": "fastq_file",
+			"id": "step_5-input_dataset_step_4-fastq_to_bam_file_fastq_file"
+		},
+		{
+			"source": "step_0-input_dataset",
+			"target": "step_4-fastq_to_bam",
+			"output": "file",
+			"input": "second_fastq_file",
+			"id": "step_0-input_dataset_step_4-fastq_to_bam_file_second_fastq_file"
+		},
+		{
+			"source": "step_3-gatk_comb_var",
+			"target": "step_5-file_merge",
+			"output": "variants_vcf",
+			"input": "in2",
+			"id": "step_3-gatk_comb_var_step_5-file_merge_variants_vcf_in2"
+		},
+		{
+			"source": "step_4-fastq_to_bam",
+			"target": "step_5-file_merge",
+			"output": "bam_file",
+			"input": "in1",
+			"id": "step_4-fastq_to_bam_step_5-file_merge_bam_file_in1"
+		},
+		{
+			"source": "step_5-file_merge",
+			"target": "step_6-output_dataset",
+			"output": "out1",
+			"input": "file",
+			"id": "step_5-file_merge_step_6-output_dataset_out1_file"
+		},
+		{
+			"source": "step_0-input_dataset",
+			"target": "step_2-bwa_cg",
+			"output": "file",
+			"input": "fastq_input",
+			"id": "step_0-input_dataset_step_2-bwa_cg_file_fastq_input"
+		},
+		{
+			"source": "step_2-bwa_cg",
+			"target": "step_3-gatk_comb_var",
+			"output": "sam_output",
+			"input": "variants_to_merge",
+			"id": "step_2-bwa_cg_step_3-gatk_comb_var_sam_output_variants_to_merge"
+		},
+		{
+			"source": "step_5-input_dataset",
+			"target": "step_4-fastq_to_bam",
+			"output": "file",
+			"input": "fastq_file",
+			"id": "step_5-input_dataset_step_4-fastq_to_bam_file_fastq_file"
+		},
+		{
+			"source": "step_0-input_dataset",
+			"target": "step_4-fastq_to_bam",
+			"output": "file",
+			"input": "second_fastq_file",
+			"id": "step_0-input_dataset_step_4-fastq_to_bam_file_second_fastq_file"
+		},
+		{
+			"source": "step_0-input_dataset",
+			"target": "step_2-bwa_cg",
+			"output": "file",
+			"input": "fastq_input",
+			"id": "step_0-input_dataset_step_2-bwa_cg_file_fastq_input"
+		},
+		{
+			"source": "step_2-bwa_cg",
+			"target": "step_3-gatk_comb_var",
+			"output": "sam_output",
+			"input": "variants_to_merge",
+			"id": "step_2-bwa_cg_step_3-gatk_comb_var_sam_output_variants_to_merge"
+		},
+		{
+			"source": "step_5-input_dataset",
+			"target": "step_4-fastq_to_bam",
+			"output": "file",
+			"input": "fastq_file",
+			"id": "step_5-input_dataset_step_4-fastq_to_bam_file_fastq_file"
+		},
+		{
+			"source": "step_0-input_dataset",
+			"target": "step_4-fastq_to_bam",
+			"output": "file",
+			"input": "second_fastq_file",
+			"id": "step_0-input_dataset_step_4-fastq_to_bam_file_second_fastq_file"
+		},
+		{
+			"source": "step_3-gatk_comb_var",
+			"target": "step_5-file_merge",
+			"output": "variants_vcf",
+			"input": "in2",
+			"id": "step_3-gatk_comb_var_step_5-file_merge_variants_vcf_in2"
+		},
+		{
+			"source": "step_4-fastq_to_bam",
+			"target": "step_5-file_merge",
+			"output": "bam_file",
+			"input": "in1",
+			"id": "step_4-fastq_to_bam_step_5-file_merge_bam_file_in1"
+		},
+		{
+			"source": "step_5-file_merge",
+			"target": "step_6-output_dataset",
+			"output": "out1",
+			"input": "file",
+			"id": "step_5-file_merge_step_6-output_dataset_out1_file"
+		}
+	]
+}

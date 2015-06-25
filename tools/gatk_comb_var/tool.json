@@ -1,0 +1,31 @@
+{
+    "id": "gatk_comb_var",
+    "label": "GATK Combine Variants",
+    "version": "0.0",
+    "author": "",
+    "icon": {
+        "fontawesome": ""
+    },
+    "category": "NGS",
+    "form": "gatk_comb_var.form",
+    "params": {},
+    "inputs": {
+        "variants_to_merge": {
+            "id": "variants_to_merge",
+            "label": "Variants to Merge",
+            "type": "file"
+        }
+    },
+    "outputs": {
+        "variants_vcf": {
+            "id": "variants_vcf",
+            "label": "Variants VCF",
+            "type": "file"
+        },
+        "log": {
+            "id": "log",
+            "label": "Log",
+            "type": "file"
+        }
+    }
+}

@@ -1,0 +1,20 @@
+{
+    "id": "input_dataset",
+    "label": "Input Dataset",
+    "version": "0.0",
+    "author": "",
+    "icon": {
+        "fontawesome": "\uF08B"
+    },
+    "category": "NGS",
+    "form": "input_dataset.form",
+    "params": {},
+    "inputs": {},
+    "outputs": {
+        "file": {
+            "id": "file",
+            "label": "File",
+            "type": "file"
+        }
+    }
+}
