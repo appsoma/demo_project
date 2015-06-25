@@ -1,0 +1,7 @@
+{
+	"name": "Compliance",
+	"bootstrap_icon": "glyphicon-thumbs-up",
+	"short_description": "A prototype of a compliance app",
+	"description": "A prototype of a compliance app",
+	"portal": true
+}
