@@ -1,0 +1,70 @@
+<!doctype html>
+<head>
+	<script src="/welder_assets/js/welder_widgets.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="/welder_assets/css/welder_widgets.css">
+</head>
+<body>
+	<script type="text/javascript">
+		var $ = jQuery = require("jquery");
+		var h = require("hyperscript");
+		var welder = require("welder");
+		require("bootstrap");
+
+		$(document).ready( function() {
+			$("body").append(
+				h('.container',
+					h('h1','FastQC'),
+					h('h4','Quality Control for fastq files from sequencers.'),
+					h('.container',
+						h('form#main-form', { action:'', role:'form' },
+							h('fieldset',
+								h('div.form-group',
+									h('label','Pick a file to copy'),
+									h('input.welder-file-picker',{name:'src_file','data-default-dataset':'from_sequencer'})
+								),
+								h('button.btn.btn-primary',{type:'submit'},"Submit")
+							)
+						)
+					)
+				)
+			);
+
+			welder.initWidgetsFromClasses();
+			welder.widgets.poweredBy();
+			welder.handleRunSimilar( "#main-form" );
+
+			$("#main-form").submit( function() {
+				$(this).find('fieldset').prop('disabled',true);
+				var params = welder.formToObject( this );
+
+				welder.ajax.postRun({
+					"app_folder_name": "mount",
+					"name": "mount",
+					"params": params,
+					"tasks": [
+						{
+							"name": "copy_file",
+							"command": "mkdir ./datasets/copy_dst; cp ./inputs/src_file ./datasets/copy_dst",
+							"container_image": "container-registry.appsoma.com/zack_fastqc",
+							"inputs": {
+								"src_file": "$PARAMS/src_file"
+							},
+							"mounts": {
+							    "datasets": "$DATASETS:rw"
+							},
+							"requirements": {
+								"cpus": 1,
+								"mem": 512,
+								"disk": 512
+							}
+						}
+					]
+				});
+				return false;
+			});
+		});
+	</script>
+</body>
+
