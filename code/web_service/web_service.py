@@ -23,7 +23,9 @@ html = ""
 html += "<h1>There is a web service available to the outside world at: "+external_ip+"</h1>\n"
 html += "<a href='http://"+external_ip+"'>Go to it now</a>\n"
 html += "<br/>"
-html += "It is running in a container on port "+str(port)
+html += "Note, it may take up to 60 seconds after the launch of this service before the above link will work"
+html += "<br/>"
+html += "Service is running in a container on random machine inside the cluster on port "+str(port)
 with open( "./results/index.html", "w" ) as f:
 	f.write( html )
 
