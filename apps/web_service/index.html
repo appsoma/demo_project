@@ -1,0 +1,44 @@
+<!doctype html>
+<head>
+	<script src="/welder_assets/js/welder_widgets.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="/welder_assets/css/welder_widgets.css">
+</head>
+<body>
+	<script type="text/javascript">
+		var $ = jQuery = require("jquery");
+		var h = require("hyperscript");
+		var welder = require("welder");
+		require("bootstrap");
+
+		$(document).ready( function() {
+			welder.ajax.postRun({
+				"app_folder_name": "web_service",
+				"name": "web_service",
+				"tasks": [
+					{
+						"name": "task1",
+						"service": {
+						    "portMappings": [
+						        {
+						            "containerPort":8011,
+						            "hostPort":0,
+						            "protocol":"tcp"
+						        }
+					        ]
+						},
+						"command": "python -u ./code/web_service/web_service.py",
+						"container_image": "python:2.7",
+						"requirements": {
+							"cpus": 1,
+							"mem": 512,
+							"disk": 512
+						}
+					}
+				]
+			});
+		});
+	</script>
+</body>
+

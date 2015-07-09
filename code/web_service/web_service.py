@@ -3,27 +3,27 @@ import os
 import re
 import json
 from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
+sys.path.append( "./code/welder_api" )
+import welder_api
 
-with open( "service.pid", "w" ) as f:
-	f.write( str(os.getpid()) )
+def service_address( external_or_internal="external" ):
+	m = re.match( r'(^[^\.]+)\.', os.environ['MESOS_TASK_ID'] )
+	if m:
+		service = m.group(1)
+	else:
+		raise Exception("MESOS_TASK_ID doesn't match service pattern")
+	value = welder_api.http( "http://"+os.environ['HOST']+":2379/v2/keys/"+external_or_internal+"/"+service )
+	return json.loads( value )['node']['value']
 
-with open( "params.json", "r" ) as f:
-	params = json.loads( f.read() )
+port = 8011
 
-if sys.argv[1:]:
-    port = int(sys.argv[1])
-else:
-    port = 8900
-
-ip = os.environ['WELDER_SITE_URL']
-m = re.match( r'^.+//([^:]+)', ip )
-if m:
-	ip = m.group(1)
+external_ip = welder_api.service_address( "external" )
 
 html = ""
-html += "<h1>This is a web service running on port: "+str(port)+"</h1>\n"
-html += "<a href='http://"+ip+":"+str(port)+"'>Go to it now</a>\n"
-
+html += "<h1>There is a web service available to the outside world at: "+external_ip+"</h1>\n"
+html += "<a href='http://"+external_ip+"'>Go to it now</a>\n"
+html += "<br/>"
+html += "It is running in a container on port "+str(port)
 with open( "./results/index.html", "w" ) as f:
 	f.write( html )
 
@@ -32,11 +32,8 @@ class Handler(BaseHTTPRequestHandler):
 		self.send_response(200)
 		self.send_header('Content-type','text/html')
 		self.end_headers()
-		self.wfile.write( "The service is up. The parameter 'to_print' is:"+params['to_print'] )
-
+		self.wfile.write( "The service is up." )
 
 httpd = HTTPServer( ('0.0.0.0', port), Handler )
-
-sa = httpd.socket.getsockname()
-print "Serving HTTP on", sa[0], "port", sa[1], "..."
 httpd.serve_forever()
+
