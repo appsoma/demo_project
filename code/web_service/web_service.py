@@ -6,15 +6,6 @@ from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
 sys.path.append( "./code/welder_api" )
 import welder_api
 
-def service_address( external_or_internal="external" ):
-	m = re.match( r'(^[^\.]+)\.', os.environ['MESOS_TASK_ID'] )
-	if m:
-		service = m.group(1)
-	else:
-		raise Exception("MESOS_TASK_ID doesn't match service pattern")
-	value = welder_api.http( "http://"+os.environ['HOST']+":2379/v2/keys/"+external_or_internal+"/"+service )
-	return json.loads( value )['node']['value']
-
 port = 8011
 
 external_ip = welder_api.service_address( "external" )
