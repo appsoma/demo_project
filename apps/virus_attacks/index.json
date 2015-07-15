@@ -1,0 +1,7 @@
+{
+	"name": "Virus Attacks",
+	"bootstrap_icon": "glyphicon-globe",
+	"short_description": "Global virus attacks on the U.S. visualized",
+	"description": "Global virus attacks on the U.S. visualized",
+	"portal": true
+}
