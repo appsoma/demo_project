@@ -109,6 +109,7 @@ DAT.Globe = function(container, opts) {
 
 	var camera, scene, renderer, w, h;
 	var mesh, atmosphere, point;
+	var worldMesh;
 
 	var overRenderer;
 
@@ -155,6 +156,7 @@ DAT.Globe = function(container, opts) {
 
 		mesh = new THREE.Mesh(geometry, material);
 		mesh.rotation.y = Math.PI;
+		worldMesh = mesh;
 		scene.add(mesh);
 
 		shader = Shaders['atmosphere'];
@@ -299,39 +301,45 @@ DAT.Globe = function(container, opts) {
 			shot: {
 				size: 1.5,
 				speed: { min: 0.01, max: 0.01 },
-				speedMax: 1.4,
+				speedMax: 100,
 				color: {
 					r: { min: 1, max: 1 },
 					g: { min: 0.0, max: 0.2 },
 					b: { min: 0.0, max: 0.2 }
 				},
-				acceleration: 0.03,
-				trail: 5,
+				acceleration: 20.0,
+				closeEnough: 4,
+				trail: 3,
 				altitude: 200,
 				rise: 20
 			},
 			burst: {
 				altitude: 200,
-				speed: 0.1,
+				speed: 6,
 				size: { start: 1, end: 8 }
 			},
 			flash: {
+				color: { r:1, g:1, b:1 },
 				size: 3,
-				life: 6
+				life: 0.1
 			},
-			timeBetweenShots: 2
+			safe: {
+				color: { r:0.4, g:1, b:0.4 },
+				size: 2,
+				life: 3
+			},
+			timeBetweenShots: 0.1
 		}
 
 
 		var running = false;
 		var shotList = [];
-		var t_last = new Date().getTime();
+		var t_last = 0;
 		var dt = 0;
 		var library = {
 			material: {},
 			mesh: {}
 		};
-
 
 		// create custom material from the shader code above
 		//   that is within specially labeled script tags
@@ -378,20 +386,19 @@ DAT.Globe = function(container, opts) {
 		}
 
 		library.mesh.shot = function(param) {
-			var geometry = new THREE.SphereGeometry(1, 32, 16);
-				//THREE.TetrahedronGeometry(1); //THREE.BoxGeometry(1, 1, 1);
-			// Rotate the hedron so it has a "front"
-			//geometry.applyMatrix( new THREE.Matrix4().makeRotationAxis( new THREE.Vector3( 1, 0, -1 ).normalize(), Math.atan( Math.sqrt(2)) ) );
+			var geometry = new THREE.SphereGeometry(1, 2, 2);
 
 			var colorInt = rgbToInt(param.color.r,param.color.g,param.color.b)
-			var mesh = new THREE.Mesh( geometry, library.material.glow( colorInt ) );
+			var mesh = new THREE.Mesh( geometry, library.material.flat( colorInt, 0.6) );
 
 			mesh.scale.x = param.size;
 			mesh.scale.y = param.size;
 			mesh.scale.z = param.size;
 			mesh.onTick = function() {
-				mesh.material.uniforms.viewVector.value =
-				new THREE.Vector3().subVectors( camera.position, mesh.position );
+				// this is for use if you try to use 'glow' instead of flat. But glow
+				// is not always compatible with end user machines...
+//				mesh.material.uniforms.viewVector.value =
+//				new THREE.Vector3().subVectors( camera.position, mesh.position );
 			}
 
 
@@ -415,7 +422,21 @@ DAT.Globe = function(container, opts) {
 		library.mesh.flash = function(param) {
 			var geometry = new THREE.SphereGeometry(1, 8, 4);
 			var colorInt = rgbToInt(param.color.r,param.color.g,param.color.b)
-			var mesh = new THREE.Mesh( geometry, library.material.flat( 0xffffff, 1.0 ) );
+			var mesh = new THREE.Mesh( geometry, library.material.flat( colorInt, 0.9 ) );
+			mesh.scale.x = param.size;
+			mesh.scale.y = param.size;
+			mesh.scale.z = param.size;
+
+			mesh.onTick = function() {
+			}
+
+			return mesh;
+		}
+
+		library.mesh.safe = function(param) {
+			var geometry = new THREE.TorusGeometry( 1, 0.2, 6, 12 );	// radius, diam, radial segments, tube segments
+			var colorInt = rgbToInt(param.color.r,param.color.g,param.color.b)
+			var mesh = new THREE.Mesh( geometry, library.material.flat( colorInt, 1.0 ) );
 			mesh.scale.x = param.size;
 			mesh.scale.y = param.size;
 			mesh.scale.z = param.size;
@@ -452,7 +473,6 @@ DAT.Globe = function(container, opts) {
 		function Shot(start,target,anim,callback) {
 			var self = this;
 			var mesh;
-			var pairSignature;
 
 			function init() {
 				start.p = sphereToVector3(start.lat,start.lng);
@@ -461,7 +481,8 @@ DAT.Globe = function(container, opts) {
 				for( var k in start ) {
 					self[k] = start[k];
 				}
-
+				self.signature = 'p'+self.lat+'_'+self.lng+'_'+target.lat+'_'+target.lng;
+				self.targetSignature = 't'+target.lat+'_'+target.lng;
 				mesh = library.mesh[self.mesh](self);
 				scene.add(mesh);
 			}
@@ -487,6 +508,8 @@ DAT.Globe = function(container, opts) {
 
 			var meshHistory = [];
 			var halfTrip = 0;
+			var pairSignature;
+
 			self['fly'] = function() {
 				if( !halfTrip ) {
 					var delta = target.p.clone();
@@ -522,7 +545,7 @@ DAT.Globe = function(container, opts) {
 
 				if( line ) {
 					if( !pairSignature && pairSignature != "X" ) {
-						pairSignature = 'p'+self.lat+'_'+self.lng+'_'+target.lat+'_'+target.lng;
+						pairSignature = self.signature;
 						if( line[pairSignature] ) {
 							pairSignature = 'X';
 						}
@@ -533,7 +556,7 @@ DAT.Globe = function(container, opts) {
 					}
 				}
 
-				if( !self.kill && length < Math.max(self.speed,4) ) {
+				if( !self.kill && length < config.shot.closeEnough ) {
 					self.lat = target.lat;
 					self.lng = target.lng;
 					self.kill = true;
@@ -542,14 +565,19 @@ DAT.Globe = function(container, opts) {
 			}
 
 			self['flash'] = function() {
-				self.life -= dt;
-
 				var p = sphereToVector3( self.lat, self.lng );
 				var alt = config.burst.altitude;
 				mesh.position.set( p.x*alt, p.y*alt, p.z*alt );
+				mesh.lookAt( worldMesh.position );
+
 				mesh.scale.x = self.size;
 				mesh.scale.y = self.size;
 				mesh.scale.z = self.size;
+
+				mesh.material.opacity = ( self.life / start.life );
+				mesh.material.needsUpdate = true;
+
+				self.life -= dt;
 
 				if( !self.kill && self.life < 0  ) {
 					self.kill = true;
@@ -639,7 +667,27 @@ DAT.Globe = function(container, opts) {
 
 		function nop() { }
 
-		function burst(shot) {
+		var safeList = {};
+
+		function actionBurstOrSafe(shot) {
+			if( safeList[shot.targetSignature] === undefined ) {
+				safeList[shot.targetSignature] = pct(25);
+			}
+
+			if( safeList[shot.targetSignature] ) {
+				shotList.push( new Shot({
+					lat:shot.lat,
+					lng:shot.lng,
+					mesh: 'safe',
+					size:config.safe.size,
+					color:config.safe.color,
+					life: config.safe.life
+				},{
+					size:config.safe.size.end
+				},'flash',nop) );
+				return;
+			}
+
 			shotList.push( new Shot({
 				lat:shot.lat,
 				lng:shot.lng,
@@ -650,9 +698,10 @@ DAT.Globe = function(container, opts) {
 			},{
 				size:config.burst.size.end
 			},'burst',nop) );
+
 		}
 
-		function fire(origin,size,color,speed,target) {
+		function actionFire(origin,size,color,speed,target) {
 			shotList.push( new Shot({
 				lat:origin.lat,
 				lng:origin.lng,
@@ -660,14 +709,14 @@ DAT.Globe = function(container, opts) {
 				size:size,
 				color:color,
 				speed:speed
-			},target,'fly',burst) );
+			},target,'fly',actionBurstOrSafe) );
 
 			shotList.push( new Shot({
 				lat:origin.lat,
 				lng:origin.lng,
 				mesh: 'flash',
-				size:config.flash.size,
-				color:color,
+				size: config.flash.size,
+				color: config.flash.color,
 				life: config.flash.life
 			},target,'flash',nop) );
 
@@ -679,7 +728,10 @@ DAT.Globe = function(container, opts) {
 		function tick() {
 
 			function advanceTime() {
-				var t_now = (new Date()).getTime();
+				var t_now = (new Date()).getTime() / 1000;
+				if( t_last == 0 ) {
+					t_last = t_now - 0.05;
+				}
 				dt = Math.min(1.0,t_now - t_last);
 				t_last = t_now;
 			}
@@ -704,7 +756,7 @@ DAT.Globe = function(container, opts) {
 					};
 					var speed = rndf( config.shot.speed.min, config.shot.speed.max );
 
-					fire( origin, config.shot.size, color, speed, target);
+					actionFire( origin, config.shot.size, color, speed, target);
 					timeSinceShot = 0;
 				}
 			}
