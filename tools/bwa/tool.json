@@ -44,7 +44,7 @@ NO			"extension": [ ".fastq", ".fq" ],
 			"url": "git://github.com/appsoma/example_code.git"
 		}
 	],
-	"container_image": "container-registry.appsoma.com/zack_cutadapt_macs2_bwa",
+	"container_image": "zsimpson/cutadapt_macs2_bwa",
 	"requirements": {
 		"cpus": 1,
 		"mem": 512,
