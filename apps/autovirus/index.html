@@ -1,0 +1,662 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+<script type="text/javascript" src="http://www.google.com/jsapi"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script type="text/javascript">
+var ErrorHandler = (function() {
+	var msg = '';
+	window.onerror = function(errorMsg, url, lineNumber) {
+		if( !msg ) {
+			var errorPane = document.getElementById("ErrorPane");
+			if( !errorPane ) {
+				throw msg;
+			}
+			msg = errorMsg+"\nin "+url+" line "+lineNumber;
+			errorPane.innerHTML = msg;
+		}
+	}
+}());
+</script>
+<style>
+body {
+	margin:20px;
+}
+#ErrorPane {
+	color: red;
+}
+.cloudPassageLogo {
+    width: 375px;
+    display: inline-block;
+}
+.poweredByAppsoma {
+	float: right;
+}
+#DatabaseLoad {
+	width: 600px;
+	height: 300px;
+}
+#CompanyPain {
+	width: 500px;
+	height: 300px;
+	margin-top: 30px;
+	overflow-y: scroll;
+}
+.companyPainHeader {
+	font-size: 18px;
+	font-weight: bold;
+	margin-bottom: 20px;
+}
+table.attackTable tbody tr td {
+	vertical-align: top;
+}
+table.attackTable thead tr th {
+	min-width: 120px;
+	border-bottom: 1px solid #888;
+}
+table.attackTable tbody tr:nth-child(even) {
+	background: #ddd;
+}
+table.attackTable tbody tr:nth-child(odd) {
+	background: #FFF;
+}
+.companyName {
+	font-size: 14px;
+	width: 120px;
+}
+.attackCount {
+	font-size: 14px;
+	text-align: center;
+}
+.nodeSamples {
+	font-size: 10px;
+}
+.nodeSamples div {
+	white-space: normal;
+}
+.nodeName {
+	display: inline-block;
+}
+#Throughput {
+	width: 600px;
+	height: 0px;
+}
+#WorkerCount {
+	width: 400px;
+	height: 300px;
+    display: none;
+}
+#WorkerLoad {
+	width: 600px;
+	height: 300px;
+}
+.WorkerLoadKey {
+	margin-left:110px;
+    font-size:10px;
+}
+#Log {
+	background-color: black;
+	color: white;
+	white-space: pre-wrap;
+	font-family: "Courier New", Courier, monospace;
+	font-size: 12px;
+	height: 140px;
+	width: 800px;
+	overflow-y: scroll;
+}
+#Log p {
+	-webkit-margin-before: 0em;
+	-webkit-margin-after: 0em;
+}
+span.keyEntry {
+	display: inline-block;
+	width: 14px;
+	height: 14px;
+	margin-left: 8px;
+}
+span.keyMessages {
+	background-color: blue;
+}
+span.keyMisses{
+	background-color: orange;
+}
+span.keyInvalid {
+	background-color: red;
+}
+span.keyViruses {
+	background-color: magenta;
+}
+</style>
+
+<script type="text/javascript">
+	var Config = {
+		wsServerUrl: "ws://mesos.appsoma.com:8887",
+		myUrl: "http://mesos.appsoma.com:8888/index.html",
+		logMaxLength: 1024*30,
+		time_until_visible_worker_death: 20*1000,	// millisecconds
+		vis: {
+			titleTextStyle: { color: 'black', fontSize: 20},
+			axisTextStyle: { color: 'blue', fontSize: 16}
+		}
+	}
+	var Channel = function() {
+		var self = this;
+		var msgList = [];
+		var msgHandler = {};
+		var ws = null;
+		var url = null;
+		function handler(type,fn) {
+			msgHandler[type] = fn;
+		}
+		function open(_url) {
+			url = _url;
+			console.log( "Opening "+url );
+			ws = new WebSocket(url);
+			ws.onmessage = function (evt) {
+				var msg = null;
+                var msgTrimmed = null
+				try {
+                    msgTrimmed = evt.data.replace(/[\x00]/g, "");
+					msg = JSON.parse(msgTrimmed);
+				}
+				catch(e) {
+					throw "Failed to parse message ["+evt.data+" " + e.message + "]";
+				}
+				var handler = msgHandler[msg.type];
+				if( !handler ) {
+					throw "No handler for message type "+msg.type;
+				}
+				handler.apply( self, [msg] );
+			};
+		}
+		function send(type,content) {
+			var msg = JSON.stringify({
+				'type': type,
+				'content': content
+			});
+			msgList.push(msg);
+			while( msgList.length > 0 ) {
+				ws.send(msgList.shift());
+			}
+		}
+		self.open = open;
+		self.handler = handler;
+		self.send = send;
+		self.ws = function() { return ws };
+		return self;
+	};
+function logPrint(s) {
+	var target = $("#Log");
+	var s0 = target.html();
+	var start = Math.max( 0, (s0.length + s.length) - Config.logMaxLength );
+	target.html( s0.substring(start) + "<p>"+s+"</p>" );
+	target.scrollTop( target.prop("scrollHeight") );
+}
+function WebSocketTest()
+{
+	var channel = new Channel();
+	function webSocketUrl() {
+		return Config.wsServerUrl;
+	}
+	if (! "WebSocket" in window) {
+		throw "WebSockets are not supported."
+	}
+	var channel = new Channel();
+	channel.open(webSocketUrl());
+	channel.handler( 'text', function(msg) {
+		logPrint(msg.content);
+	});
+	channel.handler( 'connection', function(msg) {
+		logPrint(msg.content);
+	});
+	channel.handler( 'workerCount', function(msg) {
+		ChartManager.get('WorkerCount').dataAdd( msg );
+	});
+    channel.handler('stormWorkerCount', function (msg) {
+        ChartManager.get('WorkerCount').dataAdd(msg);
+    });
+	channel.handler( 'workerLoad', function(msg) {
+		ChartManager.get('WorkerLoad').dataAdd( msg );
+		ChartManager.get('DatabaseLoad').dataAdd( msg );
+	});
+	channel.handler( 'attack', function(msg) {
+		ChartManager.get('CompanyPain').dataAdd( 'attack', msg );
+	});
+    channel.handler( 'virus', function(msg) {
+        ChartManager.get('CompanyPain').dataAdd('virus', msg);
+    });
+	channel.ws().onopen = function() {
+		logPrint("Socket open.");
+		// Web Socket is connected, send data using send()
+		channel.send('text','Test message');
+	};
+	channel.ws().onclose = function() {
+		// websocket is closed.
+		logPrint("Socket closed.");
+	};
+}
+//
+// CompanyPain
+//
+var CompanyPain = function( chartSelector ) {
+	var self = this;
+	var nodeList = {};
+    var virusList = {};
+	self.tick = function() {
+		var s = "<div class='companyPainHeader'>Companies Reporting Bad Files</div>";
+		s += "<table class='attackTable'>";
+		s += "<thead><tr><th>Company</th><th>Nodes with<br />Bad Files</th><th>Nodes</th><th>Viruses</th></tr></thead>";
+		s += "<tbody>";
+		$.each( nodeList, function( companyName, node) {
+			s += "<tr class='attackLine'>";
+			s += "<td class='companyName'>"+companyName+"</td>";
+			var nodeCount = 0;
+			var showMax = 20;
+			var nodeString = "";
+			$.each( node, function( nodeName, dateTime) {
+				if( nodeCount < showMax ) {
+					nodeString += (nodeCount>0 ? ',' : '') + "<span class='nodeName'>"+nodeName+"</span>"
+				}
+				else if( nodeCount == showMax ) {
+					nodeString += "...";
+				}
+				nodeCount += 1;
+			});
+            var virusString = "";
+            var virus = virusList[companyName] || {};
+            var virusCount = 0;
+            showMax = 20;
+            $.each(virus, function (virusName, path) {
+                if (virusCount < showMax) {
+                    virusString += (virusCount > 0 ? '<br />' : '') + "<span class='nodeName'>" + virusName + "</span>"
+                }
+                else if (virusCount == showMax) {
+                    virusString += "...";
+                }
+                virusCount += 1;
+            });
+			s += "<td class='attackCount'>"+nodeCount+"</td>";
+			s += "<td class='nodeSamples'><div>"+nodeString+"</div></td>";
+            s += "<td class='nodeSamples'><div>"+virusString+"</div></td>";
+			s += "</tr>"
+		});
+		s += "</tbody>";
+		s += "</table>";
+		$( chartSelector ).html(s);
+	};
+	self.dataAdd = function(type, msg) {
+        if (type == 'attack') {
+            nodeList[msg.company] = nodeList[msg.company] || {};
+            nodeList[msg.company][msg.node] = msg.dateTime;
+        } else if (type == 'virus') {
+            virusList[msg.company] = virusList[msg.company] || {};
+            virusList[msg.company][msg.virus] = msg.path;
+        }
+	}
+};
+//
+// DatabaseLoad
+//
+var DatabaseLoad = function( chartSelector ) {
+	var self = this;
+	var data = null;
+	var view = null;
+	var chart = null;
+	var chartVertMax = 2;
+	var ageMax = 61;
+	var recordList = [];
+	var renderIntervalSec = 1;
+	self.tick = function() {
+		// Add a new record each second. It will be the accumulator.
+		recordList.push( {
+			time: new Date().getTime(),
+			cacheMissCount: 0,
+			invalidChecksumCount: 0,
+            virusesFoundCount: 0
+		});
+	}
+	self.tick();	// Need a starting record.
+	self.dataAdd = function( msg ) {
+        if (recordList.length <= 0) {
+            return
+        }
+		recordList[recordList.length-1].cacheMissCount += msg.cacheMissCount;
+		recordList[recordList.length-1].invalidChecksumCount += msg.invalidChecksumCount;
+        recordList[recordList.length-1].virusesFoundCount += msg.virusesFoundCount;
+		var now = new Date().getTime();
+		recordList = recordList.filter( function( record ) {
+			// we only trim the really old stuff, so we can have some initial
+			// record. Not optimal, but sufficient.
+			return record.time >= now - (ageMax*1000*2);
+		});
+	}
+	self.plot = function() {
+		var elem = $(chartSelector)[0];
+		if( !$.googleChartsLoaded ) {
+			$(elem).html("Loading...");
+			return;
+		}
+		// make the data table entries
+		if( !data ) {
+			data = new google.visualization.DataTable();
+			data.addColumn('number','Time');
+			data.addColumn('number','CacheMisses');
+			data.addColumn('number','InvalidChecksums');
+            data.addColumn('number','VirusesFound');
+			data.addRows( ageMax+1 );
+			view = new google.visualization.DataView(data);
+			view.setColumns([0, 1, 2, 3]);
+			chart = new google.visualization.ColumnChart(elem);
+		}
+		var options = {
+			title: 'Database Load',
+			titleTextStyle: Config.vis.titleTextStyle,
+			legend: { position: 'top', maxLines: 3 },
+    	    isStacked: true,
+			hAxis: { title: 'Time', titleTextStyle: Config.vis.axisTextStyle },
+			vAxis: { title: 'Database Hits', titleTextStyle: Config.vis.axisTextStyle },
+			colors: [ 'orange', 'red', 'magenta' ],
+			bar: { groupWidth: '90%' }
+		};
+		var now = new Date().getTime();
+		var i = 0;
+		var slot = {};
+		for( i=0 ; i<recordList.length ; ++i ) {
+			var age = Math.floor( (recordList[i].time - now) / 1000 );
+			slot[age] = recordList[i];
+		}
+		var row = 0;
+		for( i=-ageMax ; i<=0 ; i += renderIntervalSec ) {
+			var timeAgo = i;
+			var record = slot[i];
+			data.setCell( row, 0, timeAgo );
+			data.setCell( row, 1, record ? record.cacheMissCount : 0);
+			data.setCell( row, 2, record ? record.invalidChecksumCount : 0);
+            data.setCell( row, 3, record ? record.virusesFoundCount: 0);
+			row += 1;
+		}
+		chart.draw(view, options);
+	}
+	self.renderIntervalHandle = setInterval( self.plot, renderIntervalSec*1000 );
+	return self;
+}
+//
+// WorkerCount
+//
+var WorkerCount = function( chartSelector ) {
+	var self = this;
+	var data = null;
+	var view = null;
+	var chart = null;
+	var chartVertMax = 2;
+	var ageMax = 61;
+	var recordList = [];
+	var renderIntervalSec = 2;
+	self.dataAdd = function( msg ) {
+		recordList.push(msg);
+		var now = new Date().getTime();
+		recordList = recordList.filter( function( record ) {
+			// we only trim the really old stuff, so we can have some initial
+			// record. Not optimal, but sufficient.
+			return record.time >= now - (ageMax*1000*2);
+		});
+	}
+	self.plot = function() {
+		var elem = $(chartSelector)[0];
+		if( !$.googleChartsLoaded ) {
+			$(elem).html("Loading...");
+			return;
+		}
+		// make the data table entries
+		if( !data ) {
+			data = new google.visualization.DataTable();
+			data.addColumn('number','Time');
+			data.addColumn('number','WorkerCount');
+			data.addRows( ageMax+1 );
+			view = new google.visualization.DataView(data);
+			view.setColumns([0, 1]);
+			chart = new google.visualization.ColumnChart(elem);
+		}
+		var options = {
+			title: 'Worker Count',
+			titleTextStyle: Config.vis.titleTextStyle,
+			legend: { position: 'top', maxLines: 3 },
+			hAxis: {
+				title: 'Time',
+				titleTextStyle: Config.vis.axisTextStyle,
+				minValue: -(ageMax+1),
+				maxValue: 0
+			},
+			vAxis: {
+				title: 'Number of Workers',
+				titleTextStyle: Config.vis.axisTextStyle,
+				minValue: 0
+			},
+			colors: [ 'lightgreen' ],
+			bar: { groupWidth: '90%' }
+		};
+		var now = new Date().getTime();
+		var i = 0;
+		var slot = {};
+		for( i=0 ; i<recordList.length ; ++i ) {
+			var age = Math.floor( (recordList[i].time - now) / 1000 );
+			slot[age] = recordList[i];
+		}
+		var last = 0;
+		for( i=-ageMax ; i<=0 ; i += renderIntervalSec ) {
+			if( !slot[i] ) {
+				slot[i] = last;
+			}
+			else {
+				last = slot[i];
+			}
+		}
+		var row = 0;
+		for( i=-ageMax ; i<=0 ; i += renderIntervalSec ) {
+			var timeAgo = i;
+			var record = slot[i];
+			data.setCell( row, 0, timeAgo );
+			data.setCell( row, 1, record ? record.count : 0);
+			row += 1;
+		}
+		chart.draw(view, options);
+	}
+	self.renderIntervalHandle = setInterval( self.plot, renderIntervalSec*1000 );
+	return self;
+};
+//
+// WorkerLoad
+//
+var WorkerLoad = function( chartSelector ) {
+	var self = this;
+	var workerList = {};
+	var data = null;
+	var view = null;
+	var chart = null;
+	var chartHorizMax = 2;
+	var renderIntervalMs = 1000;
+	self.dataAdd = function( msg ) {
+		workerList[msg.name] = workerList[msg.name] || {};
+		$.extend( workerList[msg.name], msg );
+        workerList[msg.name].dead = false;
+		workerList[msg.name].lastUpdate = new Date().getTime();
+		workerList[msg.name].touchedSinceLastPlot = true;
+	};
+	self.plot = function() {
+		var elem = $(chartSelector)[0];
+		if( !$.googleChartsLoaded ) {
+			$(elem).html("Loading...");
+			return;
+		}
+		// make the data table entries
+		if( !data ) {
+			data = new google.visualization.DataTable();
+			data.addColumn('string','Name');
+			data.addColumn('number','Messages');
+			data.addColumn('number','CacheMisses');
+			data.addColumn('number','InvalidChecksums');
+            data.addColumn('number','VirusesFound');
+			view = new google.visualization.DataView(data);
+			view.setColumns([0, 1, 2, 3, 4]);
+			chart = new google.visualization.BarChart(elem);
+		}
+		var options = {
+			title: 'Worker Load',
+			titleTextStyle: Config.vis.titleTextStyle,
+			legend: 'none',
+			hAxis: {
+				title: 'Count',
+				titleTextStyle: Config.vis.axisTextStyle
+			},
+			colors: [ 'blue', 'orange', 'red', 'magenta' ],
+			bar: { groupWidth: '90%' }
+		};
+		// Discover any workers that are dead
+		var nowMilliseconds = new Date().getTime();
+		$.each( workerList, function( name, worker ) {
+			if( worker.lastUpdate < nowMilliseconds - Config.time_until_visible_worker_death ) {
+				worker.dead = true;
+			}
+		});
+		var visibleRows = [];
+		// Determine any newly appearing workers...
+		$.each( workerList, function( name, worker ) {
+			if( !worker.seen ) {
+				worker.seen = true;
+				worker.row = data.addRows(1);
+				data.setCell( worker.row, 0, worker.name );
+				data.setCell( worker.row, 1, 0 );
+				data.setCell( worker.row, 2, 0 );
+				data.setCell( worker.row, 3, 0 );
+                data.setCell( worker.row, 4, 0 );
+				// console.log( worker.row+" added "+worker.name);
+			}
+		});
+		// Only show non-dead rows
+		$.each( workerList, function( name, worker ) {
+			if( !worker.dead ) {
+				visibleRows.push(worker.row);
+			}
+		});
+		// determine the new max horiz axis, from the NEW data, even though we're snapping to old!
+		$.each( workerList, function( name, worker ) {
+			chartHorizMax = Math.max(chartHorizMax, Math.max( worker.messagesPerSecond, worker.cacheMissCount ) );
+		});
+		options.max = chartHorizMax;
+		// Now draw it, before updating the (animating) new values...
+		// This makes row changes, and the chart scale snap, even though the bars animate.
+		if( Object.keys(workerList).length !== 0 ) {
+			view.setRows(visibleRows);
+			chart.draw(view, options);
+		}
+		// Fill in the new data, to be animated
+        var now = new Date().getTime();
+		$.each( workerList, function( name, worker ) {
+			if( !worker.dead ) {
+				data.setCell( worker.row, 0, name );
+                worker.touchedSinceLastPlot = ( now - worker.lastUpdate < 5*1000 );
+				data.setCell( worker.row, 1, worker.touchedSinceLastPlot ? worker.messagesPerSecond : 0 );
+				data.setCell( worker.row, 2, worker.touchedSinceLastPlot ? worker.cacheMissCount : 0 );
+				data.setCell( worker.row, 3, worker.touchedSinceLastPlot ? worker.invalidChecksumCount : 0 );
+                data.setCell( worker.row, 4, worker.touchedSinceLastPlot ? worker.virusesFoundCount : 0 );
+			}
+		});
+		options.animation = {
+			duration: renderIntervalMs - 100,
+			easing: 'out'
+		};
+		view.setRows(visibleRows);
+		chart.draw(view, options);
+//		$('#DebugPane').html("chart max="+chart.max)
+		$.each( workerList, function( name, worker ) {
+			worker.touchedSinceLastPlot = false;
+		});
+	};
+	self.renderIntervalHandle = setInterval( self.plot, renderIntervalMs );
+	return self;
+};
+var ChartManager = (function() {
+	var chartList = {};
+	this.add = function(name,chart) {
+		chartList[name] = chart;
+	};
+	this.get = function(name) {
+		return chartList[name];
+	};
+	var tick = function() {
+		$.each( chartList, function(name,chart) {
+			if( chart.tick ) {
+				chart.tick();
+			}
+		});
+		return true;
+	}
+	var intervalHandleTick = setInterval( tick, 1000 );
+	return this;
+}());
+function OnGoogleChartReady() {
+	$.googleChartsLoaded = true;
+	return true;
+}
+// Google docs seem to indicate that you should NOT wait for document ready - just charge ahead!
+google.load('visualization', '1.0', {'packages':['corechart']});
+google.setOnLoadCallback(OnGoogleChartReady);
+$( document ).ready(function() {
+	console.log( "ready!" );
+	ChartManager.add( 'DatabaseLoad', new DatabaseLoad( "#DatabaseLoad" ) );
+	ChartManager.add( 'CompanyPain', new CompanyPain( "#CompanyPain" ) );
+	ChartManager.add( 'WorkerCount', new WorkerCount( "#WorkerCount" ) );
+	ChartManager.add( 'WorkerLoad', new WorkerLoad( "#WorkerLoad" ) );
+	WebSocketTest();
+});
+</script>
+</head>
+<body>
+
+<div class='poweredByAppsoma'><img src='https://biotseq.ut.appsoma.com:5001/public_folder/powered_by_appsoma.png' /></div>
+<div>
+    <img class="cloudPassageLogo" src="https://s3.amazonaws.com/awsmp-logos/CP_Logotype_Final.png" />
+    <span style="vertical-align: middle;
+    display: inline-block;
+    font-size: 34px;
+    margin-top: 18px">Worker Monitor</span>
+    </div>
+<h4>Proof of Concept Demo</h4>
+<p>
+    <a href="http://mesos.appsoma.com:10090">Storm User Interface</a> ||
+    <a href="http://mesos.appsoma.com:5050">Mesos Master Console</a> ||
+    <a href="http://mesos.appsoma.com:8080">Marathon Console</a> ||
+    <a href="http://mesos.appsoma.com:10091">Kafka Web Console</a>
+</p>
+<div id="ErrorPane"></div>
+<div id="DebugPane"></div>
+<div id="Throughput">
+</div>
+<table>
+	<tr>
+		<td>
+			<div id="DatabaseLoad"></div>
+		</td>
+		<td>
+			<div id="CompanyPain"></div>
+		</td>
+	</tr>
+</table>
+<table>
+	<tr>
+		<td>
+			<div id="WorkerLoad"></div>
+			<div class='WorkerLoadKey'>Key:   <span class='keyEntry keyMessages'></span> Messages <span class='keyEntry keyMisses'></span> Cache Misses <span class='keyEntry keyInvalid'></span> Invalid Checksums <span class='keyEntry keyViruses'></span> Viruses Found </div>
+        </td>
+        <td>
+            <div id="WorkerCount"></div>
+        </td>
+    </tr>
+</table>
+</div>
+<h2>Cassandra SQL Log</h2>
+<div id="Log">
+</div>
+</body>
