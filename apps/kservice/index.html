@@ -1,0 +1,81 @@
+<!doctype html>
+<head>
+	<script src="/welder_assets/js/welder_widgets.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="/welder_assets/css/welder_widgets.css">
+</head>
+
+<body>
+	<script type="text/javascript">
+		var $ = jQuery = require("jquery");
+		var h = require("hyperscript");
+		var welder = require("welder");
+		require("bootstrap");
+
+
+		function launch(appName,cmdLine) {
+			$('#status').html('Launching');
+
+			var appDesc = {
+				"id": "/"+appName,
+				"cmd": "cd /welder/projects/demo_project/apps/"+appName+"; umask u=rwx,g=rwx,o=r; "+cmdLIne+" >> $WELDER_LOG 2>&1",
+				"cpus": 0.1,
+				"mem": 100.0,
+				"instances": 1,
+				"env": {
+					"WELDER_LOG": "/mnt/data/welder/log/"+appName+".log"
+				},
+				"container": {
+					"type": "DOCKER",
+					"docker": {
+						"image": "appsoma/wspython:latest",
+						"network": "BRIDGE",
+					},
+					"volumes": [
+						{
+							"hostPath": "/mnt/data/welder",
+							"containerPath": "/welder",
+							"mode": "RO"
+						},
+						{
+							"hostPath": "/mnt/data/welder/log",
+							"containerPath": "/mnt/data/welder/log",
+							"mode": "RW"
+						}
+					]
+				},
+			};
+			welder.ajax.marathon( "POST", '/v2/apps', appDesc,
+				function(res) {
+					$('#status').html('pending');
+				},
+				function(res) {
+					var note = "Error starting service: "+res.code+" "+res.message;
+					if( res.status == 409 ) {
+						note = "Service is already pending or running."
+					}
+					$('#status').html(note);
+				}
+			);
+		}
+
+		$(document).ready( function() {
+			var myApp = {
+				name: 'kservice',
+				cmdLine: 'python -u ./hello.py'
+			};
+			function filter(app) {
+				return app.id == '/'+myApp.name;
+			}
+			var service;
+			service = welder.widgets.runServices( "#services", { filter:filter, inject: myApp.name } );
+			service.serviceDialog('/'+myApp.name,'#detail');
+		});
+
+	</script>
+	<h1>Service Manager</h1>
+	<div>Status: <span id='status'></span></div>
+	<div id='services'></div>
+	<div id='detail'></div>
+</body>

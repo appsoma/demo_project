@@ -1,0 +1,7 @@
+{
+	"name": "kservice",
+	"bootstrap_icon": "glyphicon-equalizer",
+	"short_description": "A test of running marathon services via app interfaces",
+	"description": "A test of running marathon services via app interfaces",
+	"portal": false
+}
