@@ -1,0 +1,8 @@
+{
+    "name": "PythonPlyer",
+    "creator": "ken",
+    "plyerFileName": "PythonPlyer.py",
+    "description": "A demo python plyer",
+    "serviceName": "pythonplyer-plyer",
+    "language": "python"
+}
