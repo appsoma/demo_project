@@ -3,5 +3,6 @@
     "creator": "ken",
     "plyerFileName": "DemoPlyer.java",
     "description": "A demo plyer",
-    "serviceName": "demoplyer-plyer"
+    "serviceName": "demoplyer-plyer",
+    "language": "java"
 }
