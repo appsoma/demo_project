@@ -4,5 +4,7 @@
     "plyerFileName": "DemoPlyer.java",
     "description": "A demo plyer",
     "serviceName": "demoplyer-plyer",
-    "language": "java"
+    "language": "java",
+    "cpus": 0.1,
+    "mem": 100
 }
