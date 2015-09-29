@@ -1,13 +1,13 @@
 {
-	"name": "kservice",
+	"name": "rand_service",
 	"bootstrap_icon": "glyphicon-equalizer",
 	"short_description": "A test of running marathon services via app interfaces",
 	"description": "A test of running marathon services via app interfaces",
 	"portal": false,
 	"service": true,
 	"marathon_definition": {
-		"id": "/kservice",
-		"cmd": "cd /welder/projects/demo_project/apps/kservice; umask u=rwx,g=rwx,o=r; python -u ./makenum.py >> $WELDER_LOG 2>&1",
+		"id": "/rand_service",
+		"cmd": "cd /welder/projects/demo_project/apps/rand_service; umask u=rwx,g=rwx,o=r; python -u ./makenum.py >> $WELDER_LOG 2>&1",
 		"container": {
 			"docker": {
 				"image": "appsoma/wspython:latest"
