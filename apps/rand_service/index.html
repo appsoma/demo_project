@@ -1,0 +1,62 @@
+<!doctype html>
+<head>
+	<script src="/welder_assets/js/welder_widgets.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="/welder_assets/css/welder_widgets.css">
+</head>
+<body>
+	<script type="text/javascript">
+		var $ = jQuery = require("jquery");
+		var h = require("hyperscript");
+		var welder = require("welder");
+		require("bootstrap");
+
+		var autoLaunch = null;
+		$(document).ready( function() {
+			var myApp = {
+				name: 'rand_service'
+			};
+
+			function onStart( workloadDef, callback ) {
+				$('#service-status').hide();
+				$("#myform").html(
+					h('form#main-form', { action:'', role:'form' },
+						h('fieldset',
+							h('div.form-group',
+								h('label','What is the maximum random integer value you wish to generate?'),
+								h('input.form-control',{type:'number',name:'max_value',value:100,style:{width:'100px'}})
+							),
+							h('button.btn.btn-primary',{type:'submit'},"Submit")
+						)
+					)
+				);
+				welder.initWidgetsFromClasses();
+				welder.widgets.poweredBy();
+				welder.handleRunSimilar( "#main-form" );
+
+				$("#main-form").submit( function() {
+					$(this).find('fieldset').prop('disabled',true);
+					var params = welder.formToObject( this );
+					workloadDef.env.MAX_VALUE = params.max_value;
+					$('#myform').hide();
+					$('#service-status').show();
+					callback(workloadDef);
+				});
+			}
+
+			var service = welder.widgets.serviceStatus( "#service-status", {
+				project: welder.getCurrentProjectFromUrl(),
+				serviceId: myApp.name,
+				onStart: onStart
+			});
+		});
+
+	</script>
+	<div class='container'>
+		<h1>Random Number Service Demo</h1>
+		<h4>A demonstration of how to launch services with custom workload definitions.</h4>
+		<div id='myform'></div>
+		<div id='service-status'></div>
+	</div>
+</body>
