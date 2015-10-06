@@ -1,3 +1,0 @@
-[submodule "code/welder_api"]
-	path = code/welder_api
-	url = git://github.com/appsoma/welder_api
