@@ -3,5 +3,5 @@
 	"bootstrap_icon": "glyphicon-hourglass",
 	"short_description": "A demo service that sleeps for N seconds.",
 	"description": "",
-	"portal": true
+	"portal": false
 }

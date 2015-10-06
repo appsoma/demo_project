@@ -3,5 +3,5 @@
 	"bootstrap_icon": "glyphicon-share",
 	"short_description": "Requires specified memory",
 	"description": "",
-	"portal": true
+	"portal": false
 }
