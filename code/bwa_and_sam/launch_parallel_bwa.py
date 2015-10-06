@@ -3,8 +3,8 @@ import json
 import os
 import sys
 
-sys.path.append( "code/welder_api" )
-from welder_api import *
+sys.path.append( "/welder_support/pywelder" )
+from pywelder import *
 from subprocess import call
 
 params = {}
