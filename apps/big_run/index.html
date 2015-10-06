@@ -1,0 +1,123 @@
+<!doctype html>
+<head>
+	<script src="/welder_assets/js/welder_widgets.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="/welder_assets/css/welder_widgets.css">
+</head>
+<body>
+	<script type="text/javascript">
+		var $ = jQuery = require("jquery");
+		var h = require("hyperscript");
+		var welder = require("welder");
+		require("bootstrap");
+
+		$(document).ready( function() {
+			$("body").append(
+				h('.container',
+					h('h1','Big Run'),
+					h('h4','Demonstrates a large, complex batch run that you can make fail for demo purposes.'),
+					h('.container',
+						h('form#main-form', { action:'', role:'form' },
+							h('fieldset',
+/*
+								h('div.form-group',
+									h('label','Reference Genome'),
+									h('input.welder-file-picker',{name:'reference_genome','data-default-dataset':'reference_genomes'})
+								),
+								h('div.form-group',
+									h('label','Fastq file(s)'),
+									h('input.welder-file-picker',{name:'fastq_files[]','data-multiple':true,'data-default-dataset':'from_sequencer'})
+								),
+*/
+								h('div.form-group',
+									h('label','Max random number?'),
+									h('input.form-control',{name:'max_rand',value:100,type:'number',style:{width:'100px'}})
+								),
+								h('div.form-group',
+									h('label','Which step to fail on?'),
+									h('input.form-control',{name:'fail_step',value:0,type:'number',style:{width:'100px'}})
+								),
+								h('button.btn.btn-primary',{type:'submit'},"Submit")
+							)
+						)
+					)
+				)
+			);
+
+			welder.initWidgetsFromClasses();
+			welder.widgets.poweredBy();
+			welder.handleRunSimilar( "#main-form" );
+
+			function randomInt(max) {
+				return Math.floor(Math.random() * max);
+			}
+
+			function makeTask(step,fail_step) {
+
+				function makeTaskName(step) {
+					return "bigTask"+step;
+				}
+
+				function fill(n) {
+					var src = [];
+					for( var i=0 ; i<n ; src.push(i++) ) {}
+					return src;
+				}
+
+				function shuffle(o) {
+					for(var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
+					return o;
+				}
+
+				function makeDepends(step,count) {
+					var deps = [];
+					if( count <= step ) {
+						var src = shuffle( fill(step) );
+						while( count-- ) {
+							deps.push(makeTaskName(src.shift()));
+						}
+					}
+					return deps;
+				}
+				return {
+					"name": makeTaskName(step),
+					"command": "python ./code/big_run/takeaction.py",
+					"container_image": "appsoma/wspython:latest",
+//					"inputs": {
+//					},
+					"environment": {
+						"BR_STEP": step,
+						"BR_FAIL": fail_step
+					},
+					"requirements": {
+						"cpus": 0.1,
+						"mem": 32,
+						"disk": 0
+					},
+					"depends_on": makeDepends(step,randomInt(Math.min(6,step)))
+				}
+			}
+
+			$("#main-form").submit( function() {
+				$(this).find('fieldset').prop('disabled',true);
+				var params = welder.formToObject( this );
+				params.fail_step = parseInt(params.fail_step);
+				var workload = {
+					"app_folder_name": "bigrun",
+					"name": "big_run",
+					"params": params,
+					"tasks": []
+				};
+				for( var i=0 ; i<30 ; ++i ) {
+					workload.tasks.push( makeTask(i,params.fail_step) );
+				}
+
+				welder.ajax.postRun(workload);
+
+				return false;
+			});
+		});
+	</script>
+
+</body>
