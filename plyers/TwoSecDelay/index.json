@@ -1,0 +1,10 @@
+{
+    "name": "TwoSecDelay",
+    "creator": "ken",
+    "plyerFileName": "TwoSecDelay.java",
+    "description": "A plyer that takes two seconds to process",
+    "serviceName": "twosecdelay-plyer",
+    "language": "java",
+    "cpus": 0.1,
+    "mem": 200
+}
