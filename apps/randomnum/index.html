@@ -13,13 +13,12 @@
 		var welder = require("welder");
 		require("bootstrap");
 
-		var autoLaunch = null;
 		$(document).ready( function() {
 			var myApp = {
 				name: 'randomnum'
 			};
 
-			function onStart( workloadDef, callback ) {
+			function onStart( info ) {
 				$('#service-status').hide();
 				$("#myform").html(
 					h('form#main-form', { action:'', role:'form' },
@@ -37,12 +36,19 @@
 				welder.handleRunSimilar( "#main-form" );
 
 				$("#main-form").submit( function() {
-					$(this).find('fieldset').prop('disabled',true);
-					var params = welder.formToObject( this );
-					workloadDef.env.MAX_VALUE = params.max_value;
 					$('#myform').hide();
 					$('#service-status').show();
-					callback(workloadDef);
+					$(this).find('fieldset').prop('disabled',true);
+
+					var params = welder.formToObject( this );
+
+					var marathonDef = welder.marathonDefCreate(info.marathon_definition, info.project, info.name );
+					marathonDef.env.MAX_VALUE = params.max_value;
+
+					welder.ajax.marathon( "POST", '/v2/apps', marathonDef, function(err,postResult) {
+						if( err ) return alert(err);
+						// maybe refesh the widget here.
+					});
 				});
 			}
 
