@@ -3,12 +3,12 @@ import os
 import re
 import json
 from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
-sys.path.append( "./code/welder_api" )
-import welder_api
+sys.path.append( "/welder_support/pywelder" )
+import pywelder
 
 port = 8011
 
-external_ip = welder_api.service_address( "external" )
+external_ip = pywelder.service_address( "external" )
 
 html = ""
 html += "<h1>There is a web service available to the outside world at: "+external_ip+"</h1>\n"
