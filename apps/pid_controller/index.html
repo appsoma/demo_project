@@ -1,0 +1,78 @@
+<!doctype html>
+<head>
+	<script src="/welder_assets/js/welder_widgets.js"></script>
+	<script src="https://www.google.com/jsapi"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="/welder_assets/css/welder_widgets.css">
+</head>
+<body>
+	<script type="text/javascript">
+		var $ = jQuery = require("jquery");
+		var h = require("hyperscript");
+		var welder = require("welder");
+		require("bootstrap");
+
+		$(document).ready( function() {
+
+			var lagChart;
+			var scalingChart;
+			var lagDataTable;
+			var scalingDataTable;
+			var lagOptions = {
+				hAxis: {
+					title: 'Time'
+				},
+				vAxis: {
+					title: ''
+				}
+			}
+			var scalingOptions = {
+				hAxis: {
+					title: 'Time'
+				},
+				vAxis: {
+					title: ''
+				},
+				isStacked: true
+			}
+
+			function renderLagChart( info ) {
+				lagDataTable.addRow([
+					info.when,
+					info.sumLag
+				]);
+				scalingDataTable.addRow([
+					info.when,
+					info.runningTasks,
+					info.stagingTasks
+				]);
+				lagChart.draw(lagDataTable,lagOptions);
+				scalingChart.draw(scalingDataTable,scalingOptions);
+			}
+
+			google.load( 'visualization', '1.1', {
+				packages:['line'],
+				callback:function() {
+					lagDataTable = new google.visualization.DataTable();
+					lagDataTable.addColumn( 'number', 'Time' );
+					lagDataTable.addColumn( 'number', 'Lag' );
+					scalingDataTable = new google.visualization.DataTable();
+					scalingDataTable.addColumn( 'number', 'Time' );
+					scalingDataTable.addColumn( 'number', 'Running' );
+					scalingDataTable.addColumn( 'number', 'Staging' );
+					lagChart = new google.visualization.LineChart( $('#lag-chart',selector)[0] );
+					scalingChart = new google.visualization.AreaChart( $('#scaling-chart',selector)[0] );
+				}
+			});
+
+			$("body").append(
+				h('div',
+					h('div#lag-chart'),
+					h('div#scaling-chart')
+				)
+			);
+		});
+	</script>
+</body>
+
