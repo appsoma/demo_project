@@ -19,48 +19,121 @@
 					h('div#lag-chart'),
 					h('div#scaling-chart'),
 					h('div#controller-output-chart'),
-					h('div',
-						h('div.form-horizontal',
-							h('div.form-group',
-								h('label.col-sm-2.control-label','Ingress'),
-								h('div.col-sm-2',
-									h('input.form-control#ingress',{type:'number',min:0,max:100})
+					h('div.container',
+						h('div',
+							h('span','Normalized Error Integral:'),
+							h('span#normalized-error-integral')
+						),
+						h('div',
+							h('span','Normalized Idle Integral:'),
+							h('span#idle-integral')
+						)
+					),
+					h('div.container',
+						h('div.row',
+							h('div.col-xs-4',
+								h('div.row',
+									h('h2','Parameters'),
+									h('div.form-horizontal',
+										h('div.form-group',
+											h('label.col-xs-3.control-label','Kp'),
+											h('div.col-xs-5',
+												h('input.form-control#Kp',{type:'number'})
+											)
+										),
+										h('div.form-group',
+											h('label.col-xs-3.control-label','Ki'),
+											h('div.col-xs-5',
+												h('input.form-control#Ki',{type:'number'})
+											)
+										),
+										h('div.form-group',
+											h('label.col-xs-3.control-label','Kd'),
+											h('div.col-xs-5',
+												h('input.form-control#Kd',{type:'number'})
+											)
+										),
+										h('div.form-group',
+											h('label.col-xs-3.control-label','Kq'),
+											h('div.col-xs-5',
+												h('input.form-control#Kq',{type:'number'})
+											)
+										),
+										h('div.form-group',
+											h('label.col-xs-3.control-label',''),
+											h('div.col-xs-5',
+												h('button.form-control.btn.btn-default#set','Set')
+											)
+										)
+									)
 								)
 							),
-							h('div.form-group',
-								h('label.col-sm-2.control-label','Kp'),
-								h('div.col-sm-2',
-									h('input.form-control#Kp',{type:'number'})
+							h('div.col-xs-4',
+								h('div.row',
+									h('h2','Live simulation'),
+									h('div.form-horizontal',
+										h('div.form-group',
+											h('label.col-xs-3.control-label','Ingress'),
+											h('div.col-xs-5',
+												h('input.form-control#ingress',{type:'number',min:0,max:100})
+											)
+										),
+										h('div.form-group',
+											h('label.col-xs-3.control-label',''),
+											h('div.col-xs-5',
+												h('button.form-control.btn.btn-default#start','Start/Set')
+											)
+										),
+										h('div.form-group',
+											h('label.col-xs-3.control-label',''),
+											h('div.col-xs-5',
+												h('button.form-control.btn.btn-default#reset','Reset')
+											)
+										)
+									)
 								)
 							),
-							h('div.form-group',
-								h('label.col-sm-2.control-label','Ki'),
-								h('div.col-sm-2',
-									h('input.form-control#Ki',{type:'number'})
-								)
-							),
-							h('div.form-group',
-								h('label.col-sm-2.control-label','Kd'),
-								h('div.col-sm-2',
-									h('input.form-control#Kd',{type:'number'})
-								)
-							),
-							h('div.form-group',
-								h('label.col-sm-2.control-label',''),
-								h('div.col-sm-2',
-									h('button.form-control.btn.btn-default#set','Set')
-								)
-							),
-							h('div.form-group',
-								h('label.col-sm-2.control-label',''),
-								h('div.col-sm-2',
-									h('button.form-control.btn.btn-default#reset','Reset')
+							h('div.col-xs-4',
+								h('h2','Generate a trace'),
+								h('div.form-horizontal',
+									h('div.form-group',
+										h('label.col-xs-3.control-label','Mean'),
+										h('div.col-xs-5',
+											h('input.form-control#mean',{type:'number'})
+										)
+									),
+									h('div.form-group',
+										h('label.col-xs-3.control-label','Variance'),
+										h('div.col-xs-5',
+											h('input.form-control#variance',{type:'number'})
+										)
+									),
+									h('div.form-group',
+										h('label.col-xs-3.control-label','Burstiness'),
+										h('div.col-xs-5',
+											h('input.form-control#burstiness',{type:'number'})
+										)
+									),
+									h('div.form-group',
+										h('label.col-xs-3.control-label',''),
+										h('div.col-xs-5',
+											h('button.form-control.btn.btn-default#create-trace','Create trace')
+										)
+									)
 								)
 							)
 						)
 					)
 				)
 			);
+
+			function setUi( parameters, ingress ) {
+				$('#Kp').val( parameters.Kp );
+				$('#Ki').val( parameters.Ki );
+				$('#Kd').val( parameters.Kd );
+				$('#Kq').val( parameters.Kq );
+				$('#ingress').val( ingress );
+			}
 
 			var lagDataTable;
 			var scalingDataTable;
@@ -105,6 +178,8 @@
 				controllerOutputDataTable = new google.visualization.DataTable();
 				controllerOutputDataTable.addColumn( 'number', 'Time' );
 				controllerOutputDataTable.addColumn( 'number', 'PID Output' );
+				controllerOutputDataTable.addColumn( 'number', 'Ingress' );
+				controllerOutputDataTable.addColumn( 'number', 'Idle' );
 				lagChart = new google.visualization.LineChart( $('#lag-chart')[0] );
 				scalingChart = new google.visualization.AreaChart( $('#scaling-chart')[0] );
 				controllerOutputChart = new google.visualization.LineChart( $('#controller-output-chart')[0] );
@@ -112,10 +187,13 @@
 
 			google.load( 'visualization', 1, {
 				packages:['corechart','line'],
-				callback:resetCharts
+				callback:function() {
+					resetCharts();
+					renderCharts();
+				}
 			});
 
-			function renderCharts( info ) {
+			function addChartRows( info ) {
 				lagDataTable.addRow([
 					info.when,
 					info.sumLag
@@ -127,71 +205,98 @@
 				]);
 				controllerOutputDataTable.addRow([
 					info.when,
-					info.controllerOutput
+					info.controllerOutput,
+					info.ingress,
+					info.idle
 				]);
+			}
+
+			function renderCharts() {
 				lagChart.draw(lagDataTable,lagOptions);
 				scalingChart.draw(scalingDataTable,scalingOptions);
 				controllerOutputChart.draw(controllerOutputDataTable,controllerOutputOptions);
 			}
 
-			function simulation() {
+			function renderStats( normalizedErrorIntegral, idleIntegral ) {
+				$('#normalized-error-integral').text( Number(normalizedErrorIntegral).toFixed(2) );
+				$('#idle-integral').text( Number(idleIntegral).toFixed(2) );
+			}
+
+			function uiGetFloat( selector ) {
+				var v = parseFloat( $(selector).val() );
+				if( isNaN(v) ) v = 0;
+				return v;
+			}
+
+			function uiGetInt( selector ) {
+				var v = parseInt( $(selector).val() );
+				if( isNaN(v) ) v = 0;
+				return v;
+			}
+
+			var trace;
+
+			$('#create-trace').click( function() {
+				var mean = uiGetFloat( '#mean' );
+				var variance = uiGetFloat( '#variance' );
+				var burstiness = uiGetFloat( '#burstiness' );
+				trace = generateTrace( mean, variance, burstiness );
+				simulation( trace );
+			});
+
+			var parameters = {
+				Kp: 0.3,
+				Ki: 0.02,
+				Kd: 0.1,
+				Kq: 0.01
+			}
+			var ingress = 0;
+
+			setUi( parameters, ingress );
+		
+			var simulationInterval;
+
+			function simulation( trace ) {
+				resetCharts();
+				clearInterval( simulationInterval );
+				simulationInterval = null;
+
 				var when = 0;
-				var runningTasks =0;
+				var runningTasks = 0;
 				var stagingTasks = 0;
 				var queuedMessages = 0;
 				var stagingStart = 0;
 				var ticksToStage = 10;
-
 				var integral = 0;
 				var previousErr = 0;
-				var ingress = 0;
-				var Kp = 0;
-				var Ki = 0;
-				var Kd = 0;
+				var totalErrorIntegral = 0;
+				var idleIntegral = 0;
 
-				$("#set").click( function() {
-					ingress = parseInt( $('#ingress').val() );
-					if( isNaN(ingress) ) ingress = 0;
-
-					Kp = parseFloat( $('#Kp').val() );
-					if( isNaN(Kp) ) Kp = 0;
-
-					Ki = parseFloat( $('#Ki').val() );
-					if( isNaN(Ki) ) Ki = 0;
-
-					Kd = parseFloat( $('#Kd').val() );
-					if( isNaN(Kd) ) Kd = 0;
-				});
-
-				$("#reset").click( function() {
-					resetCharts();
-					when = 0;
-					runningTasks =0;
-					stagingTasks = 0;
-					queuedMessages = 0;
-					integral = 0;
-					previousErr = 0;
-				});
-
-				function pidController( err, Kp, Ki, Kd ) {
+				function pidController( err, parameters ) {
+					totalErrorIntegral += err;
+					integral *= 1 - parameters.Kq;
 					integral += err;
 					var derivative = err - previousErr;
-					var output = Kp * err + Ki * integral + Kd * derivative;
+					var output = parameters.Kp * err + parameters.Ki * integral + parameters.Kd * derivative;
 					previousErr = err;
 					return output;
 				}
 
-				function tick() {
-					when += 1;
-
+				function tick( ingress ) {
 					// ingress adds to the queue
 					queuedMessages += ingress;
 
 					// running tasks removes from queue at a constant rate
-					queuedMessages = Math.max( 0, queuedMessages - runningTasks*1 );
+					queuedMessages = Math.max( 0, queuedMessages - (runningTasks+stagingTasks) );
 
-					var output = pidController( queuedMessages, Kp, Ki, Kd );
-					var toRun = Math.max( 1, Math.floor( output + 0.5 ) );
+					var output = pidController( queuedMessages, parameters );
+					var toRun = Math.max( 1, Math.floor( output + 1.5 ) );
+
+					var idle = 0;
+					if( queuedMessages == 0 ) {
+						idle = Math.max( 0, runningTasks - ingress );
+						idleIntegral += idle;
+					}
 
 					if( toRun != runningTasks && stagingTasks == 0 ) {
 						// Ok to change number of tasks
@@ -207,23 +312,174 @@
 						}
 					}
 
-					renderCharts({
+					addChartRows({
 						when: when,
 						sumLag: queuedMessages,
 						runningTasks: runningTasks,
 						stagingTasks: stagingTasks,
-						controllerOutput: output
+						controllerOutput: output,
+						ingress: ingress,
+						idle: idle
 					});
+
+					if( ! trace ) {
+						renderCharts();
+					}
+
+					when += 1;
 				}
 
-				var tickInterval = setInterval( tick, 500 );
+				if( trace ) {
+					for( var i=0; i<trace.length; i++ ) {
+						tick( trace[i] );
+					}
+					renderCharts();
+					renderStats( totalErrorIntegral / when, idleIntegral / when );
+				}
+				else {
+					simulationInterval = setInterval( function() {
+						tick( ingress );
+						renderCharts();
+						renderStats( totalErrorIntegral / when, idleIntegral / when );
+					}, 200 );
+				}
 			}
 
-			simulation();
+			$("#set").click( function() {
+				parameters = {
+					Kp: uiGetFloat( '#Kp' ),
+					Ki: uiGetFloat( '#Ki' ),
+					Kd: uiGetFloat( '#Kd' ),
+					Kq: uiGetFloat( '#Kq' )
+				}
+				if( ! simulationInterval ) {
+					// Re-run the current trace with the new parameters
+					simulation( trace );
+				}
+			});
 
+			$("#start").click( function() {
+				ingress = uiGetInt( '#ingress' );
+				if( ! simulationInterval ) {
+					simulation( null );
+				}
+			});
+
+			$("#reset").click( function() {
+				simulation( null );
+			});
+
+			function Ziggurat() {
+				var jsr = 123456789;
+				var wn = Array(128);
+				var fn = Array(128);
+				var kn = Array(128);
+
+				function RNOR() {
+					var hz = SHR3();
+					var iz = hz & 127;
+					return (Math.abs(hz) < kn[iz]) ? hz * wn[iz] : nfix(hz, iz);
+				}
+
+				this.nextGaussian = function() {
+					return RNOR();
+				}
+
+				function nfix(hz, iz) {
+					var r = 3.442619855899;
+					var r1 = 1.0 / r;
+					var x;
+					var y;
+					while(true) {
+						x = hz * wn[iz];
+						if( iz == 0 ) {
+							x = (-Math.log(UNI()) * r1); 
+							y = -Math.log(UNI());
+							while( y + y < x * x) {
+								x = (-Math.log(UNI()) * r1); 
+								y = -Math.log(UNI());
+							}
+							return ( hz > 0 ) ? r+x : -r-x;
+						}
+
+						if( fn[iz] + UNI() * (fn[iz-1] - fn[iz]) < Math.exp(-0.5 * x * x) ) {
+							return x;
+						}
+						hz = SHR3();
+						iz = hz & 127;
+
+						if( Math.abs(hz) < kn[iz]) {
+							return (hz * wn[iz]);
+						}
+					}
+				}
+
+				function SHR3() {
+					var jz = jsr;
+					var jzr = jsr;
+					jzr ^= (jzr << 13);
+					jzr ^= (jzr >>> 17);
+					jzr ^= (jzr << 5);
+					jsr = jzr;
+					return (jz+jzr) | 0;
+				}
+
+				function UNI() {
+					return 0.5 * (1 + SHR3() / -Math.pow(2,31));
+				}
+
+				function zigset() {
+					// seed generator based on current time
+					jsr ^= new Date().getTime();
+
+					var m1 = 2147483648.0;
+					var dn = 3.442619855899;
+					var tn = dn;
+					var vn = 9.91256303526217e-3;
+
+					var q = vn / Math.exp(-0.5 * dn * dn);
+					kn[0] = Math.floor((dn/q)*m1);
+					kn[1] = 0;
+
+					wn[0] = q / m1;
+					wn[127] = dn / m1;
+
+					fn[0] = 1.0;
+					fn[127] = Math.exp(-0.5 * dn * dn);
+
+					for(var i = 126; i >= 1; i--) {
+						dn = Math.sqrt(-2.0 * Math.log( vn / dn + Math.exp( -0.5 * dn * dn)));
+						kn[i+1] = Math.floor((dn/tn)*m1);
+						tn = dn;
+						fn[i] = Math.exp(-0.5 * dn * dn);
+						wn[i] = dn / m1;
+					}
+				}
+				zigset();
+			}
+
+			function generateTrace( mean, variance, burstiness ) {
+				var z = new Ziggurat();
+				var trace = [];
+				var inBurst = false;
+				for( var i=0; i<200; i++ ) {
+					var v = z.nextGaussian();
+					v = Math.max( 0, Math.floor(v*variance + mean + 0.5) );
+					if( inBurst ) {
+						v += mean * 5;
+						if( Math.random() < 0.2 ) {
+							inBurst = false;
+						}
+					}
+					else {
+						if( Math.random() < burstiness ) {
+							inBurst = true;
+						}
+					}
+					trace.push( v );
+				}
+				return trace;
+			}
 		});
 	</script>
 </body>
-
-// It has no sense of a steady state. I mean it needs at least
-// The current ingress rate times the mean time it takes to run a task
