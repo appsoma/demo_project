@@ -14,11 +14,60 @@
 		require("bootstrap");
 
 		$(document).ready( function() {
+			$("body").append(
+				h('div',
+					h('div#lag-chart'),
+					h('div#scaling-chart'),
+					h('div#controller-output-chart'),
+					h('div',
+						h('div.form-horizontal',
+							h('div.form-group',
+								h('label.col-sm-2.control-label','Ingress'),
+								h('div.col-sm-2',
+									h('input.form-control#ingress',{type:'number',min:0,max:100})
+								)
+							),
+							h('div.form-group',
+								h('label.col-sm-2.control-label','Kp'),
+								h('div.col-sm-2',
+									h('input.form-control#Kp',{type:'number'})
+								)
+							),
+							h('div.form-group',
+								h('label.col-sm-2.control-label','Ki'),
+								h('div.col-sm-2',
+									h('input.form-control#Ki',{type:'number'})
+								)
+							),
+							h('div.form-group',
+								h('label.col-sm-2.control-label','Kd'),
+								h('div.col-sm-2',
+									h('input.form-control#Kd',{type:'number'})
+								)
+							),
+							h('div.form-group',
+								h('label.col-sm-2.control-label',''),
+								h('div.col-sm-2',
+									h('button.form-control.btn.btn-default#set','Set')
+								)
+							),
+							h('div.form-group',
+								h('label.col-sm-2.control-label',''),
+								h('div.col-sm-2',
+									h('button.form-control.btn.btn-default#reset','Reset')
+								)
+							)
+						)
+					)
+				)
+			);
 
-			var lagChart;
-			var scalingChart;
 			var lagDataTable;
 			var scalingDataTable;
+			var controllerOutputDataTable;
+			var lagChart;
+			var scalingChart;
+			var controllerOutputChart;
 			var lagOptions = {
 				hAxis: {
 					title: 'Time'
@@ -36,8 +85,37 @@
 				},
 				isStacked: true
 			}
+			var controllerOutputOptions = {
+				hAxis: {
+					title: 'Time'
+				},
+				vAxis: {
+					title: ''
+				}
+			}
 
-			function renderLagChart( info ) {
+			function resetCharts() {
+				lagDataTable = new google.visualization.DataTable();
+				lagDataTable.addColumn( 'number', 'Time' );
+				lagDataTable.addColumn( 'number', 'Lag' );
+				scalingDataTable = new google.visualization.DataTable();
+				scalingDataTable.addColumn( 'number', 'Time' );
+				scalingDataTable.addColumn( 'number', 'Running' );
+				scalingDataTable.addColumn( 'number', 'Staging' );
+				controllerOutputDataTable = new google.visualization.DataTable();
+				controllerOutputDataTable.addColumn( 'number', 'Time' );
+				controllerOutputDataTable.addColumn( 'number', 'PID Output' );
+				lagChart = new google.visualization.LineChart( $('#lag-chart')[0] );
+				scalingChart = new google.visualization.AreaChart( $('#scaling-chart')[0] );
+				controllerOutputChart = new google.visualization.LineChart( $('#controller-output-chart')[0] );
+			}
+
+			google.load( 'visualization', 1, {
+				packages:['corechart','line'],
+				callback:resetCharts
+			});
+
+			function renderCharts( info ) {
 				lagDataTable.addRow([
 					info.when,
 					info.sumLag
@@ -47,32 +125,105 @@
 					info.runningTasks,
 					info.stagingTasks
 				]);
+				controllerOutputDataTable.addRow([
+					info.when,
+					info.controllerOutput
+				]);
 				lagChart.draw(lagDataTable,lagOptions);
 				scalingChart.draw(scalingDataTable,scalingOptions);
+				controllerOutputChart.draw(controllerOutputDataTable,controllerOutputOptions);
 			}
 
-			google.load( 'visualization', '1.1', {
-				packages:['line'],
-				callback:function() {
-					lagDataTable = new google.visualization.DataTable();
-					lagDataTable.addColumn( 'number', 'Time' );
-					lagDataTable.addColumn( 'number', 'Lag' );
-					scalingDataTable = new google.visualization.DataTable();
-					scalingDataTable.addColumn( 'number', 'Time' );
-					scalingDataTable.addColumn( 'number', 'Running' );
-					scalingDataTable.addColumn( 'number', 'Staging' );
-					lagChart = new google.visualization.LineChart( $('#lag-chart',selector)[0] );
-					scalingChart = new google.visualization.AreaChart( $('#scaling-chart',selector)[0] );
-				}
-			});
+			function simulation() {
+				var when = 0;
+				var runningTasks =0;
+				var stagingTasks = 0;
+				var queuedMessages = 0;
+				var stagingStart = 0;
+				var ticksToStage = 10;
 
-			$("body").append(
-				h('div',
-					h('div#lag-chart'),
-					h('div#scaling-chart')
-				)
-			);
+				var integral = 0;
+				var previousErr = 0;
+				var ingress = 0;
+				var Kp = 0;
+				var Ki = 0;
+				var Kd = 0;
+
+				$("#set").click( function() {
+					ingress = parseInt( $('#ingress').val() );
+					if( isNaN(ingress) ) ingress = 0;
+
+					Kp = parseFloat( $('#Kp').val() );
+					if( isNaN(Kp) ) Kp = 0;
+
+					Ki = parseFloat( $('#Ki').val() );
+					if( isNaN(Ki) ) Ki = 0;
+
+					Kd = parseFloat( $('#Kd').val() );
+					if( isNaN(Kd) ) Kd = 0;
+				});
+
+				$("#reset").click( function() {
+					resetCharts();
+					when = 0;
+					runningTasks =0;
+					stagingTasks = 0;
+					queuedMessages = 0;
+					integral = 0;
+					previousErr = 0;
+				});
+
+				function pidController( err, Kp, Ki, Kd ) {
+					integral += err;
+					var derivative = err - previousErr;
+					var output = Kp * err + Ki * integral + Kd * derivative;
+					previousErr = err;
+					return output;
+				}
+
+				function tick() {
+					when += 1;
+
+					// ingress adds to the queue
+					queuedMessages += ingress;
+
+					// running tasks removes from queue at a constant rate
+					queuedMessages = Math.max( 0, queuedMessages - runningTasks*1 );
+
+					var output = pidController( queuedMessages, Kp, Ki, Kd );
+					var toRun = Math.max( 1, Math.floor( output + 0.5 ) );
+
+					if( toRun != runningTasks && stagingTasks == 0 ) {
+						// Ok to change number of tasks
+						stagingTasks = toRun - runningTasks;
+						stagingStart = when;
+					}
+					if( stagingTasks != 0 ) {
+						// ticks to boot or shutdown a machine
+						if( when - stagingStart > ticksToStage ) {
+							runningTasks += stagingTasks;
+							stagingTasks = 0;
+							stagingStart = 0;
+						}
+					}
+
+					renderCharts({
+						when: when,
+						sumLag: queuedMessages,
+						runningTasks: runningTasks,
+						stagingTasks: stagingTasks,
+						controllerOutput: output
+					});
+				}
+
+				var tickInterval = setInterval( tick, 500 );
+			}
+
+			simulation();
+
 		});
 	</script>
 </body>
 
+// It has no sense of a steady state. I mean it needs at least
+// The current ingress rate times the mean time it takes to run a task
