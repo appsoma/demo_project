@@ -60,6 +60,12 @@
 											)
 										),
 										h('div.form-group',
+											h('label.col-xs-3.control-label','Kw'),
+											h('div.col-xs-5',
+												h('input.form-control#Kw',{type:'number'})
+											)
+										),
+										h('div.form-group',
 											h('label.col-xs-3.control-label',''),
 											h('div.col-xs-5',
 												h('button.form-control.btn.btn-default#set','Set')
@@ -132,6 +138,7 @@
 				$('#Ki').val( parameters.Ki );
 				$('#Kd').val( parameters.Kd );
 				$('#Kq').val( parameters.Kq );
+				$('#Kw').val( parameters.Kw );
 				$('#ingress').val( ingress );
 			}
 
@@ -245,10 +252,11 @@
 			});
 
 			var parameters = {
-				Kp: 0.3,
-				Ki: 0.02,
-				Kd: 0.1,
-				Kq: 0.01
+				Kp: 0.005,
+				Ki: 0.0,
+				Kd: 0.0,
+				Kq: 0.0,
+				Kw: 40
 			}
 			var ingress = 0;
 
@@ -262,7 +270,7 @@
 				simulationInterval = null;
 
 				var when = 0;
-				var runningTasks = 0;
+				var runningTasks = 1;
 				var stagingTasks = 0;
 				var queuedMessages = 0;
 				var stagingStart = 0;
@@ -271,6 +279,7 @@
 				var previousErr = 0;
 				var totalErrorIntegral = 0;
 				var idleIntegral = 0;
+				var meanWindow = [];
 
 				function pidController( err, parameters ) {
 					totalErrorIntegral += err;
@@ -289,7 +298,26 @@
 					// running tasks removes from queue at a constant rate
 					queuedMessages = Math.max( 0, queuedMessages - (runningTasks+stagingTasks) );
 
+					// COMPUTE the window Mean over the last Kw samples
+					if( parameters.Kw > 0 ) {
+						meanWindow[when % parameters.Kw] = ingress;
+					}
+
+					var sumCount = 0;
+					var sum = 0;
+					for( var i=0; i<parameters.Kw; i++ ) {
+						var v = meanWindow[i];
+						if( ! isNaN(v) ) {
+							sum += v;
+							sumCount += 1;
+						}
+					}
+
 					var output = pidController( queuedMessages, parameters );
+					
+					// ADD in the base-line mean
+					output += sum / sumCount;
+
 					var toRun = Math.max( 1, Math.floor( output + 1.5 ) );
 
 					var idle = 0;
@@ -320,6 +348,8 @@
 						controllerOutput: output,
 						ingress: ingress,
 						idle: idle
+						//idle: sum / sumCount
+
 					});
 
 					if( ! trace ) {
@@ -350,12 +380,17 @@
 					Kp: uiGetFloat( '#Kp' ),
 					Ki: uiGetFloat( '#Ki' ),
 					Kd: uiGetFloat( '#Kd' ),
-					Kq: uiGetFloat( '#Kq' )
+					Kq: uiGetFloat( '#Kq' ),
+					Kw: uiGetFloat( '#Kw' )
 				}
 				if( ! simulationInterval ) {
 					// Re-run the current trace with the new parameters
 					simulation( trace );
 				}
+				// @TODO: Add a history
+				//$('#history').append(
+				//	parameters+' '+
+				//)
 			});
 
 			$("#start").click( function() {
