@@ -1,0 +1,10 @@
+{
+	"name": "InputPlyer",
+	"creator": "ken",
+	"description": "A demo plyer with inputs at start",
+	"language": "java",
+	"marathon_definition": {
+		"cpus": 0.1,
+		"mem": 200
+	}
+}

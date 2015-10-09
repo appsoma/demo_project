@@ -16,7 +16,7 @@ public class DemoPlyer extends Plyer {
 		JSONObject eventOut = new JSONObject();
 		eventOut.put( "note", note );
 		eventOut.put( "event", eventIn );
-		
+
 		this.trace( eventOut );
 	}
 }

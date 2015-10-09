@@ -1,10 +1,12 @@
 {
-    "name": "DemoPlyer",
-    "creator": "ken",
-    "plyerFileName": "DemoPlyer.java",
-    "description": "A demo plyer",
-    "serviceName": "demoplyer-plyer",
-    "language": "java",
-    "cpus": 0.1,
-    "mem": 200
+	"name": "DemoPlyer",
+	"creator": "ken",
+	"plyerFileName": "DemoPlyer.java",
+	"description": "A demo plyer",
+	"serviceName": "demoplyer",
+	"language": "java",
+	"marathon_definition": {
+		"cpus": 0.1,
+		"mem": 200
+	}
 }

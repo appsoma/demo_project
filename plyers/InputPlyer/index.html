@@ -15,7 +15,7 @@
 
 		$(document).ready( function() {
 			var myApp = {
-				name: 'randomnum'
+				name: 'InputPlyer'
 			};
 
 			function onStart( info ) {
@@ -24,8 +24,8 @@
 					h('form#main-form', { action:'', role:'form' },
 						h('fieldset',
 							h('div.form-group',
-								h('label','What is the maximum random integer value you wish to generate?'),
-								h('input.form-control',{type:'number',name:'max_value',value:100,style:{width:'100px'}})
+								h('label','Ingress Topic?'),
+								h('input.form-control',{type:'string',name:'ingress_id',value:'customer1_ingress',style:{width:'300px'}})
 							),
 							h('button.btn.btn-primary',{type:'submit'},"Submit")
 						)
@@ -41,10 +41,21 @@
 					$(this).find('fieldset').prop('disabled',true);
 
 					var params = welder.formToObject( this );
-					var marathonDef = welder.marathonDefCreate(info.marathon_definition, info.project, info.name );
-					marathonDef.env.MAX_VALUE = params.max_value;
+					var data = {
+						yakMode: "kayak",
+						plyerApiPath: null
+					};
 
-					welder.ajax.marathon( "POST", '/v2/apps', marathonDef, function(postResult) {
+					welder.ajax.apiv1( "GET", welder.getCurrentProjectFromUrl(), '/plyers/'+myApp.name, data, function(info) {
+						var marathonDef = $.extend( {}, info.marathon_definition_default, info.marathon_definition );
+						marathonDef.env.YAK_INGRESS_ID = params.ingress_id;
+						marathonDef.container.volumes.push({
+							"hostPath": "/etc",
+							"containerPath": "/host_etc",
+							"mode": "RO"
+						});
+
+						welder.ajax.marathon( "POST", '/v2/apps', marathonDef);
 					});
 					return false;
 				});
@@ -52,6 +63,7 @@
 
 			var service = welder.widgets.serviceStatus( "#service-status", {
 				project: welder.getCurrentProjectFromUrl(),
+				appDir: 'plyers',
 				serviceName: myApp.name,
 				onStart: onStart
 			});
@@ -59,9 +71,10 @@
 
 	</script>
 	<div class='container'>
-		<h1>Random Number Service Demo</h1>
-		<h4>A demonstration of how to launch services with custom workload definitions.</h4>
+		<h1>Demo Plyer</h1>
+		<h4>A demonstration of a java-based plyer that accepts input.</h4>
 		<div id='myform'></div>
+		<div id='plyer-status'></div>
 		<div id='service-status'></div>
 	</div>
 </body>
