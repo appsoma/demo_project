@@ -46,16 +46,18 @@
 						plyerApiPath: null
 					};
 
-					welder.ajax.apiv1( "GET", welder.getCurrentProjectFromUrl(), '/plyers/'+myApp.name, data, function(info) {
-						var marathonDef = $.extend( {}, info.marathon_definition_default, info.marathon_definition );
-						marathonDef.env.YAK_INGRESS_ID = params.ingress_id;
-						marathonDef.container.volumes.push({
-							"hostPath": "/etc",
-							"containerPath": "/host_etc",
-							"mode": "RO"
-						});
+					welderUtil.ajax.apiv1( "PUT", welder.getCurrentProjectFromUrl(), '/plyers/'+myApp.name, {}, function(compileResult) {
+						welder.ajax.apiv1( "GET", welder.getCurrentProjectFromUrl(), '/plyers/'+myApp.name, data, function(info) {
+							var marathonDef = $.extend( {}, info.marathon_definition_default, info.marathon_definition );
+							marathonDef.env.YAK_INGRESS_ID = params.ingress_id;
+							marathonDef.container.volumes.push({
+								"hostPath": "/etc",
+								"containerPath": "/host_etc",
+								"mode": "RO"
+							});
 
-						welder.ajax.marathon( "POST", '/v2/apps', marathonDef);
+							welder.ajax.marathon( "POST", '/v2/apps', marathonDef);
+						});
 					});
 					return false;
 				});

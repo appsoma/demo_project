@@ -1,7 +1,7 @@
 import com.appsoma.Pump.Plyer;
 import org.json.simple.JSONObject;
 
-public class DemoPlyer extends Plyer {
+public class InputPlyer extends Plyer {
 	public Boolean trigger( JSONObject event ) {
 		return true;
 	}
