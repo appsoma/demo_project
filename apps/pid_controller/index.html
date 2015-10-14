@@ -21,11 +21,11 @@
 					h('div#controller-output-chart'),
 					h('div.container',
 						h('div',
-							h('span','Normalized Error Integral:'),
+							h('span','Normalized Lag Integral (message processing delays):'),
 							h('span#normalized-error-integral')
 						),
 						h('div',
-							h('span','Normalized Idle Integral:'),
+							h('span','Normalized Idle Integral (extra machine costs):'),
 							h('span#idle-integral')
 						)
 					),
@@ -129,7 +129,8 @@
 								)
 							)
 						)
-					)
+					),
+					h('div#history')
 				)
 			);
 
@@ -224,9 +225,9 @@
 				controllerOutputChart.draw(controllerOutputDataTable,controllerOutputOptions);
 			}
 
-			function renderStats( normalizedErrorIntegral, idleIntegral ) {
-				$('#normalized-error-integral').text( Number(normalizedErrorIntegral).toFixed(2) );
-				$('#idle-integral').text( Number(idleIntegral).toFixed(2) );
+			function renderStats( errorMetrics ) {
+				$('#normalized-error-integral').text( Number(errorMetrics.normalizedErrorIntegral).toFixed(2) );
+				$('#idle-integral').text( Number(errorMetrics.normalizedIdleIntegral).toFixed(2) );
 			}
 
 			function uiGetFloat( selector ) {
@@ -263,6 +264,7 @@
 			setUi( parameters, ingress );
 		
 			var simulationInterval;
+			var errorMetrics = {};
 
 			function simulation( trace ) {
 				resetCharts();
@@ -275,6 +277,7 @@
 				var queuedMessages = 0;
 				var stagingStart = 0;
 				var ticksToStage = 10;
+				var ticksToUnstage = 1;
 				var integral = 0;
 				var previousErr = 0;
 				var totalErrorIntegral = 0;
@@ -331,9 +334,18 @@
 						stagingTasks = toRun - runningTasks;
 						stagingStart = when;
 					}
-					if( stagingTasks != 0 ) {
+
+					if( stagingTasks > 0 ) {
 						// ticks to boot or shutdown a machine
 						if( when - stagingStart > ticksToStage ) {
+							runningTasks += stagingTasks;
+							stagingTasks = 0;
+							stagingStart = 0;
+						}
+					}
+					else if( stagingTasks < 0 ) {
+						// ticks to boot or shutdown a machine
+						if( when - stagingStart > ticksToUnstage ) {
 							runningTasks += stagingTasks;
 							stagingTasks = 0;
 							stagingStart = 0;
@@ -364,13 +376,17 @@
 						tick( trace[i] );
 					}
 					renderCharts();
-					renderStats( totalErrorIntegral / when, idleIntegral / when );
+					errorMetrics.normalizedErrorIntegral = totalErrorIntegral / when;
+					errorMetrics.normalizedIdleIntegral = idleIntegral / when;
+					renderStats( errorMetrics );
 				}
 				else {
 					simulationInterval = setInterval( function() {
 						tick( ingress );
 						renderCharts();
-						renderStats( totalErrorIntegral / when, idleIntegral / when );
+						errorMetrics.normalizedErrorIntegral = totalErrorIntegral / when;
+						errorMetrics.normalizedIdleIntegral = idleIntegral / when;
+						renderStats( errorMetrics );
 					}, 200 );
 				}
 			}
@@ -387,10 +403,7 @@
 					// Re-run the current trace with the new parameters
 					simulation( trace );
 				}
-				// @TODO: Add a history
-				//$('#history').append(
-				//	parameters+' '+
-				//)
+				$('#history').append( JSON.stringify(parameters)+" "+JSON.stringify(errorMetrics)+"<br/>" );
 			});
 
 			$("#start").click( function() {
