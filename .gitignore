@@ -1,2 +1,3 @@
 runs/
 .remote-sync.json
+*.class
