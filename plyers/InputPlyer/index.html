@@ -37,16 +37,17 @@
 				welder.handleRunSimilar( "#main-form" );
 
 				$("#main-form").submit( function() {
-					setTimeout(doSubmit,10);
+					var form = this;
+					setTimeout(function() { doSubmit(form); },10);
 					return false;
 				});
 
 				function doSubmit() {
 					$('#myform').hide();
 					$('#service-status').show();
-					$(this).find('fieldset').prop('disabled',true);
+					$(form).find('fieldset').prop('disabled',true);
 
-					var params = welder.formToObject( this );
+					var params = welder.formToObject( form );
 					var data = {
 						yakMode: "kayak",
 						plyerApiPath: null
