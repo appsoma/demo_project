@@ -15,7 +15,8 @@
 
 		$(document).ready( function() {
 			var myApp = {
-				name: 'InputPlyer'
+				name: 'InputPlyer',
+				project: welder.getCurrentProject()
 			};
 
 			function onStart( info ) {
@@ -24,7 +25,7 @@
 					h('form#main-form', { action:'', role:'form' },
 						h('fieldset',
 							h('div.form-group',
-								h('label','Ingress Topic?'),
+								h('label','What topic should be watched for incoming messages?'),
 								h('input.form-control',{type:'string',name:'ingress_id',value:'customer1_ingress',style:{width:'300px'}})
 							),
 							h('button.btn.btn-primary',{type:'submit'},"Submit")
@@ -36,18 +37,26 @@
 				welder.handleRunSimilar( "#main-form" );
 
 				$("#main-form").submit( function() {
+					var form = this;
+					setTimeout(function() { doSubmit(form); },10);
+					return false;
+				});
+
+				function doSubmit() {
 					$('#myform').hide();
 					$('#service-status').show();
-					$(this).find('fieldset').prop('disabled',true);
+					$(form).find('fieldset').prop('disabled',true);
 
-					var params = welder.formToObject( this );
+					var params = welder.formToObject( form );
 					var data = {
 						yakMode: "kayak",
 						plyerApiPath: null
 					};
 
-					welderUtil.ajax.apiv1( "PUT", welder.getCurrentProjectFromUrl(), '/plyers/'+myApp.name, {}, function(compileResult) {
-						welder.ajax.apiv1( "GET", welder.getCurrentProjectFromUrl(), '/plyers/'+myApp.name, data, function(info) {
+					// Compile
+					welder.ajax.apiv1( "PUT", myApp.project, '/plyers/'+myApp.name, {}, function(compileResult) {
+						// Get all info for this plyer
+						welder.ajax.apiv1( "GET", myApp.project, '/plyers/'+myApp.name, data, function(info) {
 							var marathonDef = $.extend( {}, info.marathon_definition_default, info.marathon_definition );
 							marathonDef.env.YAK_INGRESS_ID = params.ingress_id;
 							marathonDef.container.volumes.push({
@@ -55,16 +64,15 @@
 								"containerPath": "/host_etc",
 								"mode": "RO"
 							});
-
+							// Ask marathon to actually start this run
 							welder.ajax.marathon( "POST", '/v2/apps', marathonDef);
 						});
 					});
-					return false;
-				});
+				}
 			}
 
 			var service = welder.widgets.serviceStatus( "#service-status", {
-				project: welder.getCurrentProjectFromUrl(),
+				project: myApp.project,
 				appDir: 'plyers',
 				serviceName: myApp.name,
 				onStart: onStart
