@@ -1,7 +1,0 @@
-{
-	"name": "Service Demo",
-	"bootstrap_icon": "glyphicon-hand-right",
-	"short_description": "Run a simple service.",
-	"description": "",
-	"portal": false
-}
