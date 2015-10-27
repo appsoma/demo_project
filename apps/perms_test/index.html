@@ -1,0 +1,63 @@
+<!doctype html>
+<head>
+	<script src="/welder_assets/js/welder_widgets.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="/welder_assets/css/welder_widgets.css">
+</head>
+<body>
+	<script type="text/javascript">
+		var $ = jQuery = require("jquery");
+		var h = require("hyperscript");
+		var welder = require("welder");
+		require("bootstrap");
+
+		$(document).ready( function() {
+			$("body").append(
+				h('.container',
+					h('h1','Perms Test'),
+					h('h4','Test that permissions get set right in run'),
+					h('.container',
+						h('form#main-form', { action:'', role:'form' },
+							h('fieldset',
+								h('button.btn.btn-primary',{type:'submit'},"Submit")
+							)
+						)
+					)
+				)
+			);
+
+			welder.initWidgetsFromClasses();
+			welder.widgets.poweredBy();
+			welder.handleRunSimilar( "#main-form" );
+
+			$("#main-form").submit( function() {
+				$(this).find('fieldset').prop('disabled',true);
+				var params = welder.formToObject( this );
+
+				welder.ajax.postRun({
+					"app_folder_name": "perms_test",
+					"name": "perms_test",
+					"params": params,
+					"tasks": [
+						{
+							"name": "perms_test",
+							"command": "mkdir -p datasets/perms_test; echo 1 > datasets/perms_test/1",
+							"container_image": "ubuntu",
+							"mounts": {
+								"datasets": "$DATASETS/:rw"
+							},
+							"requirements": {
+								"cpus": 0.1,
+								"mem": 256,
+								"disk": 256
+							}
+						}
+					]
+				});
+				return false;
+			});
+		});
+	</script>
+</body>
+

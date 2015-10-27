@@ -36,33 +36,39 @@
 									h('h2','Parameters'),
 									h('div.form-horizontal',
 										h('div.form-group',
-											h('label.col-xs-3.control-label','Kp'),
+											h('label.col-xs-3.control-label','PID Kp'),
 											h('div.col-xs-5',
 												h('input.form-control#Kp',{type:'number'})
 											)
 										),
 										h('div.form-group',
-											h('label.col-xs-3.control-label','Ki'),
+											h('label.col-xs-3.control-label','PID Ki'),
 											h('div.col-xs-5',
 												h('input.form-control#Ki',{type:'number'})
 											)
 										),
 										h('div.form-group',
-											h('label.col-xs-3.control-label','Kd'),
+											h('label.col-xs-3.control-label','PID Kd'),
 											h('div.col-xs-5',
 												h('input.form-control#Kd',{type:'number'})
 											)
 										),
 										h('div.form-group',
-											h('label.col-xs-3.control-label','Kq'),
+											h('label.col-xs-3.control-label','Capability'),
 											h('div.col-xs-5',
-												h('input.form-control#Kq',{type:'number'})
+												h('input.form-control#capability',{type:'number'})
 											)
 										),
 										h('div.form-group',
-											h('label.col-xs-3.control-label','Kw'),
+											h('label.col-xs-3.control-label','Lag Weight'),
 											h('div.col-xs-5',
-												h('input.form-control#Kw',{type:'number'})
+												h('input.form-control#lag-weight',{type:'number'})
+											)
+										),
+										h('div.form-group',
+											h('label.col-xs-3.control-label','Lag Int. Decay'),
+											h('div.col-xs-5',
+												h('input.form-control#lag-decay',{type:'number'})
 											)
 										),
 										h('div.form-group',
@@ -135,11 +141,12 @@
 			);
 
 			function setUi( parameters, ingress ) {
-				$('#Kp').val( parameters.Kp );
-				$('#Ki').val( parameters.Ki );
-				$('#Kd').val( parameters.Kd );
-				$('#Kq').val( parameters.Kq );
-				$('#Kw').val( parameters.Kw );
+				$('#Kp').val( parameters.pidKp );
+				$('#Ki').val( parameters.pidKi );
+				$('#Kd').val( parameters.pidKd );
+				$('#capability').val( parameters.capability );
+				$('#lag-weight').val( parameters.lagWeight );
+				$('#lag-decay').val( parameters.lagDecay );
 				$('#ingress').val( ingress );
 			}
 
@@ -188,6 +195,7 @@
 				controllerOutputDataTable.addColumn( 'number', 'PID Output' );
 				controllerOutputDataTable.addColumn( 'number', 'Ingress' );
 				controllerOutputDataTable.addColumn( 'number', 'Idle' );
+				controllerOutputDataTable.addColumn( 'number', 'Error' );
 				lagChart = new google.visualization.LineChart( $('#lag-chart')[0] );
 				scalingChart = new google.visualization.AreaChart( $('#scaling-chart')[0] );
 				controllerOutputChart = new google.visualization.LineChart( $('#controller-output-chart')[0] );
@@ -215,7 +223,8 @@
 					info.when,
 					info.controllerOutput,
 					info.ingress,
-					info.idle
+					info.idle,
+					info.error
 				]);
 			}
 
@@ -253,11 +262,12 @@
 			});
 
 			var parameters = {
-				Kp: 0.005,
-				Ki: 0.0,
-				Kd: 0.0,
-				Kq: 0.0,
-				Kw: 40
+				pidKp: 0.1,
+				pidKi: 0.0,
+				pidKd: 0.0,
+				capability: 1.0,
+				lagWeight: 0.2,
+				lagDecay: 0.02
 			}
 			var ingress = 0;
 
@@ -280,16 +290,14 @@
 				var ticksToUnstage = 1;
 				var integral = 0;
 				var previousErr = 0;
-				var totalErrorIntegral = 0;
 				var idleIntegral = 0;
 				var meanWindow = [];
+				var lagIntegral = 0;
 
 				function pidController( err, parameters ) {
-					totalErrorIntegral += err;
-					integral *= 1 - parameters.Kq;
 					integral += err;
 					var derivative = err - previousErr;
-					var output = parameters.Kp * err + parameters.Ki * integral + parameters.Kd * derivative;
+					var output = parameters.pidKp * err + parameters.pidKi * integral + parameters.pidKd * derivative;
 					previousErr = err;
 					return output;
 				}
@@ -299,29 +307,17 @@
 					queuedMessages += ingress;
 
 					// running tasks removes from queue at a constant rate
-					queuedMessages = Math.max( 0, queuedMessages - (runningTasks+stagingTasks) );
+					// @TODO: Add noise to rate at which queued messages are removed
+					queuedMessages = Math.max( 0, queuedMessages - runningTasks );
 
-					// COMPUTE the window Mean over the last Kw samples
-					if( parameters.Kw > 0 ) {
-						meanWindow[when % parameters.Kw] = ingress;
-					}
+					lagIntegral += queuedMessages;
+					lagIntegral *= 1 - parameters.lagDecay;
 
-					var sumCount = 0;
-					var sum = 0;
-					for( var i=0; i<parameters.Kw; i++ ) {
-						var v = meanWindow[i];
-						if( ! isNaN(v) ) {
-							sum += v;
-							sumCount += 1;
-						}
-					}
+					var machinesNeeded = ingress / parameters.capability + parameters.lagWeight * queuedMessages;//lagIntegral;
+					var error = machinesNeeded - (runningTasks + stagingTasks);
+					var output = pidController( error, parameters );
 
-					var output = pidController( queuedMessages, parameters );
-					
-					// ADD in the base-line mean
-					output += sum / sumCount;
-
-					var toRun = Math.max( 1, Math.floor( output + 1.5 ) );
+					var toRun = Math.max( 1, Math.floor( output + 0.5 ) );
 
 					var idle = 0;
 					if( queuedMessages == 0 ) {
@@ -359,9 +355,8 @@
 						stagingTasks: stagingTasks,
 						controllerOutput: output,
 						ingress: ingress,
-						idle: idle
-						//idle: sum / sumCount
-
+						idle: idle,
+						error: error
 					});
 
 					if( ! trace ) {
@@ -376,16 +371,16 @@
 						tick( trace[i] );
 					}
 					renderCharts();
-					errorMetrics.normalizedErrorIntegral = totalErrorIntegral / when;
-					errorMetrics.normalizedIdleIntegral = idleIntegral / when;
+					errorMetrics.normalizedErrorIntegral = 0;//totalErrorIntegral / when;
+					errorMetrics.normalizedIdleIntegral = 0;//idleIntegral / when;
 					renderStats( errorMetrics );
 				}
 				else {
 					simulationInterval = setInterval( function() {
 						tick( ingress );
 						renderCharts();
-						errorMetrics.normalizedErrorIntegral = totalErrorIntegral / when;
-						errorMetrics.normalizedIdleIntegral = idleIntegral / when;
+						errorMetrics.normalizedErrorIntegral = 0;//totalErrorIntegral / when;
+						errorMetrics.normalizedIdleIntegral = 0;//idleIntegral / when;
 						renderStats( errorMetrics );
 					}, 200 );
 				}
@@ -393,11 +388,12 @@
 
 			$("#set").click( function() {
 				parameters = {
-					Kp: uiGetFloat( '#Kp' ),
-					Ki: uiGetFloat( '#Ki' ),
-					Kd: uiGetFloat( '#Kd' ),
-					Kq: uiGetFloat( '#Kq' ),
-					Kw: uiGetFloat( '#Kw' )
+					pidKp: uiGetFloat( '#Kp' ),
+					pidKi: uiGetFloat( '#Ki' ),
+					pidKd: uiGetFloat( '#Kd' ),
+					capability: uiGetFloat( '#capability' ),
+					lagWeight: uiGetFloat( '#lag-weight' ),
+					lagDecay: uiGetFloat( '#lag-decay' )
 				}
 				if( ! simulationInterval ) {
 					// Re-run the current trace with the new parameters
