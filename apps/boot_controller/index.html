@@ -29,7 +29,7 @@
 			var maxNodes = 3;
 			var nodes = [];
 			var taskTypes = [];
-			var taskTypeCount = 1;
+			var taskTypeCount = 2;
 			var duration = 40;
 			var bootTime = 10;
 			var nodePlots = [];
@@ -169,25 +169,27 @@
 				}
 
 				function addChartRows() {
-					_.each( nodes, (node)=>{
+					for( var i=0; i<maxNodes; i++ ) {
+						var node = nodes[i];
 						var countByType = [];
-						for( var i=0; i<taskTypeCount; i++ ) {
+						for( var j=0; j<taskTypeCount; j++ ) {
 							countByType.push(0);
 						}
-						_.each( node.tasks, (taskType)=>{
-							countByType[taskType]++;
-						});
+						if( node ) {
+							_.each( node.tasks, (taskType)=>{
+								countByType[taskType]++;
+							});
+						}
 						countByType.unshift( when );
-						if( ! nodePlots[node.id] ) debugger;
-						nodePlots[node.id].dataTable.addRow( countByType );
-					});
+						nodePlots[i].dataTable.addRow( countByType );
+					}
 				}
 
 				function tick() {
 					// VARY a task count randomly up and down
 					var taskType = taskTypes[ randi(taskTypeCount) ];
-					//taskType.count = Math.max( 1, Math.min( 16, taskType.count + randi(5)-2 ) );
-					taskType.count = Math.max( 1, Math.min( 16, taskType.count + 1 ) );
+					taskType.count = Math.max( 1, Math.min( 16, taskType.count + randi(5)-1 ) );
+					//taskType.count = Math.max( 1, Math.min( 16, taskType.count + 1 ) );
 
 					var runningCountByTaskType = countRunning();
 
