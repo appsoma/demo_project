@@ -10,6 +10,7 @@
 	<script type="text/javascript">
 		var $ = jQuery = require("jquery");
 		var h = require("hyperscript");
+		var _ = require("underscore");
 		var welder = require("welder");
 		require("bootstrap");
 
@@ -21,11 +22,11 @@
 					h('div#controller-output-chart'),
 					h('div.container',
 						h('div',
-							h('span','Normalized Lag Integral (message processing delays):'),
-							h('span#normalized-error-integral')
+							h('span','Lag Integral (message processing delays):'),
+							h('span#lag-integral')
 						),
 						h('div',
-							h('span','Normalized Idle Integral (extra machine costs):'),
+							h('span','Idle Integral (extra machine costs):'),
 							h('span#idle-integral')
 						)
 					),
@@ -66,9 +67,9 @@
 											)
 										),
 										h('div.form-group',
-											h('label.col-xs-3.control-label','Lag Int. Decay'),
+											h('label.col-xs-3.control-label','Extra'),
 											h('div.col-xs-5',
-												h('input.form-control#lag-decay',{type:'number'})
+												h('input.form-control#extra',{type:'number'})
 											)
 										),
 										h('div.form-group',
@@ -146,7 +147,7 @@
 				$('#Kd').val( parameters.pidKd );
 				$('#capability').val( parameters.capability );
 				$('#lag-weight').val( parameters.lagWeight );
-				$('#lag-decay').val( parameters.lagDecay );
+				$('#extra').val( parameters.extra );
 				$('#ingress').val( ingress );
 			}
 
@@ -189,7 +190,7 @@
 				scalingDataTable = new google.visualization.DataTable();
 				scalingDataTable.addColumn( 'number', 'Time' );
 				scalingDataTable.addColumn( 'number', 'Running' );
-				scalingDataTable.addColumn( 'number', 'Staging' );
+				scalingDataTable.addColumn( 'number', 'Waiting' );
 				controllerOutputDataTable = new google.visualization.DataTable();
 				controllerOutputDataTable.addColumn( 'number', 'Time' );
 				controllerOutputDataTable.addColumn( 'number', 'PID Output' );
@@ -209,7 +210,7 @@
 				}
 			});
 
-			function addChartRows( info ) {
+			function addChartRows( info, truncate ) {
 				lagDataTable.addRow([
 					info.when,
 					info.sumLag
@@ -217,15 +218,21 @@
 				scalingDataTable.addRow([
 					info.when,
 					info.runningTasks,
-					info.stagingTasks
+					info.waitingTasks
 				]);
 				controllerOutputDataTable.addRow([
 					info.when,
 					info.controllerOutput,
 					info.ingress,
-					info.idle,
-					info.error
+//					info.idle,
+//					info.error
+					0, 0
 				]);
+				if( truncate && lagDataTable.getNumberOfRows() > 50 ) {
+					lagDataTable.removeRow( 0 );
+					scalingDataTable.removeRow( 0 );
+					controllerOutputDataTable.removeRow( 0 );
+				}
 			}
 
 			function renderCharts() {
@@ -235,8 +242,8 @@
 			}
 
 			function renderStats( errorMetrics ) {
-				$('#normalized-error-integral').text( Number(errorMetrics.normalizedErrorIntegral).toFixed(2) );
-				$('#idle-integral').text( Number(errorMetrics.normalizedIdleIntegral).toFixed(2) );
+				$('#lag-integral').text( Number(errorMetrics.lagIntegral).toFixed(2) );
+				$('#idle-integral').text( Number(errorMetrics.idleIntegral).toFixed(2) );
 			}
 
 			function uiGetFloat( selector ) {
@@ -251,6 +258,10 @@
 				return v;
 			}
 
+			function randi( i ) {
+				return Math.floor( Math.random() * i );
+			}
+
 			var trace;
 
 			$('#create-trace').click( function() {
@@ -262,12 +273,12 @@
 			});
 
 			var parameters = {
-				pidKp: 0.1,
-				pidKi: 0.0,
+				pidKp: 0.2,
+				pidKi: 0.02,
 				pidKd: 0.0,
 				capability: 1.0,
-				lagWeight: 0.2,
-				lagDecay: 0.02
+				extra: 1.0,
+				lagWeight: 0.1
 			}
 			var ingress = 0;
 
@@ -282,20 +293,22 @@
 				simulationInterval = null;
 
 				var when = 0;
-				var runningTasks = 1;
-				var stagingTasks = 0;
+				var runningTasks = 0;
 				var queuedMessages = 0;
-				var stagingStart = 0;
-				var ticksToStage = 10;
-				var ticksToUnstage = 1;
 				var integral = 0;
 				var previousErr = 0;
 				var idleIntegral = 0;
-				var meanWindow = [];
 				var lagIntegral = 0;
+				var previousChange = 0;
 
 				function pidController( err, parameters ) {
-					integral += err;
+					if( err < -1.5 ) {
+						integral += err + 1.5;
+					}
+					else if( err > 0 ) {
+						integral += err;
+					}
+					//integral *= 0.999;
 					var derivative = err - previousErr;
 					var output = parameters.pidKp * err + parameters.pidKi * integral + parameters.pidKd * derivative;
 					previousErr = err;
@@ -311,53 +324,36 @@
 					queuedMessages = Math.max( 0, queuedMessages - runningTasks );
 
 					lagIntegral += queuedMessages;
-					lagIntegral *= 1 - parameters.lagDecay;
 
-					var machinesNeeded = ingress / parameters.capability + parameters.lagWeight * queuedMessages;//lagIntegral;
-					var error = machinesNeeded - (runningTasks + stagingTasks);
+					var estTasksNeeded = ingress / parameters.capability;
+					var tasksNeeded = (estTasksNeeded + parameters.lagWeight * queuedMessages) * parameters.extra;
+					var error = tasksNeeded - runningTasks;
 					var output = pidController( error, parameters );
 
-					var toRun = Math.max( 1, Math.floor( output + 0.5 ) );
+					var toRunTasks = Math.max( 1, Math.floor( output ) + 1 );
+
+					// No delay for a test...
+					// TODO: Put in some kind of simulation of delay in some cases.
+					// TODO: Put in hystersis
+					runningTasks = toRunTasks;
 
 					var idle = 0;
 					if( queuedMessages == 0 ) {
-						idle = Math.max( 0, runningTasks - ingress );
+						idle = Math.max( 0, runningTasks - estTasksNeeded );
 						idleIntegral += idle;
-					}
-
-					if( toRun != runningTasks && stagingTasks == 0 ) {
-						// Ok to change number of tasks
-						stagingTasks = toRun - runningTasks;
-						stagingStart = when;
-					}
-
-					if( stagingTasks > 0 ) {
-						// ticks to boot or shutdown a machine
-						if( when - stagingStart > ticksToStage ) {
-							runningTasks += stagingTasks;
-							stagingTasks = 0;
-							stagingStart = 0;
-						}
-					}
-					else if( stagingTasks < 0 ) {
-						// ticks to boot or shutdown a machine
-						if( when - stagingStart > ticksToUnstage ) {
-							runningTasks += stagingTasks;
-							stagingTasks = 0;
-							stagingStart = 0;
-						}
 					}
 
 					addChartRows({
 						when: when,
 						sumLag: queuedMessages,
 						runningTasks: runningTasks,
-						stagingTasks: stagingTasks,
+						waitingTasks: toRunTasks-runningTasks,
 						controllerOutput: output,
+						toRunTasks: toRunTasks,
 						ingress: ingress,
 						idle: idle,
-						error: error
-					});
+						error: error,
+					}, !trace );
 
 					if( ! trace ) {
 						renderCharts();
@@ -371,18 +367,18 @@
 						tick( trace[i] );
 					}
 					renderCharts();
-					errorMetrics.normalizedErrorIntegral = 0;//totalErrorIntegral / when;
-					errorMetrics.normalizedIdleIntegral = 0;//idleIntegral / when;
+					errorMetrics.lagIntegral = lagIntegral / when;
+					errorMetrics.idleIntegral = idleIntegral / when;
 					renderStats( errorMetrics );
 				}
 				else {
 					simulationInterval = setInterval( function() {
 						tick( ingress );
 						renderCharts();
-						errorMetrics.normalizedErrorIntegral = 0;//totalErrorIntegral / when;
-						errorMetrics.normalizedIdleIntegral = 0;//idleIntegral / when;
+						errorMetrics.lagIntegral = lagIntegral / when;
+						errorMetrics.idleIntegral = idleIntegral / when;
 						renderStats( errorMetrics );
-					}, 200 );
+					}, 0 );
 				}
 			}
 
@@ -392,8 +388,8 @@
 					pidKi: uiGetFloat( '#Ki' ),
 					pidKd: uiGetFloat( '#Kd' ),
 					capability: uiGetFloat( '#capability' ),
-					lagWeight: uiGetFloat( '#lag-weight' ),
-					lagDecay: uiGetFloat( '#lag-decay' )
+					extra: uiGetFloat( '#extra' ),
+					lagWeight: uiGetFloat( '#lag-weight' )
 				}
 				if( ! simulationInterval ) {
 					// Re-run the current trace with the new parameters
@@ -506,11 +502,11 @@
 				var z = new Ziggurat();
 				var trace = [];
 				var inBurst = false;
-				for( var i=0; i<200; i++ ) {
+				for( var i=0; i<400; i++ ) {
 					var v = z.nextGaussian();
 					v = Math.max( 0, Math.floor(v*variance + mean + 0.5) );
 					if( inBurst ) {
-						v += mean * 5;
+						v += mean * 2;
 						if( Math.random() < 0.2 ) {
 							inBurst = false;
 						}

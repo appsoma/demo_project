@@ -1,0 +1,217 @@
+<!doctype html>
+<head>
+	<script src="/welder_assets/js/welder_widgets.js"></script>
+	<script src="https://www.google.com/jsapi"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="/welder_assets/css/welder_widgets.css">
+</head>
+<body>
+	<script type="text/javascript">
+		var $ = jQuery = require("jquery");
+		var h = require("hyperscript");
+		var _ = require("underscore");
+		var welder = require("welder");
+		require("bootstrap");
+
+		$(document).ready( function() {
+			$("body").append(
+				h('div',
+					h('div#node-charts')
+				)
+			);
+
+			function randi( i ) {
+				return Math.floor( Math.random() * i );
+			}
+
+			function randomTaskType() {
+				return {
+					normCpu: randi(3)+1 / 10,
+					normMem: randi(3)+1 / 10,
+					count: 1
+				}
+			}
+
+			var maxNodes = 10;
+			var nodes = [];
+			var taskTypes = [];
+			var taskTypeCount = 15;
+
+			function resetTaskTypes() {
+				taskTypes = [];
+				for( var i=0; i<taskTypeCount; i++ ) {
+					taskTypes.push( randomTaskType() );
+				}
+			}
+
+			function startTask( taskType ) {
+				// FIND some node that it will fit on, start at random offset of nodes
+				var t = taskTypes[taskType];
+				var start = randi( nodes.length );
+				for( var i=0; i<nodes.length; i++ ) {
+					var node = nodes[ (i + start) % nodes.length ];
+					if( node.freeCpu > t.normCpu && node.freeMem > t.normMem ) {
+						node.freeCpu -= t.normCpu;
+						node.freeMem -= t.normMem;
+						node.tasks.push( taskType );
+						return true;
+					}
+				}
+				return false;
+			}
+
+			function stopTask( taskType ) {
+				// FIND some node that is running the task and remove it
+				var t = taskTypes[taskType];
+				var start = randi( nodes.length );
+				for( var i=0; i<nodes.length; i++ ) {
+					var node = nodes[ (i + start) % nodes.length ];
+					_.each( node.tasks, (task)=>{
+						if( task == taskType ) {
+							node.freeCpu += t.normCpu;
+							node.freeMem += t.normmem;
+							node.tasks = _.filter( node.tasks, (_taskType)=>{ return _taskType != taskType; } );
+							return true;
+						}
+					});
+				}
+				return false;
+			}
+
+			function countRunning() {
+				var runningCountByTaskType = [];
+				for( var i=0; i<taskTypeCount; i++ ) {
+					runningCountByTaskType.push( 0 );
+				}
+				_.each( nodes, (node)=>{
+					_.each( node.tasks, (task)=>{
+						runningCountByTaskType[task] ++;
+					});
+				});
+				return runningCountByTaskType;
+			}
+
+			function simulation() {
+				var when = 0;
+				var duration = 200;
+
+				resetTaskTypes();
+				resetNodes();
+
+				var bootingLock = false;
+				var bootingLockStart = null;
+				function startNodes( count ) {
+					if( bootingLock ) return;
+					bootingLock = true;
+					bootingLockStart = when;
+					for( var i=0; i<count; i++ ) {
+						if( nodes.length >= maxNodes ) {
+							return;
+						}
+						var id = nodes.length + i;
+						nodes.push({
+							id: id,
+							booted: false,
+							dataTable: new google.visualization.DataTable(),
+							areaChart: new new google.visualization.AreaChart( $('#nodechart'+id)[0] ),
+							tasks: [],
+							freeCpu: 1,
+							freeMem: 1,
+						});
+					}
+				}
+
+				function stopNodes( count ) {
+					if( bootingLock ) return;
+					bootingLock = true;
+					bootingLockStart = when;
+					for( var i=0; i<count; i++ ) {
+						nodes.pop();
+					}
+				}
+
+				function tick() {
+					// VARY the task counts randomly up and down
+					var taskType = taskTypes[ randi(taskTypeCount) ];
+					taskType.count = Math.max( 1, Math.min( 16, taskType.count + randi(5)-2 ) );
+
+					var runningCountByTaskType = countRunning();
+
+					// PRETEND to be mesos...
+					for( var i=0; i<taskTypeCount; i++ ) {
+						var needToStart = taskTypes[i].count - runningCountByTaskType[i];
+						for( var j=0; j<needToStart; j++ ) {
+							startTask( i );
+						}
+						for( var j=0; j< -needToStart; j++ ) {
+							stopTask( i );
+						}
+					}
+
+					// CHECK how much can't start at moment
+					var stalledCount = 0;
+					var stalledCpu = 0;
+					var stalledMem = 0;
+					runningCountByTaskType = countRunning();
+					for( var i=0; i<taskTypeCount; i++ ) {
+						stalledCount += Math.max( 0, taskTypes[i].count - runningCountByTaskType[i] );
+						stalledCpu += taskTypes[i].normCpu;
+						stalledMem += taskTypes[i].normMem;
+					}
+
+					// MEASURE the saturation of the system
+					var freeCpu = 0;
+					var freeMem = 0;
+					_.each( nodes, (node)=>{
+						freeCpu += node.freeCpu;
+						freeMem += node.freeMem;
+					});
+
+					// START more nodes if any stalled tasks
+					var nodesToStart = math.floor( Math.max( stalledCpu, stalledMem ) ) + 1;
+					startNode( nodesToStart );
+
+					// STOP nodes if free > 0.3
+					if( Math.min(freeCpu/nodes.length,freeMem/nodes.length) > 0.3 ) {
+						stopNodes( 1 );
+					}
+
+					when ++;
+				}
+
+				for( var i=0; i<duration; i++ ) {
+					tick();
+				}
+
+				renderCharts();
+			}
+
+			function renderCharts() {
+				var areaChartOptions = {
+					hAxis: {
+						title: 'Time'
+					},
+					vAxis: {
+						title: ''
+					},
+					isStacked: true
+				}
+				_.each( nodes, (node)=>{
+					node.areaChart.draw( node.dataTable, areaChartOptions );
+				});
+			}
+
+			google.load( 'visualization', 1, {
+				packages: [ 'corechart', 'line' ],
+				callback: ()=>{
+					for( var i=0; i<maxNodes; i++ ) {
+						$('#node-charts').append( h('div#nodechart-'+i) );
+					}
+					simulation();
+				}
+			});
+
+		});
+	</script>
+</body>
