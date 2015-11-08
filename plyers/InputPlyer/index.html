@@ -42,7 +42,7 @@
 					return false;
 				});
 
-				function doSubmit() {
+				function doSubmit(form) {
 					$('#myform').hide();
 					$('#service-status').show();
 					$(form).find('fieldset').prop('disabled',true);
@@ -57,7 +57,7 @@
 					welder.ajax.apiv1( "PUT", myApp.project, '/plyers/'+myApp.name, {}, function(compileResult) {
 						// Get all info for this plyer
 						welder.ajax.apiv1( "GET", myApp.project, '/plyers/'+myApp.name, data, function(info) {
-							var marathonDef = $.extend( {}, info.marathon_definition_default, info.marathon_definition );
+							var marathonDef = $.extend( true, {}, info.marathon_definition_default, info.marathon_definition );
 							marathonDef.env.YAK_INGRESS_ID = params.ingress_id;
 							marathonDef.container.volumes.push({
 								"hostPath": "/etc",
