@@ -17,6 +17,7 @@
 		$(document).ready( function() {
 			$("body").append(
 				h('div',
+					h('div#stalledchart'),
 					h('div#node-charts')
 				)
 			);
@@ -25,33 +26,60 @@
 				return Math.floor( Math.random() * i );
 			}
 
-			function randomTaskType() {
-				return {
-					normCpu: randi(3)+1 / 10,
-					normMem: randi(3)+1 / 10,
-					count: 1
-				}
-			}
-
-			var maxNodes = 10;
+			var maxNodes = 3;
 			var nodes = [];
 			var taskTypes = [];
-			var taskTypeCount = 15;
+			var taskTypeCount = 1;
+			var duration = 40;
+			var bootTime = 10;
+			var nodePlots = [];
+			var stalledPlot = null;
+
+			function setupPlots() {
+				var dataTable = new google.visualization.DataTable();
+				dataTable.addColumn( 'number', 'Time' );
+				for( var j=0; j<taskTypeCount; j++ ) {
+					dataTable.addColumn( 'number', 'Type-'+j );
+				}
+				stalledPlot = {
+					dataTable: dataTable,
+					chart: new google.visualization.AreaChart( $('#stalledchart')[0] ),
+				}
+
+				for( var i=0; i<maxNodes; i++ ) {
+					$('#node-charts').append( h('div#nodechart-'+i) );
+					var dataTable = new google.visualization.DataTable();
+					dataTable.addColumn( 'number', 'Time' );
+					for( var j=0; j<taskTypeCount; j++ ) {
+						dataTable.addColumn( 'number', 'Type-'+j );
+					}
+					nodePlots.push({
+						dataTable: dataTable,
+						chart: new google.visualization.AreaChart( $('#nodechart-'+i)[0] ),
+					})
+				}
+			}
 
 			function resetTaskTypes() {
 				taskTypes = [];
 				for( var i=0; i<taskTypeCount; i++ ) {
-					taskTypes.push( randomTaskType() );
+					taskTypes.push({
+						//normCpu: (randi(3)+1) / 10,
+						//normMem: (randi(3)+1) / 10,
+						normCpu: 0.1,
+						normMem: 0.1,
+						count: 1
+					});
 				}
 			}
 
 			function startTask( taskType ) {
 				// FIND some node that it will fit on, start at random offset of nodes
 				var t = taskTypes[taskType];
-				var start = randi( nodes.length );
+				var start = 0;//randi( nodes.length );
 				for( var i=0; i<nodes.length; i++ ) {
 					var node = nodes[ (i + start) % nodes.length ];
-					if( node.freeCpu > t.normCpu && node.freeMem > t.normMem ) {
+					if( node.booted && node.freeCpu > t.normCpu && node.freeMem > t.normMem ) {
 						node.freeCpu -= t.normCpu;
 						node.freeMem -= t.normMem;
 						node.tasks.push( taskType );
@@ -64,13 +92,13 @@
 			function stopTask( taskType ) {
 				// FIND some node that is running the task and remove it
 				var t = taskTypes[taskType];
-				var start = randi( nodes.length );
+				var start = 0;//randi( nodes.length );
 				for( var i=0; i<nodes.length; i++ ) {
 					var node = nodes[ (i + start) % nodes.length ];
 					_.each( node.tasks, (task)=>{
 						if( task == taskType ) {
 							node.freeCpu += t.normCpu;
-							node.freeMem += t.normmem;
+							node.freeMem += t.normMem;
 							node.tasks = _.filter( node.tasks, (_taskType)=>{ return _taskType != taskType; } );
 							return true;
 						}
@@ -85,19 +113,19 @@
 					runningCountByTaskType.push( 0 );
 				}
 				_.each( nodes, (node)=>{
-					_.each( node.tasks, (task)=>{
-						runningCountByTaskType[task] ++;
-					});
+					if( node.booted ) {
+						_.each( node.tasks, (task)=>{
+							runningCountByTaskType[task] ++;
+						});
+					}
 				});
 				return runningCountByTaskType;
 			}
 
 			function simulation() {
 				var when = 0;
-				var duration = 200;
 
 				resetTaskTypes();
-				resetNodes();
 
 				var bootingLock = false;
 				var bootingLockStart = null;
@@ -105,16 +133,15 @@
 					if( bootingLock ) return;
 					bootingLock = true;
 					bootingLockStart = when;
+					var currentNodeCount = nodes.length;
 					for( var i=0; i<count; i++ ) {
 						if( nodes.length >= maxNodes ) {
 							return;
 						}
-						var id = nodes.length + i;
+						var id = currentNodeCount + i;
 						nodes.push({
 							id: id,
 							booted: false,
-							dataTable: new google.visualization.DataTable(),
-							areaChart: new new google.visualization.AreaChart( $('#nodechart'+id)[0] ),
 							tasks: [],
 							freeCpu: 1,
 							freeMem: 1,
@@ -131,10 +158,36 @@
 					}
 				}
 
+				function checkBoot() {
+					if( bootingLock && when - bootingLockStart >= bootTime ) {
+						bootingLock = false;
+						bootingLockStart = null;
+						_.each( nodes, (node)=>{
+							node.booted = true;
+						});
+					}
+				}
+
+				function addChartRows() {
+					_.each( nodes, (node)=>{
+						var countByType = [];
+						for( var i=0; i<taskTypeCount; i++ ) {
+							countByType.push(0);
+						}
+						_.each( node.tasks, (taskType)=>{
+							countByType[taskType]++;
+						});
+						countByType.unshift( when );
+						if( ! nodePlots[node.id] ) debugger;
+						nodePlots[node.id].dataTable.addRow( countByType );
+					});
+				}
+
 				function tick() {
-					// VARY the task counts randomly up and down
+					// VARY a task count randomly up and down
 					var taskType = taskTypes[ randi(taskTypeCount) ];
-					taskType.count = Math.max( 1, Math.min( 16, taskType.count + randi(5)-2 ) );
+					//taskType.count = Math.max( 1, Math.min( 16, taskType.count + randi(5)-2 ) );
+					taskType.count = Math.max( 1, Math.min( 16, taskType.count + 1 ) );
 
 					var runningCountByTaskType = countRunning();
 
@@ -149,16 +202,26 @@
 						}
 					}
 
-					// CHECK how much can't start at moment
+					// CHECK how many tasks can't start at moment
 					var stalledCount = 0;
 					var stalledCpu = 0;
 					var stalledMem = 0;
 					runningCountByTaskType = countRunning();
+
+					var stalledRow = [];
 					for( var i=0; i<taskTypeCount; i++ ) {
-						stalledCount += Math.max( 0, taskTypes[i].count - runningCountByTaskType[i] );
-						stalledCpu += taskTypes[i].normCpu;
-						stalledMem += taskTypes[i].normMem;
+						stalledRow[i] = 0;
+						var stalledOfThisType = taskTypes[i].count - runningCountByTaskType[i];
+						if( stalledOfThisType > 0 ) {
+							stalledRow[i] = stalledOfThisType;
+							stalledCount += stalledOfThisType;
+							stalledCpu += taskTypes[i].normCpu * stalledOfThisType;
+							stalledMem += taskTypes[i].normMem * stalledOfThisType;
+						}
 					}
+
+					stalledRow.unshift( when );
+					stalledPlot.dataTable.addRow( stalledRow );
 
 					// MEASURE the saturation of the system
 					var freeCpu = 0;
@@ -169,13 +232,17 @@
 					});
 
 					// START more nodes if any stalled tasks
-					var nodesToStart = math.floor( Math.max( stalledCpu, stalledMem ) ) + 1;
-					startNode( nodesToStart );
+					var nodesToStart = Math.floor( Math.max( stalledCpu, stalledMem ) ) + 1;
+					startNodes( nodesToStart );
 
 					// STOP nodes if free > 0.3
 					if( Math.min(freeCpu/nodes.length,freeMem/nodes.length) > 0.3 ) {
 						stopNodes( 1 );
 					}
+
+					addChartRows();
+
+					checkBoot();
 
 					when ++;
 				}
@@ -197,17 +264,16 @@
 					},
 					isStacked: true
 				}
-				_.each( nodes, (node)=>{
-					node.areaChart.draw( node.dataTable, areaChartOptions );
+				_.each( nodePlots, (nodePlot)=>{
+					nodePlot.chart.draw( nodePlot.dataTable, areaChartOptions );
 				});
+				stalledPlot.chart.draw( stalledPlot.dataTable, areaChartOptions );
 			}
 
 			google.load( 'visualization', 1, {
 				packages: [ 'corechart', 'line' ],
 				callback: ()=>{
-					for( var i=0; i<maxNodes; i++ ) {
-						$('#node-charts').append( h('div#nodechart-'+i) );
-					}
+					setupPlots();
 					simulation();
 				}
 			});
