@@ -15,34 +15,51 @@
 		require("bootstrap");
 
 		$(document).ready( function() {
+			var seed = 6;
+			function randi( i ) {
+				seed = (seed * 9301 + 49297) % 233280;
+				return Math.floor( seed/233280.0 * i );
+			}
+
 			$("body").append(
 				h('div',
+					h('h3','Requested'),
+					h('div#requestedchart'),
+					h('h3','Stalled'),
 					h('div#stalledchart'),
+					h('h3','Nodes'),
 					h('div#node-charts')
 				)
 			);
 
-			function randi( i ) {
-				return Math.floor( Math.random() * i );
-			}
-
-			var maxNodes = 3;
+			var maxNodes = 2;
 			var nodes = [];
 			var taskTypes = [];
 			var taskTypeCount = 2;
 			var duration = 40;
 			var bootTime = 10;
 			var nodePlots = [];
+			var requestedPlot = null;
 			var stalledPlot = null;
 
 			function setupPlots() {
-				var dataTable = new google.visualization.DataTable();
-				dataTable.addColumn( 'number', 'Time' );
+				var requestedDataTable = new google.visualization.DataTable();
+				requestedDataTable.addColumn( 'number', 'Time' );
 				for( var j=0; j<taskTypeCount; j++ ) {
-					dataTable.addColumn( 'number', 'Type-'+j );
+					requestedDataTable.addColumn( 'number', 'Type-'+j );
+				}
+				requestedPlot = {
+					dataTable: requestedDataTable,
+					chart: new google.visualization.AreaChart( $('#requestedchart')[0] ),
+				}
+
+				var stalledDataTable = new google.visualization.DataTable();
+				stalledDataTable.addColumn( 'number', 'Time' );
+				for( var j=0; j<taskTypeCount; j++ ) {
+					stalledDataTable.addColumn( 'number', 'Type-'+j );
 				}
 				stalledPlot = {
-					dataTable: dataTable,
+					dataTable: stalledDataTable,
 					chart: new google.visualization.AreaChart( $('#stalledchart')[0] ),
 				}
 
@@ -68,7 +85,7 @@
 						//normMem: (randi(3)+1) / 10,
 						normCpu: 0.1,
 						normMem: 0.1,
-						count: 1
+						count: 5
 					});
 				}
 			}
@@ -95,14 +112,15 @@
 				var start = 0;//randi( nodes.length );
 				for( var i=0; i<nodes.length; i++ ) {
 					var node = nodes[ (i + start) % nodes.length ];
-					_.each( node.tasks, (task)=>{
+					for( var j=0; j<node.tasks.length; j++ ) {
+						var task = node.tasks[j];
 						if( task == taskType ) {
 							node.freeCpu += t.normCpu;
 							node.freeMem += t.normMem;
-							node.tasks = _.filter( node.tasks, (_taskType)=>{ return _taskType != taskType; } );
+							node.tasks.splice( j, 1 );
 							return true;
 						}
-					});
+					}
 				}
 				return false;
 			}
@@ -151,8 +169,8 @@
 
 				function stopNodes( count ) {
 					if( bootingLock ) return;
-					bootingLock = true;
-					bootingLockStart = when;
+					//bootingLock = true;
+					//bootingLockStart = when;
 					for( var i=0; i<count; i++ ) {
 						nodes.pop();
 					}
@@ -186,9 +204,12 @@
 				}
 
 				function tick() {
+
+					//if( when == 17 ) debugger;
+
 					// VARY a task count randomly up and down
 					var taskType = taskTypes[ randi(taskTypeCount) ];
-					taskType.count = Math.max( 1, Math.min( 16, taskType.count + randi(5)-1 ) );
+					taskType.count = Math.max( 5, Math.min( 16, taskType.count + randi(5)-2 ) );
 					//taskType.count = Math.max( 1, Math.min( 16, taskType.count + 1 ) );
 
 					var runningCountByTaskType = countRunning();
@@ -225,6 +246,12 @@
 					stalledRow.unshift( when );
 					stalledPlot.dataTable.addRow( stalledRow );
 
+					var requestedRow = [ when ];
+					for( var i=0; i<taskTypeCount; i++ ) {
+						requestedRow.push( taskTypes[i].count );
+					}
+					requestedPlot.dataTable.addRow( requestedRow );
+
 					// MEASURE the saturation of the system
 					var freeCpu = 0;
 					var freeMem = 0;
@@ -234,11 +261,25 @@
 					});
 
 					// START more nodes if any stalled tasks
-					var nodesToStart = Math.floor( Math.max( stalledCpu, stalledMem ) ) + 1;
-					startNodes( nodesToStart );
+					var stalled = Math.max( stalledCpu, stalledMem );
+					if( stalled > 0 ) {
+						var nodesToStart = Math.floor( stalled ) + 1;
+						startNodes( nodesToStart );
+					}
 
+					/*
 					// STOP nodes if free > 0.3
-					if( Math.min(freeCpu/nodes.length,freeMem/nodes.length) > 0.3 ) {
+					// What would it look like if I killed off a node?
+					// How much is on the last node?
+					nodes[nodes.length-1].freeCpu
+					for( var i=0; i<nodes.length-1; i++ ) {
+
+					}
+					*/
+
+					// Don't want to deboot unless the idle cpu or idle mem exceeds one machine 
+					// by the larest possible processes or memory.
+					if( Math.min(freeCpu,freeMem) > 1.2 ) {
 						stopNodes( 1 );
 					}
 
@@ -269,6 +310,7 @@
 				_.each( nodePlots, (nodePlot)=>{
 					nodePlot.chart.draw( nodePlot.dataTable, areaChartOptions );
 				});
+				requestedPlot.chart.draw( requestedPlot.dataTable, areaChartOptions );
 				stalledPlot.chart.draw( stalledPlot.dataTable, areaChartOptions );
 			}
 
