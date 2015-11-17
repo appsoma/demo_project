@@ -1,0 +1,12 @@
+{
+	"name": "SleepingPlyer",
+	"creator": "zack",
+	"plyerFileName": "SleepingPlyer.java",
+	"description": "A sleeping plyer",
+	"serviceName": "sleepingplyer",
+	"language": "java",
+	"marathon_definition": {
+		"cpus": 0.5,
+		"mem": 200
+	}
+}
