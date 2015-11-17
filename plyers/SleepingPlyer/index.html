@@ -15,7 +15,7 @@
 
 		$(document).ready( function() {
 			var myApp = {
-				name: 'InputPlyer',
+				name: 'SleepingPlyer',
 				project: welder.getCurrentProject()
 			};
 
@@ -25,8 +25,12 @@
 					h('form#main-form', { action:'', role:'form' },
 						h('fieldset',
 							h('div.form-group',
-								h('label','Sleep time'),
-								h('input.form-control',{type:'string',name:'sleeptime',value:'1')
+								h('label','What topic should be watched for incoming messages?'),
+								h('input.form-control',{type:'string',name:'ingress_id',value:'zack_ingress'})
+							),
+							h('div.form-group',
+								h('label','Sleep time (ms)'),
+								h('input.form-control',{type:'string',name:'sleeptime',value:'1'})
 							),
 							h('button.btn.btn-primary',{type:'submit'},"Submit")
 						)
@@ -58,7 +62,8 @@
 						// Get all info for this plyer
 						welder.ajax.apiv1( "GET", myApp.project, '/plyers/'+myApp.name, data, function(info) {
 							var marathonDef = $.extend( true, {}, info.marathon_definition_default, info.marathon_definition );
-							marathonDef.env.SLEEP_TIME = params.sleeptime;
+							marathonDef.env.YAK_INGRESS_ID = params.ingress_id;
+							marathonDef.env.SLEEPTIME = params.sleeptime;
 							// Ask marathon to actually start this run
 							welder.ajax.marathon( "POST", '/v2/apps', marathonDef);
 						});

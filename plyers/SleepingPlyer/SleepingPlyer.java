@@ -10,7 +10,12 @@ public class SleepingPlyer extends Plyer {
 		String note = "mykey3 is false";
 
 		String sleepTime = System.getenv("SLEEPTIME");
-		Thread.sleep( Integer.parseInt(sleepTime) );
+		System.out.println( "SLEEPTIME " + sleepTime );
+		try {
+			Thread.sleep( Integer.parseInt(sleepTime) );
+		}
+		catch( InterruptedException e ) {
+		}
 
 		JSONObject eventOut = new JSONObject();
 		eventOut.put( "sleepTime", sleepTime );
