@@ -300,6 +300,8 @@
 				var idleIntegral = 0;
 				var lagIntegral = 0;
 				var previousChange = 0;
+				var lastLags = [];
+				var timeLastDecrement = 0;
 
 				function pidController( err, parameters ) {
 					if( err < -1.5 ) {
@@ -323,14 +325,41 @@
 					// @TODO: Add noise to rate at which queued messages are removed
 					queuedMessages = Math.max( 0, queuedMessages - runningTasks );
 
+					/*
 					lagIntegral += queuedMessages;
 
 					var estTasksNeeded = ingress / parameters.capability;
 					var tasksNeeded = (estTasksNeeded + parameters.lagWeight * queuedMessages) * parameters.extra;
 					var error = tasksNeeded - runningTasks;
 					var output = pidController( error, parameters );
-
 					var toRunTasks = Math.max( 1, Math.floor( output ) + 1 );
+					*/
+
+					var lag = queuedMessages;
+					if( lastLags.length == 5 ) {
+						lastLags.shift();
+					}
+					lastLags.push( lag );
+					var avgSlope = 0;
+					if( lastLags.length >= 2 ) {
+						for( var i=0; i<lastLags.length-1; i++ ) {
+							avgSlope += lastLags[i+1] - lastLags[i];
+						}
+						avgSlope /= lastLags.length-1;
+					}
+
+					var toRunTasks = runningTasks;
+					if( avgSlope > 0 ) {
+						var runBasedOnLag = Math.min( 16, Math.max( 1, Math.floor(parameters.pidKp * lag) ) );
+						toRunTasks = Math.max( runningTasks, runBasedOnLag );
+						timeLastDecrement = when;
+					}
+					else if( lag < 3 ) {
+						if( when - timeLastDecrement > 10 ) {
+							toRunTasks = Math.max( 1, runningTasks - 1 );
+							timeLastDecrement = when;
+						}
+					}
 
 					// No delay for a test...
 					// TODO: Put in some kind of simulation of delay in some cases.
@@ -339,7 +368,7 @@
 
 					var idle = 0;
 					if( queuedMessages == 0 ) {
-						idle = Math.max( 0, runningTasks - estTasksNeeded );
+						idle = 0;//Math.max( 0, runningTasks - estTasksNeeded );
 						idleIntegral += idle;
 					}
 
@@ -348,11 +377,11 @@
 						sumLag: queuedMessages,
 						runningTasks: runningTasks,
 						waitingTasks: toRunTasks-runningTasks,
-						controllerOutput: output,
+						controllerOutput: 0,//output,
 						toRunTasks: toRunTasks,
 						ingress: ingress,
 						idle: idle,
-						error: error,
+						error: 0,//error,
 					}, !trace );
 
 					if( ! trace ) {
