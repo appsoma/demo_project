@@ -15,7 +15,7 @@
 				"fontawesome": ""
 			},
 			"category": "File Line Tools",
-			"form": "line_sorter.form",
+			"form": "line_sorter.json",
 			"params": {
 				"direction": "ascending"
 			},
@@ -46,7 +46,7 @@
 				"fontawesome": ""
 			},
 			"category": "File Line Tools",
-			"form": "file_head.form",
+			"form": "file_head.json",
 			"params": {
 				"numberOfLines": 10
 			},
