@@ -1,0 +1,81 @@
+{
+	"label": "zbs_test_pipe",
+	"version": "0.0",
+	"author": "zack",
+	"description": "Zack's test pipeline",
+	"license": "",
+	"category": "General",
+	"steps": [
+		{
+			"id": "step_0-line_sorter",
+			"label": "Line Sorter",
+			"version": "0.0",
+			"author": "zack",
+			"icon": {
+				"fontawesome": ""
+			},
+			"category": "File Line Tools",
+			"form": "line_sorter.form",
+			"params": {
+				"direction": "ascending"
+			},
+			"inputs": {
+				"in1": {
+					"id": "in1",
+					"label": "Text file",
+					"type": "text_file"
+				}
+			},
+			"outputs": {
+				"out1": {
+					"id": "out1",
+					"label": "Sorted file",
+					"type": "text_file"
+				}
+			},
+			"x": 217,
+			"y": 94,
+			"tool": "line_sorter"
+		},
+		{
+			"id": "step_1-file_head",
+			"label": "File Head",
+			"version": "0.0",
+			"author": "zack",
+			"icon": {
+				"fontawesome": ""
+			},
+			"category": "File Line Tools",
+			"form": "file_head.form",
+			"params": {
+				"numberOfLines": 10
+			},
+			"inputs": {
+				"in1": {
+					"id": "in1",
+					"label": "Text file",
+					"type": "text_file"
+				}
+			},
+			"outputs": {
+				"out1": {
+					"id": "out1",
+					"label": "Sorted file",
+					"type": "text_file"
+				}
+			},
+			"x": 476,
+			"y": 170,
+			"tool": "file_head"
+		}
+	],
+	"connections": [
+		{
+			"source": "step_0-line_sorter",
+			"target": "step_1-file_head",
+			"output": "out1",
+			"input": "in1",
+			"id": "step_0-line_sorter_step_1-file_head_out1_in1"
+		}
+	]
+}
