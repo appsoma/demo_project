@@ -1,0 +1,21 @@
+[
+    {
+        "componentName": "filepicker",
+        "context": {
+            "label": "Input file",
+            "name": "inputFile",
+            "required": false
+        }
+    },
+    {
+        "componentName": "input",
+        "context": {
+            "label": "Number of lines",
+            "name": "numberOfLines",
+            "placeholder": "10",
+            "help": "Must be a number",
+            "validFunction": "",
+            "required": false
+        }
+    }
+]

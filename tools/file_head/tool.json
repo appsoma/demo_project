@@ -1,0 +1,28 @@
+{
+	"id": "file_head",
+	"label": "File Head",
+	"version": "0.0",
+	"author": "zack",
+	"icon": {
+		"fontawesome": ""
+	},
+	"category": "File Line Tools",
+	"form": "file_head.json",
+	"params": {
+		"numberOfLines": 10
+	},
+	"inputs": {
+		"in1": {
+			"id": "in1",
+			"label": "Text file",
+			"type": "text_file"
+		}
+	},
+	"outputs": {
+		"out1": {
+			"id": "out1",
+			"label": "Sorted file",
+			"type": "text_file"
+		}
+	}
+}

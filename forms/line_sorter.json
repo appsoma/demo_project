@@ -1,0 +1,22 @@
+[
+    {
+        "componentName": "filepicker",
+        "context": {
+            "label": "Input file",
+            "name": "inputFile",
+            "required": false
+        }
+    },
+    {
+        "componentName": "radio",
+        "context": {
+            "label": "Direction",
+            "name": "direction",
+            "options": [
+                "ascending",
+                "descending"
+            ],
+            "required": false
+        }
+    }
+]

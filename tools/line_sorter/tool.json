@@ -1,0 +1,28 @@
+{
+	"id": "line_sorter",
+	"label": "Line Sorter",
+	"version": "0.0",
+	"author": "zack",
+	"icon": {
+		"fontawesome": ""
+	},
+	"category": "File Line Tools",
+	"form": "line_sorter.json",
+	"params": {
+		"direction": "ascending"
+	},
+	"inputs": {
+		"in1": {
+			"id": "in1",
+			"label": "Text file",
+			"type": "text_file"
+		}
+	},
+	"outputs": {
+		"out1": {
+			"id": "out1",
+			"label": "Sorted file",
+			"type": "text_file"
+		}
+	}
+}
