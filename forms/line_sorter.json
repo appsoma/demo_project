@@ -4,7 +4,7 @@
         "context": {
             "label": "Input file",
             "name": "inputFile",
-            "required": false
+            "required": true
         }
     },
     {
@@ -16,7 +16,7 @@
                 "ascending",
                 "descending"
             ],
-            "required": false
+            "required": true
         }
     }
 ]

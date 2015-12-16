@@ -20,17 +20,19 @@
 				"direction": "ascending"
 			},
 			"inputs": {
-				"in1": {
-					"id": "in1",
+				"inputFile": {
+					"id": "inputFile",
 					"label": "Text file",
-					"type": "text_file"
+					"type": "file",
+					"dataType": "text"
 				}
 			},
 			"outputs": {
-				"out1": {
-					"id": "out1",
+				"outputFile": {
+					"id": "outputFile",
 					"label": "Sorted file",
-					"type": "text_file"
+					"type": "file",
+					"dataType": "text"
 				}
 			},
 			"x": 217,
@@ -51,17 +53,19 @@
 				"numberOfLines": 10
 			},
 			"inputs": {
-				"in1": {
-					"id": "in1",
+				"inputFile": {
+					"id": "inputFile",
 					"label": "Text file",
-					"type": "text_file"
+					"type": "file",
+					"dataType": "text"
 				}
 			},
 			"outputs": {
 				"out1": {
 					"id": "out1",
 					"label": "Sorted file",
-					"type": "text_file"
+					"type": "file",
+					"dataType": "text"
 				}
 			},
 			"x": 476,
@@ -73,9 +77,9 @@
 		{
 			"source": "step_0-line_sorter",
 			"target": "step_1-file_head",
-			"output": "out1",
-			"input": "in1",
-			"id": "step_0-line_sorter_step_1-file_head_out1_in1"
+			"output": "outputFile",
+			"input": "inputFile",
+			"id": "step_0-line_sorter_step_1-file_head_outputFile_inputFile"
 		}
 	]
 }

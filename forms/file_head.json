@@ -4,7 +4,7 @@
         "context": {
             "label": "Input file",
             "name": "inputFile",
-            "required": false
+            "required": true
         }
     },
     {
@@ -15,7 +15,7 @@
             "placeholder": "10",
             "help": "Must be a number",
             "validFunction": "",
-            "required": false
+            "required": true
         }
     }
 ]
