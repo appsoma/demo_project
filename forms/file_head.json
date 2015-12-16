@@ -1,21 +1,24 @@
-[
-    {
-        "componentName": "filepicker",
-        "context": {
-            "label": "Input file",
-            "name": "inputFile",
-            "required": true
+{
+    "version": "0.0",
+    "components": [
+        {
+            "componentName": "filepicker",
+            "context": {
+                "label": "Input file",
+                "name": "inputFile",
+                "required": true
+            }
+        },
+        {
+            "componentName": "input",
+            "context": {
+                "label": "Number of lines",
+                "name": "numberOfLines",
+                "placeholder": "10",
+                "help": "Must be a number",
+                "validFunction": "",
+                "required": true
+            }
         }
-    },
-    {
-        "componentName": "input",
-        "context": {
-            "label": "Number of lines",
-            "name": "numberOfLines",
-            "placeholder": "10",
-            "help": "Must be a number",
-            "validFunction": "",
-            "required": true
-        }
-    }
-]
+    ]
+}

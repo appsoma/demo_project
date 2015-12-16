@@ -1,5 +1,4 @@
 {
-	"id": "line_sorter",
 	"label": "Line Sorter",
 	"version": "0.0",
 	"author": "zack",
@@ -7,22 +6,58 @@
 		"fontawesome": ""
 	},
 	"category": "File Line Tools",
-	"form": "line_sorter.json",
+	"formSource": "line_sorter.json",
+	"formCopy": {
+	    "version": "0.0",
+	    "components": [
+		    {
+		        "componentName": "filepicker",
+		        "context": {
+		            "label": "Input file",
+		            "name": "inputFile",
+		            "required": true
+		        }
+		    },
+		    {
+		        "componentName": "radio",
+		        "context": {
+		            "label": "Direction",
+		            "name": "direction",
+		            "options": [
+		                "ascending",
+		                "descending"
+		            ],
+		            "required": true
+		        }
+		    }
+		]
+	},
 	"params": {
 		"direction": "ascending"
 	},
 	"inputs": {
-		"in1": {
-			"id": "in1",
+		"inputFile": {
+			"id": "inputFile",
 			"label": "Text file",
-			"type": "text_file"
+			"type": "file",
+			"dataType": "text"
 		}
 	},
 	"outputs": {
-		"out1": {
-			"id": "out1",
+		"outputFile": {
+			"id": "outputFile",
 			"label": "Sorted file",
-			"type": "text_file"
+			"type": "file",
+			"dataType": "text"
+		}
+	},
+	"task": {
+		"command": "[[\"$PARAM_direction\" -eq \"descending\"]] && ORDER=\"--reverse\" || ORDER=\"\"; sort $ORDER ./inputs/inputFile > ./outputs/outputFile",
+		"container_image": "ubuntu:14.04",
+		"requirements": {
+			"cpus": 1,
+			"mem": 512,
+			"disk": 1024
 		}
 	}
 }

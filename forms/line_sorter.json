@@ -1,22 +1,25 @@
-[
-    {
-        "componentName": "filepicker",
-        "context": {
-            "label": "Input file",
-            "name": "inputFile",
-            "required": true
+{
+    "version": "0.0",
+    "components": [
+        {
+            "componentName": "filepicker",
+            "context": {
+                "label": "Input file",
+                "name": "inputFile",
+                "required": true
+            }
+        },
+        {
+            "componentName": "radio",
+            "context": {
+                "label": "Direction",
+                "name": "direction",
+                "options": [
+                    "ascending",
+                    "descending"
+                ],
+                "required": true
+            }
         }
-    },
-    {
-        "componentName": "radio",
-        "context": {
-            "label": "Direction",
-            "name": "direction",
-            "options": [
-                "ascending",
-                "descending"
-            ],
-            "required": true
-        }
-    }
-]
+    ]
+}

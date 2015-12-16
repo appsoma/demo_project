@@ -1,5 +1,4 @@
 {
-	"id": "file_head",
 	"label": "File Head",
 	"version": "0.0",
 	"author": "zack",
@@ -7,22 +6,57 @@
 		"fontawesome": ""
 	},
 	"category": "File Line Tools",
-	"form": "file_head.json",
+	"formSource": "file_head.json",
+	"formCopy": {
+	    "version": "0.0",
+	    "components": [
+	        {
+	            "componentName": "filepicker",
+	            "context": {
+	                "label": "Input file",
+	                "name": "inputFile",
+	                "required": true
+	            }
+	        },
+	        {
+	            "componentName": "input",
+	            "context": {
+	                "label": "Number of lines",
+	                "name": "numberOfLines",
+	                "placeholder": "10",
+	                "help": "Must be a number",
+	                "validFunction": "",
+	                "required": true
+	            }
+	        }
+	    ]
+	},
 	"params": {
 		"numberOfLines": 10
 	},
 	"inputs": {
-		"in1": {
-			"id": "in1",
+		"inputFile": {
+			"id": "inputFile",
 			"label": "Text file",
-			"type": "text_file"
+			"type": "file",
+			"dataType": "text"
 		}
 	},
 	"outputs": {
-		"out1": {
-			"id": "out1",
+		"outputFile": {
+			"id": "outputFile",
 			"label": "Sorted file",
-			"type": "text_file"
+			"type": "file",
+			"dataType": "text"
+		}
+	},
+	"task": {
+		"command": "head --lines=$PARAM_numberOfLines ./inputs/inputFile > ./outputs/outputFile",
+		"container_image": "ubuntu:14.04",
+		"requirements": {
+			"cpus": 1,
+			"mem": 512,
+			"disk": 1024
 		}
 	}
 }
