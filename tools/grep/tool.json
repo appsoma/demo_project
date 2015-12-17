@@ -1,0 +1,75 @@
+{
+	"id": "grep",
+	"label": "GREP",
+	"version": "0.0",
+	"author": "zack",
+	"icon": {
+		"fontawesome": ""
+	},
+	"category": "File Line Tools",
+	"formSource": "grep",
+	"formCopy": {
+	    "version": "0.0",
+	    "components": [
+			{
+				"componentName": "filepicker",
+				"context": {
+					"label": "Input file",
+					"name": "inputFile",
+					"required": true
+				}
+			},
+			{
+				"componentName": "input",
+				"context": {
+					"label": "Pattern",
+					"name": "pattern",
+					"placeholder": "",
+					"help": "",
+					"validFunction": "",
+					"required": true
+				}
+			},
+			{
+				"componentName": "radio",
+				"context": {
+					"label": "Case",
+					"name": "case",
+					"options": [
+						"match",
+						"ignore"
+					],
+					"validFunction": "",
+					"required": false
+				}
+			}
+		]
+	},
+	"params": {
+	},
+	"inputs": {
+		"inputFile": {
+			"id": "inputFile",
+			"label": "Text file",
+			"type": "file",
+			"dataType": "text"
+		}
+	},
+	"outputs": {
+		"outputFile": {
+			"id": "outputFile",
+			"label": "Matching lines",
+			"type": "file",
+			"dataType": "text"
+		}
+	},
+	"task": {
+		"command": "[[\"$PARAM_case\" -eq \"ignore\"]] && IGNORE=\"--ignore-case\" || IGNORE=\"\"; grep $IGNORE $PARAM_pattern ./inputs/inputFile > ./outputs/outputFile",
+		"container_image": "ubuntu:14.04",
+		"requirements": {
+			"cpus": 1,
+			"mem": 512,
+			"disk": 1024
+		}
+	}
+}

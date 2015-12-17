@@ -7,7 +7,7 @@
 		"fontawesome": ""
 	},
 	"category": "File Line Tools",
-	"formSource": "file_head.json",
+	"formSource": "file_head",
 	"formCopy": {
 	    "version": "0.0",
 	    "components": [

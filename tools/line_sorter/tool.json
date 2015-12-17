@@ -7,7 +7,7 @@
 		"fontawesome": ""
 	},
 	"category": "File Line Tools",
-	"formSource": "line_sorter.json",
+	"formSource": "line_sorter",
 	"formCopy": {
 	    "version": "0.0",
 	    "components": [
