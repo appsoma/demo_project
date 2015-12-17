@@ -1,73 +1,76 @@
-[
-    {
-        "componentName": "input",
-        "context": {
-            "label": "input1",
-            "name": "input1",
-            "placeholder": "placeholder",
-            "help": "",
-            "validFunction": "",
-            "required": false
+{
+    "version": "0.0",
+    "components": [
+        {
+            "componentName": "input",
+            "context": {
+                "label": "input1",
+                "name": "input1",
+                "placeholder": "placeholder",
+                "help": "",
+                "validFunction": "",
+                "required": false
+            }
+        },
+        {
+            "componentName": "textarea",
+            "context": {
+                "label": "input2",
+                "name": "input2",
+                "placeholder": "placeholder",
+                "help": "",
+                "rows": "3",
+                "validFunction": "",
+                "required": false
+            }
+        },
+        {
+            "componentName": "radio",
+            "context": {
+                "label": "input3",
+                "name": "input3",
+                "options": [
+                    "Option A",
+                    "Option B"
+                ],
+                "required": false
+            }
+        },
+        {
+            "componentName": "checkbox",
+            "context": {
+                "label": "input4",
+                "name": "input4",
+                "optionLabel": "Option A",
+                "required": false
+            }
+        },
+        {
+            "componentName": "select_multi",
+            "context": {
+                "label": "input5",
+                "name": "input5",
+                "options": [
+                    "Option A",
+                    "Option B",
+                    "Option C"
+                ],
+                "size": "3",
+                "required": false
+            }
+        },
+        {
+            "componentName": "select_single",
+            "context": {
+                "label": "input6",
+                "name": "input6",
+                "options": [
+                    "Option A",
+                    "Option B",
+                    "Option C"
+                ],
+                "required": false
+            }
         }
-    },
-    {
-        "componentName": "textarea",
-        "context": {
-            "label": "input2",
-            "name": "input2",
-            "placeholder": "placeholder",
-            "help": "",
-            "rows": "3",
-            "validFunction": "",
-            "required": false
-        }
-    },
-    {
-        "componentName": "radio",
-        "context": {
-            "label": "input3",
-            "name": "input3",
-            "options": [
-                "Option A",
-                "Option B"
-            ],
-            "required": false
-        }
-    },
-    {
-        "componentName": "checkbox",
-        "context": {
-            "label": "input4",
-            "name": "input4",
-            "optionLabel": "Option A",
-            "required": false
-        }
-    },
-    {
-        "componentName": "select_multi",
-        "context": {
-            "label": "input5",
-            "name": "input5",
-            "options": [
-                "Option A",
-                "Option B",
-                "Option C"
-            ],
-            "size": "3",
-            "required": false
-        }
-    },
-    {
-        "componentName": "select_single",
-        "context": {
-            "label": "input6",
-            "name": "input6",
-            "options": [
-                "Option A",
-                "Option B",
-                "Option C"
-            ],
-            "required": false
-        }
-    }
-]
+    ]
+}

@@ -14,7 +14,7 @@
             "context": {
                 "label": "Number of lines",
                 "name": "numberOfLines",
-                "placeholder": "10",
+                "placeholder": "",
                 "help": "Must be a number",
                 "validFunction": "",
                 "required": true

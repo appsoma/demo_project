@@ -18,7 +18,7 @@
 				"fontawesome": ""
 			},
 			"category": "File Line Tools",
-			"formSource": "line_sorter.json",
+			"formSource": "line_sorter",
 			"formCopy": {
 			    "version": "0.0",
 			    "components": [
@@ -85,7 +85,7 @@
 				"fontawesome": ""
 			},
 			"category": "File Line Tools",
-			"formSource": "file_head.json",
+			"formSource": "file_head",
 			"formCopy": {
 			    "version": "0.0",
 			    "components": [
@@ -102,7 +102,7 @@
 			            "context": {
 			                "label": "Number of lines",
 			                "name": "numberOfLines",
-			                "placeholder": "10",
+			                "placeholder": "",
 			                "help": "Must be a number",
 			                "validFunction": "",
 			                "required": true
@@ -111,7 +111,6 @@
 			    ]
 			},
 			"params": {
-				"numberOfLines": 10
 			},
 			"inputs": {
 				"inputFile": {
