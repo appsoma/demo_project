@@ -54,7 +54,7 @@
 		}
 	},
 	"task": {
-		"command": "wc --$PARAM_what ./inputs/inputFile > ./outputs/outputFile",
+		"command": "wc --$PARAM_what < ./inputs/inputFile > ./outputs/outputFile",
 		"container_image": "ubuntu:14.04",
 		"requirements": {
 			"cpus": 1,
