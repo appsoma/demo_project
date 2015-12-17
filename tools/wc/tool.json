@@ -1,0 +1,65 @@
+{
+	"id": "wc",
+	"label": "Counter",
+	"version": "0.0",
+	"author": "zack",
+	"icon": {
+		"fontawesome": ""
+	},
+	"category": "File Line Tools",
+	"formSource": "wc",
+	"formCopy": {
+		"version": "0.0",
+		"components": [
+			{
+				"componentName": "filepicker",
+				"context": {
+					"label": "Input file",
+					"name": "inputFile",
+					"required": true
+				}
+			},
+			{
+				"componentName": "radio",
+				"context": {
+					"label": "What to count",
+					"name": "what",
+					"options": [
+						"bytes",
+						"lines",
+						"words"
+					],
+					"required": true
+				}
+			}
+		]
+	},
+	"params": {
+		"what": "lines"
+	},
+	"inputs": {
+		"inputFile": {
+			"id": "inputFile",
+			"label": "Text file",
+			"type": "file",
+			"dataType": "text"
+		}
+	},
+	"outputs": {
+		"outputFile": {
+			"id": "outputFile",
+			"label": "Count",
+			"type": "file",
+			"dataType": "text"
+		}
+	},
+	"task": {
+		"command": "wc --$PARAM_what ./inputs/inputFile > ./outputs/outputFile",
+		"container_image": "ubuntu:14.04",
+		"requirements": {
+			"cpus": 1,
+			"mem": 512,
+			"disk": 1024
+		}
+	}
+}

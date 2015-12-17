@@ -1,0 +1,26 @@
+{
+	"version": "0.0",
+	"components": [
+		{
+			"componentName": "filepicker",
+			"context": {
+				"label": "Input file",
+				"name": "inputFile",
+				"required": true
+			}
+		},
+		{
+			"componentName": "radio",
+			"context": {
+				"label": "What to count",
+				"name": "what",
+				"options": [
+					"bytes",
+					"lines",
+					"words"
+				],
+				"required": true
+			}
+		}
+	]
+}
