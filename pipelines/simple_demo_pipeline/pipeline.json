@@ -1,0 +1,152 @@
+{
+	"label": "simple_demo_pipeline",
+	"version": "0.0",
+	"author": "zack",
+	"description": "A simple demo pipeline",
+	"license": "",
+	"category": "General",
+	"steps": [
+		{
+			"id": "step_0-line_sorter",
+			"x": 217,
+			"y": 94,
+			"toolSource": "line_sorter",
+			"label": "Line Sorter",
+			"version": "0.0",
+			"author": "zack",
+			"icon": {
+				"fontawesome": ""
+			},
+			"category": "File Line Tools",
+			"formSource": "line_sorter",
+			"formCopy": {
+			    "version": "0.0",
+			    "components": [
+				    {
+				        "componentName": "filepicker",
+				        "context": {
+				            "label": "Input file",
+				            "name": "inputFile",
+				            "required": true
+				        }
+				    },
+				    {
+				        "componentName": "radio",
+				        "context": {
+				            "label": "Direction",
+				            "name": "direction",
+				            "options": [
+				                "ascending",
+				                "descending"
+				            ],
+				            "required": true
+				        }
+				    }
+				]
+			},
+			"params": {
+				"direction": "ascending"
+			},
+			"inputs": {
+				"inputFile": {
+					"id": "inputFile",
+					"label": "Text file",
+					"type": "file",
+					"dataType": "text"
+				}
+			},
+			"outputs": {
+				"outputFile": {
+					"id": "outputFile",
+					"label": "Sorted file",
+					"type": "file",
+					"dataType": "text"
+				}
+			},
+			"task": {
+				"command": "[[\"$PARAM_direction\" -eq \"descending\"]] && ORDER=\"--reverse\" || ORDER=\"\"; sort $ORDER ./inputs/inputFile > ./outputs/outputFile",
+				"container_image": "ubuntu:14.04",
+				"requirements": {
+					"cpus": 1,
+					"mem": 512,
+					"disk": 1024
+				}
+			}
+		},
+		{
+			"id": "step_1-file_head",
+			"x": 476,
+			"y": 170,
+			"toolSource": "file_head",
+			"label": "File Head",
+			"version": "0.0",
+			"author": "zack",
+			"icon": {
+				"fontawesome": ""
+			},
+			"category": "File Line Tools",
+			"formSource": "file_head",
+			"formCopy": {
+			    "version": "0.0",
+			    "components": [
+			        {
+			            "componentName": "filepicker",
+			            "context": {
+			                "label": "Input file",
+			                "name": "inputFile",
+			                "required": true
+			            }
+			        },
+			        {
+			            "componentName": "input",
+			            "context": {
+			                "label": "Number of lines",
+			                "name": "numberOfLines",
+			                "placeholder": "",
+			                "help": "Must be a number",
+			                "validFunction": "",
+			                "required": true
+			            }
+			        }
+			    ]
+			},
+			"params": {
+				"numberOfLines": 20
+			},
+			"inputs": {
+				"inputFile": {
+					"id": "inputFile",
+					"label": "Text file",
+					"type": "file",
+					"dataType": "text"
+				}
+			},
+			"outputs": {
+				"outputFile": {
+					"id": "outputFile",
+					"label": "Sorted file",
+					"type": "file",
+					"dataType": "text"
+				}
+			},
+			"task": {
+				"command": "head --lines=$PARAM_numberOfLines ./inputs/inputFile > ./outputs/outputFile",
+				"container_image": "ubuntu:14.04",
+				"requirements": {
+					"cpus": 1,
+					"mem": 512,
+					"disk": 1024
+				}
+			}
+		}
+	],
+	"connections": [
+		{
+			"source": "step_0-line_sorter",
+			"target": "step_1-file_head",
+			"output": "outputFile",
+			"input": "inputFile",
+			"id": "step_0-line_sorter_step_1-file_head_outputFile_inputFile"
+		}
+	]
+}
