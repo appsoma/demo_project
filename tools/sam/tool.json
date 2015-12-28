@@ -32,7 +32,7 @@
 	},
 	"command": "python ./code/bwa_and_sam/sam_tool.py",
 	"code": [ "bwa_and_sam" ],
-	"container_image": "zsimpson/cutadapt_macs2_bwa",
+	"container_image": "appsoma/cutadapt_macs2_bwa",
 	"requirements": {
 		"cpus": 1,
 		"mem": 512,
