@@ -21,8 +21,16 @@
 						h('form#main-form', { action:'', role:'form' },
 							h('fieldset',
 								h('div.form-group',
-									h('label','Memory in MB'),
-									h('input.form-control',{name:'mem'})
+									h('label','Memory allocated to container in MB'),
+									h('input.form-control',{name:'mem_to_container'})
+								),
+								h('div.form-group',
+									h('label','Memory allocated inside container in MB'),
+									h('input.form-control',{name:'mem_in_container'})
+								),
+								h('div.form-group',
+									h('label','Number of forks'),
+									h('input.form-control',{name:'forks'})
 								),
 								h('button.btn.btn-primary',{type:'submit'},"Submit")
 							)
@@ -46,11 +54,11 @@
 					"tasks": [
 						{
 							"name": "memoryhog",
-							"command": "sleep 10",
-							"container_image": "ubuntu",
+							"command": "python code/memhog/memhog.py",
+							"container_image": "python:2.7",
 							"requirements": {
 								"cpus": 1,
-								"mem": "$PARAMS/mem",
+								"mem": "$PARAMS/mem_to_container",
 								"disk": 1024
 							}
 						}
