@@ -1,0 +1,207 @@
+{
+	"label": "simple_bigquery_pipeline",
+	"version": "0.0",
+	"author": "zack",
+	"description": "A simple bigquery pipeline",
+	"license": "",
+	"category": "General",
+	"steps": [
+		{
+			"id": "step_0-bigquery",
+			"x": 249,
+			"y": 113.56472396850586,
+			"toolSource": "simple_bigquery_tool",
+			"label": "Simple Big Query",
+			"version": "0.0",
+			"author": "zack",
+			"icon": {
+				"fontawesome": ""
+			},
+			"category": "General",
+			"formSource": "simple_bigquery",
+			"formCopy": {
+				"version": "0.0",
+				"components": [
+					{
+						"componentName": "filepicker",
+						"context": {
+							"label": "Google API Service Account JSON to use",
+							"name": "inputFile",
+							"validFunction": "",
+							"required": false
+						}
+					},
+					{
+						"componentName": "input",
+						"context": {
+							"label": "Project Name",
+							"name": "projectName",
+							"placeholder": "appsoma-1",
+							"help": "Google project name",
+							"validFunction": "",
+							"required": true
+						}
+					},
+					{
+						"componentName": "input",
+						"context": {
+							"label": "Dataset",
+							"name": "dataSetName",
+							"placeholder": "publicdata:samples",
+							"help": "",
+							"validFunction": "",
+							"required": true
+						}
+					},
+					{
+						"componentName": "input",
+						"context": {
+							"label": "Table",
+							"name": "table",
+							"placeholder": "gsod",
+							"help": "Select a valid table in the dataset",
+							"validFunction": "",
+							"required": true
+						}
+					},
+					{
+						"componentName": "input",
+						"context": {
+							"label": "Columns to select",
+							"name": "columns",
+							"placeholder": "max_temperature, year, month, day, station_number",
+							"help": "Comma separated column names",
+							"validFunction": "",
+							"required": true
+						}
+					},
+					{
+						"componentName": "input",
+						"context": {
+							"label": "Column to sort on",
+							"name": "sortColumn",
+							"placeholder": "max_temperature",
+							"help": "(must be selected above)",
+							"validFunction": "",
+							"required": true
+						}
+					},
+					{
+						"componentName": "input",
+						"context": {
+							"label": "Number of records to return",
+							"name": "count",
+							"placeholder": "10",
+							"help": "",
+							"validFunction": "",
+							"required": true
+						}
+					},
+					{
+						"componentName": "radio",
+						"context": {
+							"label": "Sort Order",
+							"name": "sortOrder",
+							"options": [
+								"Ascending",
+								"Descending"
+							],
+							"required": true
+						}
+					}
+				]
+			},
+			"params": {
+				"direction": "ascending",
+				"projectName": "appsoma-1",
+				"dataSetName": "publicdata:samples",
+				"table": "gsod",
+				"columns": "max_temperature, day, month, year, station_number",
+				"sortColumn": "max_temperature",
+				"count": "20",
+				"sortOrder": "Descending",
+				"big_query_credentials": "$DATASETS/bigquery/bigquery-test.json",
+				"inputFile": "$DATASETS/bigquery/bigquery-test.json"
+			},
+			"inputs": {
+				"inputFile": {
+					"id": "inputFile",
+					"label": "Bigquery credential file",
+					"type": "file",
+					"dataType": "text"
+				}
+			},
+			"outputs": {
+				"outputFile": {
+					"id": "outputFile",
+					"label": "Query Results",
+					"type": "file",
+					"dataType": "text"
+				}
+			},
+			"task": {
+				"command": "python ./code/big_query/simple_big_query.py ./inputs/inputFile ./outputs/outputFile",
+				"container_image": "appsoma/python-google-api",
+				"requirements": {
+					"cpus": 1,
+					"mem": 512,
+					"disk": 1024
+				}
+			}
+		},
+		{
+			"label": "json_to_table",
+			"version": "0.0",
+			"author": "demo",
+			"description": "Convert JSON to HTML table",
+			"license": "",
+			"icon": {
+				"fontawesome": ""
+			},
+			"category": "General",
+			"formSource": "json_to_table",
+			"formCopy": {
+				"version": "0.0",
+				"components": [
+					{
+						"componentName": "filepicker",
+						"context": {
+							"label": "JSON Input file",
+							"name": "inputFile",
+							"required": false
+						}
+					}
+				]
+			},
+			"task": {
+				"command": "python ./code/big_query/json_to_table.py ./inputs/inputFile ./results/output.html",
+				"container_image": "appsoma/python-google-api",
+				"requirements": {
+					"cpus": 1,
+					"mem": 512,
+					"disk": 1024
+				}
+			},
+			"inputs": {
+				"inputFile": {
+					"id": "inputFile",
+					"label": "JSON file",
+					"type": "file",
+					"dataType": "text"
+				}
+			},
+			"x": 577,
+			"y": 207,
+			"id": "step_1-json_to_table"
+		}
+	],
+	"connections": [
+		{
+			"source": "step_0-bigquery",
+			"target": "step_1-json_to_table",
+			"output": "outputFile",
+			"input": "inputFile",
+			"id": "step_0-bigquery_step_1-json_to_table_outputFile_inputFile"
+		}
+	]
+}

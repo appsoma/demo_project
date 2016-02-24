@@ -1,0 +1,92 @@
+<!doctype html>
+<head>
+	<script src="/welder_assets/js/welder_widgets.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="/welder_assets/css/welder_widgets.css">
+</head>
+<body>
+	<script type="text/javascript">
+		var $ = jQuery = require("jquery");
+		var h = require("hyperscript");
+		var welder = require("welder");
+		require("bootstrap");
+
+		$(document).ready( function() {
+			$("body").append(
+				h('.container',
+					h('h1','Simple BigQuery'),
+					h('h4','Example of calling BigQuery from Welder'),
+					h('.container',
+						h('form#main-form', { action:'', role:'form' },
+							h('fieldset',
+								h('div.form-group',
+									h('label','Google API Service Account JSON to use'),
+									h('input.welder-file-picker',{name:'credentialsJson','data-default-dataset':'bigquery'})
+								),
+								h('div.form-group',
+									h('label','Project'),
+									h('input.form-control',{name:'projectName',value:'appsoma-1',type:'string',style:{width:'100px'}})
+								),
+								h('div.form-group',
+									h('label','Dataset'),
+									h('input.form-control',{name:'dataSetName',value:'publicdata:samples',type:'string',style:{width:'200px'}})
+								),
+								h('div.form-group',
+									h('label','Table'),
+									h('input.form-control',{name:'table',value:'gsod',type:'string',style:{width:'100px'}})
+								),
+								h('div.form-group',
+									h('label','Columns to select'),
+									h('input.form-control',{name:'columns',value:'max_temperature, day, month, year, station_number',type:'string',style:{width:'500px'}})
+								),
+								h('div.form-group',
+									h('label','Column to sort on'),
+									h('input.form-control',{name:'sortColumn',value:'max_temperature',type:'string',style:{width:'200px'}})
+								),
+								h('div.form-group',
+									h('label','Number of records to return'),
+									h('input.form-control',{name:'count',value:'10',type:'string',style:{width:'100px'}})
+								),
+								h('button.btn.btn-primary',{type:'submit'},"Submit")
+							)
+						)
+					)
+				)
+			);
+
+			welder.initWidgetsFromClasses();
+			welder.widgets.poweredBy();
+			welder.handleRunSimilar( "#main-form" );
+
+			$("#main-form").submit( function() {
+				$(this).find('fieldset').prop('disabled',true);
+				var params = welder.formToObject( this );
+				
+				welder.ajax.postRun({
+					"app_folder_name": "simple_bigquery",
+					"name": "simple_bigquery",
+					"params": params,
+					"tasks": [
+						{
+							"name": "simple_bigquery",
+							"command": "python ./code/big_query/simple_big_query.py ./inputs/credentials_json ./results/query_result.json",
+							"container_image": "appsoma/python-google-api",
+							"inputs": {
+								"credentials_json": "$PARAMS/credentialsJson"
+							},
+							"requirements": {
+								"cpus": 1,
+								"mem": 512,
+								"disk": 1024
+							}
+						}
+					]
+				});
+				
+				return false;
+			});
+		});
+	</script>
+
+</body>

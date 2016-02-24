@@ -1,4 +1,6 @@
 {
+	"id": "untar",
+	"category": "File Manipulation",
 	"name": "untar",
 	"inputs": {
 		"tar_file": {

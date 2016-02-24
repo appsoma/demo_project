@@ -1,0 +1,13 @@
+{
+	"version": "0.0",
+	"components": [
+		{
+			"componentName": "filepicker",
+			"context": {
+				"label": "JSON Input file",
+				"name": "inputFile",
+				"required": false
+			}
+		}
+	]
+}

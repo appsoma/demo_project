@@ -1,0 +1,40 @@
+{
+	"label": "json_to_table",
+	"version": "0.0",
+	"author": "demo",
+	"description": "Convert JSON to HTML table",
+	"license": "",
+	"icon": { "fontawesome": "\uf036" },
+	"category": "General",
+	"formSource": "json_to_table",
+	"formCopy": {
+		"version": "0.0",
+		"components": [
+			{
+				"componentName": "filepicker",
+				"context": {
+					"label": "JSON Input file",
+					"name": "inputFile",
+					"required": false
+				}
+			}
+		]
+	},
+	"task": {
+		"command": "python ./code/big_query/json_to_table.py ./inputs/inputFile ./results/output.html",
+		"container_image": "appsoma/python-google-api",
+		"requirements": {
+			"cpus": 1,
+			"mem": 512,
+			"disk": 1024
+		}
+	},
+	"inputs": {
+		"inputFile": {
+			"id": "inputFile",
+			"label": "JSON file",
+			"type": "file",
+			"dataType": "text"
+		}
+	}
+}

@@ -1,4 +1,5 @@
 {
+	"id": "sam",
 	"name": "sam",
 	"inputs": {
 		"extracted_reference_genome": {
@@ -16,12 +17,12 @@
 		"fastq2": {
 			"extension": [ ".fastq", ".fq" ],
 			"type": "fastq",
-			"optional": true,
+			"optional": true
 		},
 		"sai2": {
 			"extension": ".sai",
 			"type": "sai",
-			"optional": true,
+			"optional": true
 		}
 	},
 	"outputs": {

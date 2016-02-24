@@ -1,32 +1,20 @@
-Best Practice:
-In the project "demo_project_{user}_{branch}"
-
-Name code submodules with their tag, eg "bwa_and_sam_v1.4"
-
-What comes across:
-name
-params (but compiled into the run)
-inputs (but compiled)
-outputs
-
-
 {
 	"name": "bwa",
-	"label": "Root Intrusion",
+	"label": "BWA",
 	"icon": { "fontawesome": "\uf071" },
 	"categoryId": "Security",
 
-LATER	"params": {
+	"params": {
 		"some_name": "default value"
 	},
 
 	"inputs": {
 		"extracted_reference_genome": {
-MAYBE			"folder": true,
+		"folder": true,
 			"type": "NCBI_extracted_tar"
 		},
 		"fastq": {
-NO			"extension": [ ".fastq", ".fq" ],
+			"extension": [ ".fastq", ".fq" ],
 			"type": "fastq"
 		}
 	},

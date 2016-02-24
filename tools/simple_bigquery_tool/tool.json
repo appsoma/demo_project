@@ -1,0 +1,48 @@
+{
+	"id": "simple_bigquery_tool",
+	"label": "Simple Big Query Tool",
+	"description": "A simple tool to query BigQuery",
+	"category": "Google",
+	"formSource": "simple_bigquery",
+	"version": "0.0",
+	"author": "demo",
+	"icon": {
+		"fontawesome": "\uf036"
+	},
+	"params": {
+		"direction": "ascending",
+		"projectName": "appsoma-1",
+		"dataSetName": "publicdata:samples",
+		"table": "gsod",
+		"columns": "max_temperature, year, month, day, station_number",
+		"sortColumn": "max_temperature",
+		"count": "10",
+		"sortOrder": "Descending",
+		"big_query_credentials": "$DATASETS/bigquery/bigquery-test.json"
+	},
+	"inputs": {
+		"inputFile": {
+			"id": "inputFile",
+			"label": "Bigquery credential file",
+			"type": "file",
+			"dataType": "text"
+		}
+	},
+	"outputs": {
+		"outputFile": {
+			"id": "outputFile",
+			"label": "Query Results",
+			"type": "file",
+			"dataType": "text"
+		}
+	},
+	"task": {
+		"command": "python ./code/big_query/simple_big_query.py ./inputs/inputFile ./outputs/outputFile",
+		"container_image": "appsoma/python-google-api",
+		"requirements": {
+			"cpus": 1,
+			"mem": 512,
+			"disk": 1024
+		}
+	}
+}
