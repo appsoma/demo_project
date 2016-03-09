@@ -64,7 +64,7 @@
 		}
 	},
 	"task": {
-		"command": "[[\"$PARAM_case\" -eq \"ignore\"]] && IGNORE=\"--ignore-case\" || IGNORE=\"\"; grep $IGNORE $PARAM_pattern ./inputs/inputFile > ./outputs/outputFile",
+		"command": "[[ \"$PARAM_case\" -eq \"ignore\" ]] && IGNORE=\"--ignore-case\" || IGNORE=\"\"; grep $IGNORE $PARAM_pattern ./inputs/inputFile > ./outputs/outputFile",
 		"container_image": "ubuntu:14.04",
 		"requirements": {
 			"cpus": 1,

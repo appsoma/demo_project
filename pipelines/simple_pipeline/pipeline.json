@@ -1,0 +1,164 @@
+{
+	"label": "simple_pipeline",
+	"version": "0.0",
+	"author": "demo",
+	"description": "",
+	"license": "",
+	"category": "General",
+	"steps": [
+		{
+			"id": "step_0-grep",
+			"label": "GREP",
+			"version": "0.0",
+			"author": "zack",
+			"icon": {
+				"fontawesome": ""
+			},
+			"category": "File Line Tools",
+			"formSource": "grep",
+			"formCopy": {
+				"version": "0.0",
+				"components": [
+					{
+						"componentName": "filepicker",
+						"context": {
+							"label": "Input file",
+							"name": "inputFile",
+							"required": true
+						}
+					},
+					{
+						"componentName": "input",
+						"context": {
+							"label": "Pattern",
+							"name": "pattern",
+							"placeholder": "",
+							"help": "",
+							"validFunction": "",
+							"required": true
+						}
+					},
+					{
+						"componentName": "radio",
+						"context": {
+							"label": "Case",
+							"name": "case",
+							"options": [
+								"match",
+								"ignore"
+							],
+							"validFunction": "",
+							"required": false
+						}
+					}
+				]
+			},
+			"params": {},
+			"inputs": {
+				"inputFile": {
+					"id": "inputFile",
+					"label": "Text file",
+					"type": "file",
+					"dataType": "text"
+				}
+			},
+			"outputs": {
+				"outputFile": {
+					"id": "outputFile",
+					"label": "Matching lines",
+					"type": "file",
+					"dataType": "text"
+				}
+			},
+			"task": {
+				"command": "[[\"$PARAM_case\" -eq \"ignore\"]] && IGNORE=\"--ignore-case\" || IGNORE=\"\"; grep $IGNORE $PARAM_pattern ./inputs/inputFile > ./outputs/outputFile",
+				"container_image": "ubuntu:14.04",
+				"requirements": {
+					"cpus": 1,
+					"mem": 512,
+					"disk": 1024
+				}
+			},
+			"x": 498,
+			"y": 172,
+			"tool": "grep"
+		},
+		{
+			"id": "step_2-wc",
+			"label": "Counter",
+			"version": "0.0",
+			"author": "zack",
+			"icon": {
+				"fontawesome": ""
+			},
+			"category": "File Line Tools",
+			"formSource": "wc",
+			"formCopy": {
+				"version": "0.0",
+				"components": [
+					{
+						"componentName": "filepicker",
+						"context": {
+							"label": "Input file",
+							"name": "inputFile",
+							"required": true
+						}
+					},
+					{
+						"componentName": "radio",
+						"context": {
+							"label": "What to count",
+							"name": "what",
+							"options": [
+								"bytes",
+								"lines",
+								"words"
+							],
+							"required": true
+						}
+					}
+				]
+			},
+			"params": {
+				"what": "lines"
+			},
+			"inputs": {
+				"inputFile": {
+					"id": "inputFile",
+					"label": "Text file",
+					"type": "file",
+					"dataType": "text"
+				}
+			},
+			"outputs": {
+				"outputFile": {
+					"id": "outputFile",
+					"label": "Count",
+					"type": "file",
+					"dataType": "text"
+				}
+			},
+			"task": {
+				"command": "wc --$PARAM_what < ./inputs/inputFile > ./outputs/outputFile",
+				"container_image": "ubuntu:14.04",
+				"requirements": {
+					"cpus": 1,
+					"mem": 512,
+					"disk": 1024
+				}
+			},
+			"x": 687,
+			"y": 201,
+			"tool": "wc"
+		}
+	],
+	"connections": [
+		{
+			"source": "step_0-grep",
+			"target": "step_2-wc",
+			"output": "outputFile",
+			"input": "inputFile",
+			"id": "step_0-grep_step_2-wc_outputFile_inputFile"
+		}
+	]
+}

@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+	<head>
+		<script src="/welder_assets/js/welder_widgets.js"></script>
+		<!-- Welder widgets is the set of UI components and utility functions. -->
+	
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+			<!-- Bootstrap is a popular CSS framework.  Welder widgets depend on this framework -->
+	
+		<link rel="stylesheet" href="/welder_assets/css/welder_widgets.css">
+			<!-- This is the stylesheet for welder widgets. Needed if you intend to have any widgets -->
+	</head>
+	<body>
+		<script type="text/javascript">
+			var $ = jQuery = require("jquery");
+				// Jquery is the popular JS toolkit for DOM manipulation.
+				// It is highly advised you keep this.
+	
+			var h = require("hyperscript");
+				// Hyperscript is a JS toolkit for creating DOM elements.
+				// It makes it easy to create HTML from JS. (See h() calls below.)
+				// You may choose to not use this library in which case you would
+				// code your HTML in tradional style.
+	
+			var welder = require("welder");
+				// Welder is a set of helper functions for welder-related activities
+				// such as posting runs.
+	
+			require("bootstrap");
+				// Bootstrap js is the extension for bootstrap to handle modal dialog
+				// boxes and many other situations. It is used by welder widgets.
+	
+	
+			$(document).ready( function() {
+				var appName = "foo";
+				var appDescription = "";
+				var pipelineName = "simple_pipeline";
+	
+				welder.initWidgetsFromClasses();
+					// This call creates Welder widgets from class names
+					// See https://github.com/appsoma/welder/blob/master/README.md
+					// for details.
+	
+				welder.widgets.poweredBy();
+					// This adds the "Appsoma" logo in the upper right corner.
+					
+				welder.selectedProject = welder.getCurrentProject();
+				window.location = welder.url_management.get("pipelines_form",{':pipeline':pipelineName});
+				
+				e.preventDefault();
+				return false;
+			});
+		</script>
+	</body>
+</html>

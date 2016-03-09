@@ -4,6 +4,98 @@
 	"description": "A simple tool to query BigQuery",
 	"category": "Google",
 	"formSource": "simple_bigquery",
+	"formCopy": {
+		"version": "0.0",
+		"components": [
+			{
+				"componentName": "filepicker",
+				"context": {
+					"label": "Google API Service Account JSON to use",
+					"name": "inputFile",
+					"validFunction": "",
+					"required": false
+				}
+			},
+			{
+				"componentName": "input",
+				"context": {
+					"label": "Project Name",
+					"name": "projectName",
+					"placeholder": "appsoma-1",
+					"help": "Google project name",
+					"validFunction": "",
+					"required": true
+				}
+			},
+			{
+				"componentName": "input",
+				"context": {
+					"label": "Dataset",
+					"name": "dataSetName",
+					"placeholder": "publicdata:samples",
+					"help": "",
+					"validFunction": "",
+					"required": true
+				}
+			},
+			{
+				"componentName": "input",
+				"context": {
+					"label": "Table",
+					"name": "table",
+					"placeholder": "gsod",
+					"help": "Select a valid table in the dataset",
+					"validFunction": "",
+					"required": true
+				}
+			},
+			{
+				"componentName": "input",
+				"context": {
+					"label": "Columns to select",
+					"name": "columns",
+					"placeholder": "max_temperature, year, month, day, station_number",
+					"help": "(Comma separated column names",
+					"validFunction": "",
+					"required": true
+				}
+			},
+			{
+				"componentName": "input",
+				"context": {
+					"label": "Column to sort on",
+					"name": "sortColumn",
+					"placeholder": "max_temperature",
+					"help": "(must be selected above)",
+					"validFunction": "",
+					"required": true
+				}
+			},
+			{
+				"componentName": "input",
+				"context": {
+					"label": "Number of records to return",
+					"name": "count",
+					"placeholder": "10",
+					"help": "",
+					"validFunction": "",
+					"required": true
+				}
+			},
+			{
+				"componentName": "radio",
+				"context": {
+					"label": "Sort Order",
+					"name": "sortOrder",
+					"options": [
+						"Ascending",
+						"Descending"
+					],
+					"required": true
+				}
+			}
+		]
+	},
 	"version": "0.0",
 	"author": "demo",
 	"icon": {
