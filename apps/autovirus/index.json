@@ -1,6 +1,5 @@
 {
 	"name": "Auto Virus",
-	"icon": "http://imgur.com/efweWKT.png",
 	"bootstrap_icon": "glyphicon-equalizer",
 	"short_description": "Auto mfgrs virus detection",
 	"description": "Auto manufacturers detect and mitigate virus attacks.",
